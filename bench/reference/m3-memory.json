@@ -1,0 +1,75 @@
+{
+  "model_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+  "context": 2048,
+  "positions_evaluated": 2048,
+  "input_token_id": 16,
+  "input_token_text": "1",
+  "threads": 1,
+  "cache_type": "F32",
+  "cache_payload_bytes": 117440512,
+  "maximum_rss_kib": 9101076,
+  "maximum_rss_gib": 8.679462432861328,
+  "wall_seconds": 3008.33,
+  "user_seconds": 3000.99,
+  "system_seconds": 3.24,
+  "exit_status": 0,
+  "method": "/usr/bin/time -v, entire process including F16 load and upcast; 2048 actual positions; output head on final position only; raw IDs without CLI tokenizer",
+  "source_sha256": "136f79be4d59606cdc6f8aacb8b31c1a086244cdcb78b63f0a808bb4de561756",
+  "binary_sha256": "cb5b3cef1429ce6a1540f1cc6ceb5de226a67cf8fb8d381ddd2aeb9bbb82ab0a",
+  "final_library_rebuild_same_binary": true,
+  "compile_command": [
+    "g++",
+    "-std=c++20",
+    "-O2",
+    "-Iinclude",
+    "-Ibuild-m3/generated",
+    "/tmp/neuron-m3-memory.cpp",
+    "build-m3/libneuron.a",
+    "-o",
+    "/tmp/neuron-m3-memory"
+  ],
+  "source_note": "The source used in /tmp is byte-identical to bench/context_memory.cpp.",
+  "command": [
+    "/usr/bin/time",
+    "-v",
+    "-o",
+    "/tmp/neuron-m3-memory.time",
+    "/tmp/neuron-m3-memory",
+    "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf"
+  ],
+  "notes": "Builds and shorter reference, generation and regression checks ran concurrently. This is per-process peak RSS, not total system memory or a speed benchmark. Power settings were observed, not changed.",
+  "power_observation_during_run": {
+    "utc": "2026-11-16T09:10:36.324906+00:00",
+    "load_average": [
+      1.99609375,
+      1.9443359375,
+      1.74365234375
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "machine_after": {
+    "utc": "2026-11-16T09:26:22.123206+00:00",
+    "load_average": [
+      0.50537109375,
+      1.3193359375,
+      1.69482421875
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "time_report": "\tCommand being timed: \"/tmp/neuron-m3-memory /home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf\"\n\tUser time (seconds): 3000.99\n\tSystem time (seconds): 3.24\n\tPercent of CPU this job got: 99%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 50:08.33\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 9101076\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 14669\n\tMinor (reclaiming a frame) page faults: 1714223\n\tVoluntary context switches: 25834\n\tInvoluntary context switches: 37978\n\tSwaps: 0\n\tFile system inputs: 3265232\n\tFile system outputs: 520\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+  "output": "context=2048 position=2048\n"
+}

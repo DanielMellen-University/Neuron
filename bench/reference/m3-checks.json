@@ -1,0 +1,1175 @@
+{
+  "model_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+  "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+  "neuron_binary_sha256": "2da45bf4121635650d3b651e423e1bd735cec53fda138677322ccfc9de3e0626",
+  "reference_tool_sha256": "04937116870430ff6a7c212f335eed6653563e0a340a0677a4ba1c1c6bf7fafe",
+  "context": 2048,
+  "threads": 1,
+  "machine_before": {
+    "utc": "2026-11-16T09:10:36.324906+00:00",
+    "load_average": [
+      1.99609375,
+      1.9443359375,
+      1.74365234375
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "notes": "Scalar FP32, one thread. Full 2048-position Neuron memory collection active concurrently. Correctness checks, no speed claim. Power state observed, not changed.",
+  "tokenizer_cases": 63,
+  "chat_cases": 4,
+  "greedy": [
+    {
+      "prompt_id": "rabbit",
+      "command": [
+        "/home/daniel/codex-runs/Neuron-m3/build-m3/neuron",
+        "run",
+        "-m",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+        "-p",
+        "Once upon a time, a little rabbit lived beside a quiet forest. Every morning, she visited the same old oak tree to meet her friend, a small brown bird. One day, the bird was missing, and a shiny blue feather lay on the ground. The rabbit decided to",
+        "-n",
+        "32",
+        "--greedy",
+        "--json"
+      ],
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 56,
+        "total_tokens": 56,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 32,
+        "total_tokens": 32,
+        "agreement_rate": 1.0
+      },
+      "candidate": {
+        "prompt_tokens": [
+          12522,
+          5193,
+          264,
+          882,
+          11,
+          264,
+          2632,
+          38724,
+          12163,
+          29388,
+          264,
+          11340,
+          13638,
+          13,
+          7209,
+          6556,
+          11,
+          1340,
+          11994,
+          279,
+          1852,
+          2310,
+          37871,
+          4916,
+          311,
+          3367,
+          1059,
+          4238,
+          11,
+          264,
+          2613,
+          13876,
+          11958,
+          13,
+          3776,
+          1899,
+          11,
+          279,
+          11958,
+          572,
+          7402,
+          11,
+          323,
+          264,
+          41199,
+          6303,
+          49776,
+          10962,
+          389,
+          279,
+          4910,
+          13,
+          576,
+          38724,
+          6635,
+          311
+        ],
+        "generated_tokens": [
+          2711,
+          369,
+          1059,
+          4238,
+          13,
+          2932,
+          8110,
+          279,
+          49776,
+          311,
+          264,
+          2613,
+          35570,
+          1380,
+          1340,
+          1730,
+          279,
+          11958,
+          13,
+          576,
+          38724,
+          323,
+          279,
+          11958,
+          1033,
+          1602,
+          6247,
+          311,
+          1490,
+          1817,
+          1008,
+          1549
+        ],
+        "top2": [
+          {
+            "first": 2711,
+            "second": 1477,
+            "gap": 0.180301666
+          },
+          {
+            "first": 369,
+            "second": 279,
+            "gap": 2.60764885
+          },
+          {
+            "first": 1059,
+            "second": 279,
+            "gap": 0.0421218872
+          },
+          {
+            "first": 4238,
+            "second": 13,
+            "gap": 2.47484589
+          },
+          {
+            "first": 13,
+            "second": 323,
+            "gap": 0.428297043
+          },
+          {
+            "first": 2932,
+            "second": 4636,
+            "gap": 1.78251648
+          },
+          {
+            "first": 8110,
+            "second": 1730,
+            "gap": 0.130971909
+          },
+          {
+            "first": 279,
+            "second": 264,
+            "gap": 1.9678154
+          },
+          {
+            "first": 49776,
+            "second": 8849,
+            "gap": 1.91279984
+          },
+          {
+            "first": 311,
+            "second": 323,
+            "gap": 0.721101761
+          },
+          {
+            "first": 264,
+            "second": 279,
+            "gap": 1.38607979
+          },
+          {
+            "first": 2613,
+            "second": 14046,
+            "gap": 1.23371887
+          },
+          {
+            "first": 35570,
+            "second": 32750,
+            "gap": 0.114612579
+          },
+          {
+            "first": 1380,
+            "second": 11,
+            "gap": 0.204704285
+          },
+          {
+            "first": 1340,
+            "second": 279,
+            "gap": 1.37905884
+          },
+          {
+            "first": 1730,
+            "second": 5485,
+            "gap": 1.44001198
+          },
+          {
+            "first": 279,
+            "second": 1059,
+            "gap": 1.45884323
+          },
+          {
+            "first": 11958,
+            "second": 2632,
+            "gap": 3.88670158
+          },
+          {
+            "first": 13,
+            "second": 11,
+            "gap": 0.620229721
+          },
+          {
+            "first": 576,
+            "second": 2932,
+            "gap": 0.882287979
+          },
+          {
+            "first": 38724,
+            "second": 11958,
+            "gap": 0.044626236
+          },
+          {
+            "first": 323,
+            "second": 572,
+            "gap": 0.3046875
+          },
+          {
+            "first": 279,
+            "second": 11958,
+            "gap": 2.29804802
+          },
+          {
+            "first": 11958,
+            "second": 13876,
+            "gap": 3.93568993
+          },
+          {
+            "first": 1033,
+            "second": 6116,
+            "gap": 0.19925499
+          },
+          {
+            "first": 1602,
+            "second": 76879,
+            "gap": 0.926912308
+          },
+          {
+            "first": 6247,
+            "second": 12421,
+            "gap": 2.55216408
+          },
+          {
+            "first": 311,
+            "second": 323,
+            "gap": 3.60598564
+          },
+          {
+            "first": 1490,
+            "second": 387,
+            "gap": 1.31256485
+          },
+          {
+            "first": 1817,
+            "second": 825,
+            "gap": 6.43984795
+          },
+          {
+            "first": 1008,
+            "second": 2441,
+            "gap": 9.35864067
+          },
+          {
+            "first": 1549,
+            "second": 13,
+            "gap": 0.447498322
+          }
+        ],
+        "timings": {
+          "prompt_n": 56,
+          "prompt_ms": 77341.0104,
+          "predicted_n": 32,
+          "predicted_ms": 50658.1689,
+          "prompt_per_second": 0.724066051,
+          "predicted_per_second": 0.61194474
+        }
+      }
+    },
+    {
+      "prompt_id": "garden",
+      "command": [
+        "/home/daniel/codex-runs/Neuron-m3/build-m3/neuron",
+        "run",
+        "-m",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+        "-p",
+        "Lily helped her grandfather plant seeds in the garden. They gave each seed a little water and waited for the sun to come out. After many days, a tiny green leaf appeared. Lily was so happy that she ran into the house and said, \"Grandpa, come and look!",
+        "-n",
+        "32",
+        "--greedy",
+        "--json"
+      ],
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 58,
+        "total_tokens": 58,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 32,
+        "total_tokens": 32,
+        "agreement_rate": 1.0
+      },
+      "candidate": {
+        "prompt_tokens": [
+          43,
+          1541,
+          8910,
+          1059,
+          37850,
+          6008,
+          19056,
+          304,
+          279,
+          13551,
+          13,
+          2379,
+          6551,
+          1817,
+          10320,
+          264,
+          2632,
+          3015,
+          323,
+          29215,
+          369,
+          279,
+          7015,
+          311,
+          2525,
+          700,
+          13,
+          4636,
+          1657,
+          2849,
+          11,
+          264,
+          13673,
+          6176,
+          15933,
+          9723,
+          13,
+          47290,
+          572,
+          773,
+          6247,
+          429,
+          1340,
+          10613,
+          1119,
+          279,
+          3753,
+          323,
+          1053,
+          11,
+          330,
+          40151,
+          6595,
+          11,
+          2525,
+          323,
+          1401,
+          0
+        ],
+        "generated_tokens": [
+          330,
+          6252,
+          37850,
+          3697,
+          323,
+          5485,
+          279,
+          13673,
+          6176,
+          15933,
+          13,
+          1260,
+          1053,
+          11,
+          330,
+          2132,
+          594,
+          6233,
+          11,
+          714,
+          432,
+          594,
+          537,
+          264,
+          4916,
+          3602,
+          13,
+          330,
+          47290,
+          1053,
+          11,
+          330
+        ],
+        "top2": [
+          {
+            "first": 330,
+            "second": 358,
+            "gap": 0.00113487244
+          },
+          {
+            "first": 6252,
+            "second": 10304,
+            "gap": 1.34658623
+          },
+          {
+            "first": 37850,
+            "second": 6662,
+            "gap": 1.98324203
+          },
+          {
+            "first": 3697,
+            "second": 10613,
+            "gap": 0.832876205
+          },
+          {
+            "first": 323,
+            "second": 700,
+            "gap": 0.191204071
+          },
+          {
+            "first": 5485,
+            "second": 6966,
+            "gap": 0.46506691
+          },
+          {
+            "first": 279,
+            "second": 264,
+            "gap": 1.4671154
+          },
+          {
+            "first": 13673,
+            "second": 2632,
+            "gap": 0.169981003
+          },
+          {
+            "first": 6176,
+            "second": 15933,
+            "gap": 1.70959473
+          },
+          {
+            "first": 15933,
+            "second": 10901,
+            "gap": 4.72540092
+          },
+          {
+            "first": 13,
+            "second": 11,
+            "gap": 1.82059669
+          },
+          {
+            "first": 1260,
+            "second": 330,
+            "gap": 0.890108109
+          },
+          {
+            "first": 1053,
+            "second": 572,
+            "gap": 0.429389954
+          },
+          {
+            "first": 11,
+            "second": 311,
+            "gap": 2.93162918
+          },
+          {
+            "first": 330,
+            "second": 1036,
+            "gap": 6.89792633
+          },
+          {
+            "first": 2132,
+            "second": 40,
+            "gap": 0.244552612
+          },
+          {
+            "first": 594,
+            "second": 5868,
+            "gap": 1.69207191
+          },
+          {
+            "first": 6233,
+            "second": 264,
+            "gap": 0.487125397
+          },
+          {
+            "first": 11,
+            "second": 0,
+            "gap": 0.546773911
+          },
+          {
+            "first": 714,
+            "second": 47290,
+            "gap": 1.13518524
+          },
+          {
+            "first": 432,
+            "second": 358,
+            "gap": 1.13727188
+          },
+          {
+            "first": 594,
+            "second": 3880,
+            "gap": 1.16109276
+          },
+          {
+            "first": 537,
+            "second": 2058,
+            "gap": 0.153049469
+          },
+          {
+            "first": 264,
+            "second": 5527,
+            "gap": 0.856636047
+          },
+          {
+            "first": 4916,
+            "second": 6008,
+            "gap": 0.319267273
+          },
+          {
+            "first": 3602,
+            "second": 13,
+            "gap": 1.0194149
+          },
+          {
+            "first": 13,
+            "second": 1189,
+            "gap": 0.489442825
+          },
+          {
+            "first": 330,
+            "second": 1084,
+            "gap": 2.61661339
+          },
+          {
+            "first": 47290,
+            "second": 330,
+            "gap": 0.975126266
+          },
+          {
+            "first": 1053,
+            "second": 19995,
+            "gap": 1.79116249
+          },
+          {
+            "first": 11,
+            "second": 311,
+            "gap": 5.73961449
+          },
+          {
+            "first": 330,
+            "second": 1036,
+            "gap": 7.54181671
+          }
+        ],
+        "timings": {
+          "prompt_n": 58,
+          "prompt_ms": 82154.4267,
+          "predicted_n": 32,
+          "predicted_ms": 52531.9915,
+          "prompt_per_second": 0.70598752,
+          "predicted_per_second": 0.590116595
+        }
+      }
+    },
+    {
+      "prompt_id": "ball",
+      "command": [
+        "/home/daniel/codex-runs/Neuron-m3/build-m3/neuron",
+        "run",
+        "-m",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+        "-p",
+        "Tom and his dog Max played with a red ball in the park. Tom threw the ball too far, and it rolled under a wooden gate. Max could see it, but he could not reach it. Tom sat down beside his dog and tried to think of a way to",
+        "-n",
+        "32",
+        "--greedy",
+        "--json"
+      ],
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 55,
+        "total_tokens": 55,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 32,
+        "total_tokens": 32,
+        "agreement_rate": 1.0
+      },
+      "candidate": {
+        "prompt_tokens": [
+          24732,
+          323,
+          806,
+          5562,
+          7487,
+          6342,
+          448,
+          264,
+          2518,
+          4935,
+          304,
+          279,
+          6118,
+          13,
+          8364,
+          22192,
+          279,
+          4935,
+          2238,
+          3041,
+          11,
+          323,
+          432,
+          22447,
+          1212,
+          264,
+          22360,
+          18126,
+          13,
+          7487,
+          1410,
+          1490,
+          432,
+          11,
+          714,
+          566,
+          1410,
+          537,
+          5545,
+          432,
+          13,
+          8364,
+          7578,
+          1495,
+          29388,
+          806,
+          5562,
+          323,
+          6679,
+          311,
+          1744,
+          315,
+          264,
+          1616,
+          311
+        ],
+        "generated_tokens": [
+          633,
+          279,
+          4935,
+          1182,
+          13,
+          1260,
+          26471,
+          429,
+          566,
+          1030,
+          264,
+          2613,
+          3745,
+          315,
+          23069,
+          304,
+          806,
+          33136,
+          13,
+          1260,
+          3867,
+          279,
+          3745,
+          323,
+          22192,
+          432,
+          1212,
+          279,
+          18126,
+          13,
+          576,
+          4935
+        ],
+        "top2": [
+          {
+            "first": 633,
+            "second": 1492,
+            "gap": 1.11360168
+          },
+          {
+            "first": 279,
+            "second": 7487,
+            "gap": 3.68482208
+          },
+          {
+            "first": 4935,
+            "second": 2518,
+            "gap": 5.37109947
+          },
+          {
+            "first": 1182,
+            "second": 700,
+            "gap": 0.35940361
+          },
+          {
+            "first": 13,
+            "second": 311,
+            "gap": 1.51089478
+          },
+          {
+            "first": 1260,
+            "second": 4710,
+            "gap": 1.16042328
+          },
+          {
+            "first": 26471,
+            "second": 6966,
+            "gap": 0.210121155
+          },
+          {
+            "first": 429,
+            "second": 264,
+            "gap": 1.31123924
+          },
+          {
+            "first": 566,
+            "second": 806,
+            "gap": 0.436237335
+          },
+          {
+            "first": 1030,
+            "second": 3055,
+            "gap": 2.66423607
+          },
+          {
+            "first": 264,
+            "second": 3884,
+            "gap": 1.94690514
+          },
+          {
+            "first": 2613,
+            "second": 2518,
+            "gap": 0.712856293
+          },
+          {
+            "first": 3745,
+            "second": 35765,
+            "gap": 0.237827301
+          },
+          {
+            "first": 315,
+            "second": 448,
+            "gap": 0.240528107
+          },
+          {
+            "first": 23069,
+            "second": 7375,
+            "gap": 0.302991867
+          },
+          {
+            "first": 304,
+            "second": 1212,
+            "gap": 0.492033005
+          },
+          {
+            "first": 806,
+            "second": 279,
+            "gap": 1.20447731
+          },
+          {
+            "first": 33136,
+            "second": 3054,
+            "gap": 0.15946579
+          },
+          {
+            "first": 13,
+            "second": 11,
+            "gap": 1.91197968
+          },
+          {
+            "first": 1260,
+            "second": 8364,
+            "gap": 1.03775024
+          },
+          {
+            "first": 3867,
+            "second": 8930,
+            "gap": 0.85949707
+          },
+          {
+            "first": 279,
+            "second": 700,
+            "gap": 0.133600235
+          },
+          {
+            "first": 3745,
+            "second": 4935,
+            "gap": 1.70087433
+          },
+          {
+            "first": 323,
+            "second": 700,
+            "gap": 1.22517776
+          },
+          {
+            "first": 22192,
+            "second": 2182,
+            "gap": 0.094575882
+          },
+          {
+            "first": 432,
+            "second": 279,
+            "gap": 2.83206177
+          },
+          {
+            "first": 1212,
+            "second": 916,
+            "gap": 1.41386414
+          },
+          {
+            "first": 279,
+            "second": 264,
+            "gap": 6.65003204
+          },
+          {
+            "first": 18126,
+            "second": 22360,
+            "gap": 2.74146271
+          },
+          {
+            "first": 13,
+            "second": 11,
+            "gap": 0.915725708
+          },
+          {
+            "first": 576,
+            "second": 7487,
+            "gap": 1.75414658
+          },
+          {
+            "first": 4935,
+            "second": 3745,
+            "gap": 0.421993256
+          }
+        ],
+        "timings": {
+          "prompt_n": 55,
+          "prompt_ms": 83661.9958,
+          "predicted_n": 32,
+          "predicted_ms": 55343.2927,
+          "prompt_per_second": 0.657407219,
+          "predicted_per_second": 0.560140145
+        }
+      }
+    }
+  ],
+  "cache_vs_recompute": {
+    "model_sha256": "61b50d457809a5194818fd22e6724b456cd7bb9a6264c52c8110684c53f3704a",
+    "commands": [
+      [
+        "/home/daniel/codex-runs/Neuron-m3/build-m3/neuron",
+        "run",
+        "-m",
+        "/home/daniel/codex-runs/Neuron-m1/models/stories15M.gguf",
+        "-p",
+        "Once upon a time",
+        "-n",
+        "32",
+        "--greedy",
+        "--json"
+      ],
+      [
+        "/home/daniel/codex-runs/Neuron-m3/build-m3/neuron",
+        "run",
+        "-m",
+        "/home/daniel/codex-runs/Neuron-m1/models/stories15M.gguf",
+        "-p",
+        "Once upon a time",
+        "-n",
+        "32",
+        "--greedy",
+        "--json",
+        "--recompute"
+      ]
+    ],
+    "tokens": [
+      29892,
+      727,
+      471,
+      263,
+      2217,
+      7826,
+      4257,
+      365,
+      2354,
+      29889,
+      2296,
+      18012,
+      304,
+      1708,
+      5377,
+      297,
+      278,
+      6575,
+      845,
+      457,
+      29889,
+      3118,
+      2462,
+      29892,
+      1183,
+      4446,
+      263,
+      4802,
+      29892,
+      2654,
+      8287,
+      297
+    ],
+    "tokens_matched": 32,
+    "top2_exact": true
+  },
+  "chat_smoke": [
+    {
+      "prompt_tokens": [
+        151644,
+        8948,
+        198,
+        2610,
+        525,
+        1207,
+        16948,
+        11,
+        3465,
+        553,
+        54364,
+        14817,
+        13,
+        1446,
+        525,
+        264,
+        10950,
+        17847,
+        13,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        5050,
+        829,
+        374,
+        51149,
+        13,
+        17841,
+        448,
+        1172,
+        10402,
+        13,
+        151645,
+        198,
+        151644,
+        77091,
+        198
+      ],
+      "generated_tokens": [
+        3925
+      ],
+      "top2": [
+        {
+          "first": 3925,
+          "second": 32313,
+          "gap": 12.899498
+        },
+        {
+          "first": 151645,
+          "second": 13,
+          "gap": 5.39660454
+        }
+      ],
+      "timings": {
+        "prompt_n": 39,
+        "prompt_ms": 59938.5918,
+        "predicted_n": 1,
+        "predicted_ms": 1774.0168,
+        "prompt_per_second": 0.650665937,
+        "predicted_per_second": 0
+      },
+      "reply": "OK",
+      "command": [
+        "/home/daniel/codex-runs/Neuron-m3/build-m3/neuron",
+        "run",
+        "-m",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+        "-n",
+        "16",
+        "--greedy",
+        "--json",
+        "--message",
+        "user",
+        "My name is Ada. Reply with only OK."
+      ]
+    },
+    {
+      "prompt_tokens": [
+        151644,
+        8948,
+        198,
+        2610,
+        525,
+        1207,
+        16948,
+        11,
+        3465,
+        553,
+        54364,
+        14817,
+        13,
+        1446,
+        525,
+        264,
+        10950,
+        17847,
+        13,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        5050,
+        829,
+        374,
+        51149,
+        13,
+        17841,
+        448,
+        1172,
+        10402,
+        13,
+        151645,
+        198,
+        151644,
+        77091,
+        198,
+        3925,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        3838,
+        374,
+        847,
+        829,
+        30,
+        17841,
+        448,
+        1172,
+        279,
+        829,
+        13,
+        151645,
+        198,
+        151644,
+        77091,
+        198
+      ],
+      "generated_tokens": [
+        95347
+      ],
+      "top2": [
+        {
+          "first": 95347,
+          "second": 7771,
+          "gap": 11.0538006
+        },
+        {
+          "first": 151645,
+          "second": 13,
+          "gap": 6.27100754
+        }
+      ],
+      "timings": {
+        "prompt_n": 61,
+        "prompt_ms": 90791.243,
+        "predicted_n": 1,
+        "predicted_ms": 1577.89684,
+        "prompt_per_second": 0.671870965,
+        "predicted_per_second": 0
+      },
+      "reply": "Ada",
+      "command": [
+        "/home/daniel/codex-runs/Neuron-m3/build-m3/neuron",
+        "run",
+        "-m",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+        "-n",
+        "16",
+        "--greedy",
+        "--json",
+        "--message",
+        "user",
+        "My name is Ada. Reply with only OK.",
+        "--message",
+        "assistant",
+        "OK",
+        "--message",
+        "user",
+        "What is my name? Reply with only the name."
+      ]
+    }
+  ],
+  "machine_after": {
+    "utc": "2026-11-16T09:21:14.247491+00:00",
+    "load_average": [
+      2.943359375,
+      2.38134765625,
+      2.06005859375
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  }
+}

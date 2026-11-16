@@ -58,8 +58,11 @@ F32 K/V storage isolates FP32 forward-pass accuracy. M1's server used its
 default F16 K/V storage. The separate generation check below still uses
 M1's original committed tokens without changing that reference.
 
-Build the adapter outside the repo's source tree. These are the exact paths
-used for the recorded run, from the Neuron worktree root:
+The current adapter also supports M3 chat checks and links llama.cpp's
+common library and JSON header. Those additions do not change the M2
+reference settings or results. Build the adapter outside the repo's source
+tree. The paths below are those used for the M2 run. The current build
+command includes the additional M3 reference libraries:
 
 ```sh
 export NEURON_MODELS_DIR=/home/daniel/codex-runs/Neuron-m1/models
@@ -70,10 +73,14 @@ scripts/fetch_models.sh
 
 g++ -std=c++17 -O2 bench/llama_reference.cpp \
   -I"$NEURON_LLAMACPP_DIR/include" -I"$NEURON_LLAMACPP_DIR/ggml/include" \
+  -I"$NEURON_LLAMACPP_DIR/common" -I"$NEURON_LLAMACPP_DIR/vendor/nlohmann" \
+  "$NEURON_LLAMACPP_DIR/build/common/libllama-common.a" \
+  "$NEURON_LLAMACPP_DIR/build/common/libllama-common-base.a" \
   "$NEURON_LLAMACPP_DIR/build/src/libllama.a" \
   "$NEURON_LLAMACPP_DIR/build/ggml/src/libggml.a" \
   "$NEURON_LLAMACPP_DIR/build/ggml/src/libggml-cpu.a" \
   "$NEURON_LLAMACPP_DIR/build/ggml/src/libggml-base.a" \
+  "$NEURON_LLAMACPP_DIR/build/vendor/hash/libvendor-hash.a" \
   -fopenmp -pthread -ldl -o /tmp/neuron-m2-reference
 
 cmake -S . -B build-m2 -DCMAKE_CXX_COMPILER=g++ -DNEURON_WERROR=ON
