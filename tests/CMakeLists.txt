@@ -5,6 +5,8 @@ function(neuron_add_test name)
   add_test(NAME ${name} COMMAND ${name})
 endfunction()
 
+neuron_add_test(test_gguf)
+neuron_add_test(test_kernels)
 neuron_add_test(test_shape)
 neuron_add_test(test_version)
 
