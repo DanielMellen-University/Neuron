@@ -145,6 +145,16 @@ class CommandLineTests(unittest.TestCase):
         b["runs"][0]["prompt_tokens"] = [9]
         self.assertEqual(self.invoke(a, b, "--exact-match").returncode, 1)
 
+    def test_thread_filter_selects_actual_single_thread_runs(self):
+        a = fixture()
+        other = copy.deepcopy(a["runs"][0])
+        other["threads"] = 4
+        a["runs"].append(other)
+        self.assertEqual(self.invoke(a, fixture(), "--exact-match").returncode, 1)
+        self.assertEqual(self.invoke(a, fixture(), "--exact-match", "--threads", "1").returncode, 0)
+        self.assertEqual(self.invoke(a, fixture(), "--threads", "4").returncode, 2)
+        self.assertEqual(self.invoke(a, fixture(), "--threads", "0").returncode, 2)
+
     def test_bad_input_is_an_error_even_without_exact_flag(self):
         result = self.invoke(fixture(), {})
         self.assertEqual(result.returncode, 2)

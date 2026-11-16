@@ -1,0 +1,27 @@
+{
+  "model_sha256": "61b50d457809a5194818fd22e6724b456cd7bb9a6264c52c8110684c53f3704a",
+  "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+  "neuron_binary_sha256": "3fa8839f44dc0842b0b761b8c908ef067f06f8a418a786fe7c4f2bb9d4d974f0",
+  "reference_tool_sha256": "3cdecf058ae13ea5350bda236cce4724a17e6199c6e0d41f5e4e21247e2d1e48",
+  "context": 2048,
+  "reference_kv_type": "F32",
+  "threads": 1,
+  "tokenizer_cases": 51,
+  "logit_checks": [
+    {
+      "prompt_id": "rabbit",
+      "logits": 32000,
+      "max_absolute_difference": 9.5367431640625e-06
+    },
+    {
+      "prompt_id": "garden",
+      "logits": 32000,
+      "max_absolute_difference": 8.58306884765625e-06
+    },
+    {
+      "prompt_id": "ball",
+      "logits": 32000,
+      "max_absolute_difference": 9.5367431640625e-06
+    }
+  ]
+}
