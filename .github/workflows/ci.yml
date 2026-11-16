@@ -1,0 +1,76 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: ${{ matrix.compiler }} ${{ matrix.isa }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+        isa: [baseline, avx2]
+        include:
+          - compiler: gcc
+            cxx: g++
+          - compiler: clang
+            cxx: clang++
+          - isa: baseline
+            flags: ""
+          - isa: avx2
+            flags: "-DNEURON_AVX2=ON"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
+          -DNEURON_WERROR=ON
+          ${{ matrix.flags }}
+      - name: Build
+        run: cmake --build build -j "$(nproc)"
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  avx512-build:
+    # GitHub runners do not all have AVX-512, so this job only checks that the
+    # AVX-512 build compiles cleanly. Ghost runs the AVX-512 tests locally.
+    name: gcc avx512 (build only)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNEURON_AVX512=ON -DNEURON_WERROR=ON
+      - name: Build
+        run: cmake --build build -j "$(nproc)"
+
+  sanitize:
+    name: gcc asan+ubsan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DNEURON_SANITIZE=ON -DNEURON_WERROR=ON
+      - name: Build
+        run: cmake --build build -j "$(nproc)"
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  weights-guard:
+    name: no model weights
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject weight files and large blobs
+        run: |
+          bad=$(git ls-files | grep -Ei '\.(gguf|ggml|safetensors|bin|pt|pth|onnx|npy|npz)$' || true)
+          if [ -n "$bad" ]; then echo "weight files committed:"; echo "$bad"; exit 1; fi
+          big=$(git ls-files -z | xargs -0 -r du -k | awk '$1 > 1024 {print $2}')
+          if [ -n "$big" ]; then echo "files over 1 MiB:"; echo "$big"; exit 1; fi

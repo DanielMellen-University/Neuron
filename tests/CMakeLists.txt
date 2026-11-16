@@ -1,0 +1,16 @@
+function(neuron_add_test name)
+  add_executable(${name} ${name}.cpp)
+  target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+  target_link_libraries(${name} PRIVATE neuron neuron_options)
+  add_test(NAME ${name} COMMAND ${name})
+endfunction()
+
+neuron_add_test(test_shape)
+neuron_add_test(test_version)
+
+add_test(NAME cli_version COMMAND neuron_cli --version)
+set_tests_properties(cli_version PROPERTIES
+  PASS_REGULAR_EXPRESSION "^neuron ${PROJECT_VERSION} \\(")
+
+add_test(NAME cli_rejects_unknown_args COMMAND neuron_cli --bogus)
+set_tests_properties(cli_rejects_unknown_args PROPERTIES WILL_FAIL TRUE)
