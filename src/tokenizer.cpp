@@ -220,7 +220,8 @@ bool Tokenizer::is_eog(std::int32_t token) const {
   if (token == eos()) return true;
   if (!vocabulary_.byte_bpe || token < 0 || static_cast<std::size_t>(token) >= size()) return false;
   const auto& text = vocabulary_.tokens[static_cast<std::size_t>(token)].text;
-  return text == "<|im_end|>" || text == "<|endoftext|>";
+  return text == "<|im_end|>" || text == "<|endoftext|>" || text == "<|fim_pad|>" ||
+      text == "<|fim_repo|>" || text == "<|file_sep|>";
 }
 std::string Tokenizer::decode(const std::vector<std::int32_t>& tokens, bool remove_prefix) const {
   std::string out;

@@ -85,7 +85,13 @@ NEURON_TEST(context_token_and_shape_errors) {
   CHECK_THROWS_AS(m.step(-1), std::runtime_error); CHECK_EQ(m.position(), 0u);
   CHECK_THROWS_AS(m.step(3), std::runtime_error);
   for (int i = 0; i < 4; ++i) m.step(0, false);
-  CHECK_THROWS_AS(m.step(0), std::runtime_error);
+  try {
+    m.step(0);
+    CHECK(false);
+  } catch (const std::runtime_error& error) {
+    CHECK(std::string(error.what()).find("context limit exceeded (4 tokens)") != std::string::npos);
+  }
+  CHECK_EQ(m.position(), 4u);
   const std::array<std::int32_t, 5> too_long{}; CHECK_THROWS_AS(m.forward(too_long), std::runtime_error);
   CHECK_THROWS_AS(m.forward({}), std::runtime_error);
   m.reset(); CHECK_EQ(m.position(), 0u);

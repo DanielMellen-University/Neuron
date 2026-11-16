@@ -1,0 +1,5694 @@
+{
+  "vocabulary_size": 151936,
+  "bos": 151643,
+  "eos": 151645,
+  "tokens": [
+    {
+      "id": 0,
+      "text": "!",
+      "type": 1
+    },
+    {
+      "id": 1,
+      "text": "\"",
+      "type": 1
+    },
+    {
+      "id": 2,
+      "text": "#",
+      "type": 1
+    },
+    {
+      "id": 3,
+      "text": "$",
+      "type": 1
+    },
+    {
+      "id": 4,
+      "text": "%",
+      "type": 1
+    },
+    {
+      "id": 5,
+      "text": "&",
+      "type": 1
+    },
+    {
+      "id": 6,
+      "text": "'",
+      "type": 1
+    },
+    {
+      "id": 7,
+      "text": "(",
+      "type": 1
+    },
+    {
+      "id": 8,
+      "text": ")",
+      "type": 1
+    },
+    {
+      "id": 9,
+      "text": "*",
+      "type": 1
+    },
+    {
+      "id": 10,
+      "text": "+",
+      "type": 1
+    },
+    {
+      "id": 11,
+      "text": ",",
+      "type": 1
+    },
+    {
+      "id": 12,
+      "text": "-",
+      "type": 1
+    },
+    {
+      "id": 13,
+      "text": ".",
+      "type": 1
+    },
+    {
+      "id": 14,
+      "text": "/",
+      "type": 1
+    },
+    {
+      "id": 15,
+      "text": "0",
+      "type": 1
+    },
+    {
+      "id": 16,
+      "text": "1",
+      "type": 1
+    },
+    {
+      "id": 17,
+      "text": "2",
+      "type": 1
+    },
+    {
+      "id": 18,
+      "text": "3",
+      "type": 1
+    },
+    {
+      "id": 19,
+      "text": "4",
+      "type": 1
+    },
+    {
+      "id": 20,
+      "text": "5",
+      "type": 1
+    },
+    {
+      "id": 21,
+      "text": "6",
+      "type": 1
+    },
+    {
+      "id": 22,
+      "text": "7",
+      "type": 1
+    },
+    {
+      "id": 23,
+      "text": "8",
+      "type": 1
+    },
+    {
+      "id": 24,
+      "text": "9",
+      "type": 1
+    },
+    {
+      "id": 25,
+      "text": ":",
+      "type": 1
+    },
+    {
+      "id": 26,
+      "text": ";",
+      "type": 1
+    },
+    {
+      "id": 27,
+      "text": "<",
+      "type": 1
+    },
+    {
+      "id": 28,
+      "text": "=",
+      "type": 1
+    },
+    {
+      "id": 29,
+      "text": ">",
+      "type": 1
+    },
+    {
+      "id": 30,
+      "text": "?",
+      "type": 1
+    },
+    {
+      "id": 31,
+      "text": "@",
+      "type": 1
+    },
+    {
+      "id": 32,
+      "text": "A",
+      "type": 1
+    },
+    {
+      "id": 33,
+      "text": "B",
+      "type": 1
+    },
+    {
+      "id": 34,
+      "text": "C",
+      "type": 1
+    },
+    {
+      "id": 35,
+      "text": "D",
+      "type": 1
+    },
+    {
+      "id": 36,
+      "text": "E",
+      "type": 1
+    },
+    {
+      "id": 37,
+      "text": "F",
+      "type": 1
+    },
+    {
+      "id": 38,
+      "text": "G",
+      "type": 1
+    },
+    {
+      "id": 39,
+      "text": "H",
+      "type": 1
+    },
+    {
+      "id": 40,
+      "text": "I",
+      "type": 1
+    },
+    {
+      "id": 41,
+      "text": "J",
+      "type": 1
+    },
+    {
+      "id": 42,
+      "text": "K",
+      "type": 1
+    },
+    {
+      "id": 43,
+      "text": "L",
+      "type": 1
+    },
+    {
+      "id": 44,
+      "text": "M",
+      "type": 1
+    },
+    {
+      "id": 45,
+      "text": "N",
+      "type": 1
+    },
+    {
+      "id": 46,
+      "text": "O",
+      "type": 1
+    },
+    {
+      "id": 47,
+      "text": "P",
+      "type": 1
+    },
+    {
+      "id": 48,
+      "text": "Q",
+      "type": 1
+    },
+    {
+      "id": 49,
+      "text": "R",
+      "type": 1
+    },
+    {
+      "id": 50,
+      "text": "S",
+      "type": 1
+    },
+    {
+      "id": 51,
+      "text": "T",
+      "type": 1
+    },
+    {
+      "id": 52,
+      "text": "U",
+      "type": 1
+    },
+    {
+      "id": 53,
+      "text": "V",
+      "type": 1
+    },
+    {
+      "id": 54,
+      "text": "W",
+      "type": 1
+    },
+    {
+      "id": 55,
+      "text": "X",
+      "type": 1
+    },
+    {
+      "id": 56,
+      "text": "Y",
+      "type": 1
+    },
+    {
+      "id": 57,
+      "text": "Z",
+      "type": 1
+    },
+    {
+      "id": 58,
+      "text": "[",
+      "type": 1
+    },
+    {
+      "id": 59,
+      "text": "\\",
+      "type": 1
+    },
+    {
+      "id": 60,
+      "text": "]",
+      "type": 1
+    },
+    {
+      "id": 61,
+      "text": "^",
+      "type": 1
+    },
+    {
+      "id": 62,
+      "text": "_",
+      "type": 1
+    },
+    {
+      "id": 63,
+      "text": "`",
+      "type": 1
+    },
+    {
+      "id": 64,
+      "text": "a",
+      "type": 1
+    },
+    {
+      "id": 65,
+      "text": "b",
+      "type": 1
+    },
+    {
+      "id": 66,
+      "text": "c",
+      "type": 1
+    },
+    {
+      "id": 67,
+      "text": "d",
+      "type": 1
+    },
+    {
+      "id": 68,
+      "text": "e",
+      "type": 1
+    },
+    {
+      "id": 69,
+      "text": "f",
+      "type": 1
+    },
+    {
+      "id": 70,
+      "text": "g",
+      "type": 1
+    },
+    {
+      "id": 71,
+      "text": "h",
+      "type": 1
+    },
+    {
+      "id": 72,
+      "text": "i",
+      "type": 1
+    },
+    {
+      "id": 73,
+      "text": "j",
+      "type": 1
+    },
+    {
+      "id": 74,
+      "text": "k",
+      "type": 1
+    },
+    {
+      "id": 75,
+      "text": "l",
+      "type": 1
+    },
+    {
+      "id": 76,
+      "text": "m",
+      "type": 1
+    },
+    {
+      "id": 77,
+      "text": "n",
+      "type": 1
+    },
+    {
+      "id": 78,
+      "text": "o",
+      "type": 1
+    },
+    {
+      "id": 79,
+      "text": "p",
+      "type": 1
+    },
+    {
+      "id": 80,
+      "text": "q",
+      "type": 1
+    },
+    {
+      "id": 81,
+      "text": "r",
+      "type": 1
+    },
+    {
+      "id": 82,
+      "text": "s",
+      "type": 1
+    },
+    {
+      "id": 83,
+      "text": "t",
+      "type": 1
+    },
+    {
+      "id": 84,
+      "text": "u",
+      "type": 1
+    },
+    {
+      "id": 85,
+      "text": "v",
+      "type": 1
+    },
+    {
+      "id": 86,
+      "text": "w",
+      "type": 1
+    },
+    {
+      "id": 87,
+      "text": "x",
+      "type": 1
+    },
+    {
+      "id": 88,
+      "text": "y",
+      "type": 1
+    },
+    {
+      "id": 89,
+      "text": "z",
+      "type": 1
+    },
+    {
+      "id": 90,
+      "text": "{",
+      "type": 1
+    },
+    {
+      "id": 91,
+      "text": "|",
+      "type": 1
+    },
+    {
+      "id": 92,
+      "text": "}",
+      "type": 1
+    },
+    {
+      "id": 93,
+      "text": "~",
+      "type": 1
+    },
+    {
+      "id": 94,
+      "text": "¡",
+      "type": 1
+    },
+    {
+      "id": 95,
+      "text": "¢",
+      "type": 1
+    },
+    {
+      "id": 96,
+      "text": "£",
+      "type": 1
+    },
+    {
+      "id": 97,
+      "text": "¤",
+      "type": 1
+    },
+    {
+      "id": 98,
+      "text": "¥",
+      "type": 1
+    },
+    {
+      "id": 99,
+      "text": "¦",
+      "type": 1
+    },
+    {
+      "id": 100,
+      "text": "§",
+      "type": 1
+    },
+    {
+      "id": 101,
+      "text": "¨",
+      "type": 1
+    },
+    {
+      "id": 102,
+      "text": "©",
+      "type": 1
+    },
+    {
+      "id": 103,
+      "text": "ª",
+      "type": 1
+    },
+    {
+      "id": 104,
+      "text": "«",
+      "type": 1
+    },
+    {
+      "id": 105,
+      "text": "¬",
+      "type": 1
+    },
+    {
+      "id": 106,
+      "text": "®",
+      "type": 1
+    },
+    {
+      "id": 107,
+      "text": "¯",
+      "type": 1
+    },
+    {
+      "id": 108,
+      "text": "°",
+      "type": 1
+    },
+    {
+      "id": 109,
+      "text": "±",
+      "type": 1
+    },
+    {
+      "id": 110,
+      "text": "²",
+      "type": 1
+    },
+    {
+      "id": 111,
+      "text": "³",
+      "type": 1
+    },
+    {
+      "id": 112,
+      "text": "´",
+      "type": 1
+    },
+    {
+      "id": 113,
+      "text": "µ",
+      "type": 1
+    },
+    {
+      "id": 114,
+      "text": "¶",
+      "type": 1
+    },
+    {
+      "id": 115,
+      "text": "·",
+      "type": 1
+    },
+    {
+      "id": 116,
+      "text": "¸",
+      "type": 1
+    },
+    {
+      "id": 117,
+      "text": "¹",
+      "type": 1
+    },
+    {
+      "id": 118,
+      "text": "º",
+      "type": 1
+    },
+    {
+      "id": 119,
+      "text": "»",
+      "type": 1
+    },
+    {
+      "id": 120,
+      "text": "¼",
+      "type": 1
+    },
+    {
+      "id": 121,
+      "text": "½",
+      "type": 1
+    },
+    {
+      "id": 122,
+      "text": "¾",
+      "type": 1
+    },
+    {
+      "id": 123,
+      "text": "¿",
+      "type": 1
+    },
+    {
+      "id": 124,
+      "text": "À",
+      "type": 1
+    },
+    {
+      "id": 125,
+      "text": "Á",
+      "type": 1
+    },
+    {
+      "id": 126,
+      "text": "Â",
+      "type": 1
+    },
+    {
+      "id": 127,
+      "text": "Ã",
+      "type": 1
+    },
+    {
+      "id": 128,
+      "text": "Ä",
+      "type": 1
+    },
+    {
+      "id": 129,
+      "text": "Å",
+      "type": 1
+    },
+    {
+      "id": 130,
+      "text": "Æ",
+      "type": 1
+    },
+    {
+      "id": 131,
+      "text": "Ç",
+      "type": 1
+    },
+    {
+      "id": 132,
+      "text": "È",
+      "type": 1
+    },
+    {
+      "id": 133,
+      "text": "É",
+      "type": 1
+    },
+    {
+      "id": 134,
+      "text": "Ê",
+      "type": 1
+    },
+    {
+      "id": 135,
+      "text": "Ë",
+      "type": 1
+    },
+    {
+      "id": 136,
+      "text": "Ì",
+      "type": 1
+    },
+    {
+      "id": 137,
+      "text": "Í",
+      "type": 1
+    },
+    {
+      "id": 138,
+      "text": "Î",
+      "type": 1
+    },
+    {
+      "id": 139,
+      "text": "Ï",
+      "type": 1
+    },
+    {
+      "id": 140,
+      "text": "Ð",
+      "type": 1
+    },
+    {
+      "id": 141,
+      "text": "Ñ",
+      "type": 1
+    },
+    {
+      "id": 142,
+      "text": "Ò",
+      "type": 1
+    },
+    {
+      "id": 143,
+      "text": "Ó",
+      "type": 1
+    },
+    {
+      "id": 144,
+      "text": "Ô",
+      "type": 1
+    },
+    {
+      "id": 145,
+      "text": "Õ",
+      "type": 1
+    },
+    {
+      "id": 146,
+      "text": "Ö",
+      "type": 1
+    },
+    {
+      "id": 147,
+      "text": "×",
+      "type": 1
+    },
+    {
+      "id": 148,
+      "text": "Ø",
+      "type": 1
+    },
+    {
+      "id": 149,
+      "text": "Ù",
+      "type": 1
+    },
+    {
+      "id": 150,
+      "text": "Ú",
+      "type": 1
+    },
+    {
+      "id": 151,
+      "text": "Û",
+      "type": 1
+    },
+    {
+      "id": 152,
+      "text": "Ü",
+      "type": 1
+    },
+    {
+      "id": 153,
+      "text": "Ý",
+      "type": 1
+    },
+    {
+      "id": 154,
+      "text": "Þ",
+      "type": 1
+    },
+    {
+      "id": 155,
+      "text": "ß",
+      "type": 1
+    },
+    {
+      "id": 156,
+      "text": "à",
+      "type": 1
+    },
+    {
+      "id": 157,
+      "text": "á",
+      "type": 1
+    },
+    {
+      "id": 158,
+      "text": "â",
+      "type": 1
+    },
+    {
+      "id": 159,
+      "text": "ã",
+      "type": 1
+    },
+    {
+      "id": 160,
+      "text": "ä",
+      "type": 1
+    },
+    {
+      "id": 161,
+      "text": "å",
+      "type": 1
+    },
+    {
+      "id": 162,
+      "text": "æ",
+      "type": 1
+    },
+    {
+      "id": 163,
+      "text": "ç",
+      "type": 1
+    },
+    {
+      "id": 164,
+      "text": "è",
+      "type": 1
+    },
+    {
+      "id": 165,
+      "text": "é",
+      "type": 1
+    },
+    {
+      "id": 166,
+      "text": "ê",
+      "type": 1
+    },
+    {
+      "id": 167,
+      "text": "ë",
+      "type": 1
+    },
+    {
+      "id": 168,
+      "text": "ì",
+      "type": 1
+    },
+    {
+      "id": 169,
+      "text": "í",
+      "type": 1
+    },
+    {
+      "id": 170,
+      "text": "î",
+      "type": 1
+    },
+    {
+      "id": 171,
+      "text": "ï",
+      "type": 1
+    },
+    {
+      "id": 172,
+      "text": "ð",
+      "type": 1
+    },
+    {
+      "id": 173,
+      "text": "ñ",
+      "type": 1
+    },
+    {
+      "id": 174,
+      "text": "ò",
+      "type": 1
+    },
+    {
+      "id": 175,
+      "text": "ó",
+      "type": 1
+    },
+    {
+      "id": 176,
+      "text": "ô",
+      "type": 1
+    },
+    {
+      "id": 177,
+      "text": "õ",
+      "type": 1
+    },
+    {
+      "id": 178,
+      "text": "ö",
+      "type": 1
+    },
+    {
+      "id": 179,
+      "text": "÷",
+      "type": 1
+    },
+    {
+      "id": 180,
+      "text": "ø",
+      "type": 1
+    },
+    {
+      "id": 181,
+      "text": "ù",
+      "type": 1
+    },
+    {
+      "id": 182,
+      "text": "ú",
+      "type": 1
+    },
+    {
+      "id": 183,
+      "text": "û",
+      "type": 1
+    },
+    {
+      "id": 184,
+      "text": "ü",
+      "type": 1
+    },
+    {
+      "id": 185,
+      "text": "ý",
+      "type": 1
+    },
+    {
+      "id": 186,
+      "text": "þ",
+      "type": 1
+    },
+    {
+      "id": 187,
+      "text": "ÿ",
+      "type": 1
+    },
+    {
+      "id": 188,
+      "text": "Ā",
+      "type": 1
+    },
+    {
+      "id": 189,
+      "text": "ā",
+      "type": 1
+    },
+    {
+      "id": 190,
+      "text": "Ă",
+      "type": 1
+    },
+    {
+      "id": 191,
+      "text": "ă",
+      "type": 1
+    },
+    {
+      "id": 192,
+      "text": "Ą",
+      "type": 1
+    },
+    {
+      "id": 193,
+      "text": "ą",
+      "type": 1
+    },
+    {
+      "id": 194,
+      "text": "Ć",
+      "type": 1
+    },
+    {
+      "id": 195,
+      "text": "ć",
+      "type": 1
+    },
+    {
+      "id": 196,
+      "text": "Ĉ",
+      "type": 1
+    },
+    {
+      "id": 197,
+      "text": "ĉ",
+      "type": 1
+    },
+    {
+      "id": 198,
+      "text": "Ċ",
+      "type": 1
+    },
+    {
+      "id": 199,
+      "text": "ċ",
+      "type": 1
+    },
+    {
+      "id": 200,
+      "text": "Č",
+      "type": 1
+    },
+    {
+      "id": 201,
+      "text": "č",
+      "type": 1
+    },
+    {
+      "id": 202,
+      "text": "Ď",
+      "type": 1
+    },
+    {
+      "id": 203,
+      "text": "ď",
+      "type": 1
+    },
+    {
+      "id": 204,
+      "text": "Đ",
+      "type": 1
+    },
+    {
+      "id": 205,
+      "text": "đ",
+      "type": 1
+    },
+    {
+      "id": 206,
+      "text": "Ē",
+      "type": 1
+    },
+    {
+      "id": 207,
+      "text": "ē",
+      "type": 1
+    },
+    {
+      "id": 208,
+      "text": "Ĕ",
+      "type": 1
+    },
+    {
+      "id": 209,
+      "text": "ĕ",
+      "type": 1
+    },
+    {
+      "id": 210,
+      "text": "Ė",
+      "type": 1
+    },
+    {
+      "id": 211,
+      "text": "ė",
+      "type": 1
+    },
+    {
+      "id": 212,
+      "text": "Ę",
+      "type": 1
+    },
+    {
+      "id": 213,
+      "text": "ę",
+      "type": 1
+    },
+    {
+      "id": 214,
+      "text": "Ě",
+      "type": 1
+    },
+    {
+      "id": 215,
+      "text": "ě",
+      "type": 1
+    },
+    {
+      "id": 216,
+      "text": "Ĝ",
+      "type": 1
+    },
+    {
+      "id": 217,
+      "text": "ĝ",
+      "type": 1
+    },
+    {
+      "id": 218,
+      "text": "Ğ",
+      "type": 1
+    },
+    {
+      "id": 219,
+      "text": "ğ",
+      "type": 1
+    },
+    {
+      "id": 220,
+      "text": "Ġ",
+      "type": 1
+    },
+    {
+      "id": 221,
+      "text": "ġ",
+      "type": 1
+    },
+    {
+      "id": 222,
+      "text": "Ģ",
+      "type": 1
+    },
+    {
+      "id": 223,
+      "text": "ģ",
+      "type": 1
+    },
+    {
+      "id": 224,
+      "text": "Ĥ",
+      "type": 1
+    },
+    {
+      "id": 225,
+      "text": "ĥ",
+      "type": 1
+    },
+    {
+      "id": 226,
+      "text": "Ħ",
+      "type": 1
+    },
+    {
+      "id": 227,
+      "text": "ħ",
+      "type": 1
+    },
+    {
+      "id": 228,
+      "text": "Ĩ",
+      "type": 1
+    },
+    {
+      "id": 229,
+      "text": "ĩ",
+      "type": 1
+    },
+    {
+      "id": 230,
+      "text": "Ī",
+      "type": 1
+    },
+    {
+      "id": 231,
+      "text": "ī",
+      "type": 1
+    },
+    {
+      "id": 232,
+      "text": "Ĭ",
+      "type": 1
+    },
+    {
+      "id": 233,
+      "text": "ĭ",
+      "type": 1
+    },
+    {
+      "id": 234,
+      "text": "Į",
+      "type": 1
+    },
+    {
+      "id": 235,
+      "text": "į",
+      "type": 1
+    },
+    {
+      "id": 236,
+      "text": "İ",
+      "type": 1
+    },
+    {
+      "id": 237,
+      "text": "ı",
+      "type": 1
+    },
+    {
+      "id": 238,
+      "text": "Ĳ",
+      "type": 1
+    },
+    {
+      "id": 239,
+      "text": "ĳ",
+      "type": 1
+    },
+    {
+      "id": 240,
+      "text": "Ĵ",
+      "type": 1
+    },
+    {
+      "id": 241,
+      "text": "ĵ",
+      "type": 1
+    },
+    {
+      "id": 242,
+      "text": "Ķ",
+      "type": 1
+    },
+    {
+      "id": 243,
+      "text": "ķ",
+      "type": 1
+    },
+    {
+      "id": 244,
+      "text": "ĸ",
+      "type": 1
+    },
+    {
+      "id": 245,
+      "text": "Ĺ",
+      "type": 1
+    },
+    {
+      "id": 246,
+      "text": "ĺ",
+      "type": 1
+    },
+    {
+      "id": 247,
+      "text": "Ļ",
+      "type": 1
+    },
+    {
+      "id": 248,
+      "text": "ļ",
+      "type": 1
+    },
+    {
+      "id": 249,
+      "text": "Ľ",
+      "type": 1
+    },
+    {
+      "id": 250,
+      "text": "ľ",
+      "type": 1
+    },
+    {
+      "id": 251,
+      "text": "Ŀ",
+      "type": 1
+    },
+    {
+      "id": 252,
+      "text": "ŀ",
+      "type": 1
+    },
+    {
+      "id": 253,
+      "text": "Ł",
+      "type": 1
+    },
+    {
+      "id": 254,
+      "text": "ł",
+      "type": 1
+    },
+    {
+      "id": 255,
+      "text": "Ń",
+      "type": 1
+    },
+    {
+      "id": 256,
+      "text": "ĠĠ",
+      "type": 1
+    },
+    {
+      "id": 258,
+      "text": "in",
+      "type": 1
+    },
+    {
+      "id": 259,
+      "text": "Ġt",
+      "type": 1
+    },
+    {
+      "id": 261,
+      "text": "er",
+      "type": 1
+    },
+    {
+      "id": 263,
+      "text": "on",
+      "type": 1
+    },
+    {
+      "id": 264,
+      "text": "Ġa",
+      "type": 1
+    },
+    {
+      "id": 265,
+      "text": "re",
+      "type": 1
+    },
+    {
+      "id": 266,
+      "text": "at",
+      "type": 1
+    },
+    {
+      "id": 267,
+      "text": "st",
+      "type": 1
+    },
+    {
+      "id": 268,
+      "text": "en",
+      "type": 1
+    },
+    {
+      "id": 269,
+      "text": "or",
+      "type": 1
+    },
+    {
+      "id": 270,
+      "text": "Ġth",
+      "type": 1
+    },
+    {
+      "id": 271,
+      "text": "ĊĊ",
+      "type": 1
+    },
+    {
+      "id": 272,
+      "text": "Ġc",
+      "type": 1
+    },
+    {
+      "id": 273,
+      "text": "le",
+      "type": 1
+    },
+    {
+      "id": 274,
+      "text": "Ġs",
+      "type": 1
+    },
+    {
+      "id": 275,
+      "text": "it",
+      "type": 1
+    },
+    {
+      "id": 276,
+      "text": "an",
+      "type": 1
+    },
+    {
+      "id": 277,
+      "text": "ar",
+      "type": 1
+    },
+    {
+      "id": 278,
+      "text": "al",
+      "type": 1
+    },
+    {
+      "id": 279,
+      "text": "Ġthe",
+      "type": 1
+    },
+    {
+      "id": 281,
+      "text": "Ġp",
+      "type": 1
+    },
+    {
+      "id": 282,
+      "text": "Ġf",
+      "type": 1
+    },
+    {
+      "id": 283,
+      "text": "ou",
+      "type": 1
+    },
+    {
+      "id": 284,
+      "text": "Ġ=",
+      "type": 1
+    },
+    {
+      "id": 285,
+      "text": "is",
+      "type": 1
+    },
+    {
+      "id": 287,
+      "text": "ing",
+      "type": 1
+    },
+    {
+      "id": 288,
+      "text": "es",
+      "type": 1
+    },
+    {
+      "id": 289,
+      "text": "Ġw",
+      "type": 1
+    },
+    {
+      "id": 291,
+      "text": "ed",
+      "type": 1
+    },
+    {
+      "id": 293,
+      "text": "Ġb",
+      "type": 1
+    },
+    {
+      "id": 294,
+      "text": "Ġd",
+      "type": 1
+    },
+    {
+      "id": 295,
+      "text": "et",
+      "type": 1
+    },
+    {
+      "id": 296,
+      "text": "Ġm",
+      "type": 1
+    },
+    {
+      "id": 297,
+      "text": "Ġo",
+      "type": 1
+    },
+    {
+      "id": 299,
+      "text": "ro",
+      "type": 1
+    },
+    {
+      "id": 300,
+      "text": "as",
+      "type": 1
+    },
+    {
+      "id": 301,
+      "text": "el",
+      "type": 1
+    },
+    {
+      "id": 303,
+      "text": "nd",
+      "type": 1
+    },
+    {
+      "id": 304,
+      "text": "Ġin",
+      "type": 1
+    },
+    {
+      "id": 305,
+      "text": "Ġh",
+      "type": 1
+    },
+    {
+      "id": 307,
+      "text": "id",
+      "type": 1
+    },
+    {
+      "id": 308,
+      "text": "Ġn",
+      "type": 1
+    },
+    {
+      "id": 309,
+      "text": "am",
+      "type": 1
+    },
+    {
+      "id": 311,
+      "text": "Ġto",
+      "type": 1
+    },
+    {
+      "id": 312,
+      "text": "Ġre",
+      "type": 1
+    },
+    {
+      "id": 313,
+      "text": "--",
+      "type": 1
+    },
+    {
+      "id": 315,
+      "text": "Ġof",
+      "type": 1
+    },
+    {
+      "id": 316,
+      "text": "om",
+      "type": 1
+    },
+    {
+      "id": 318,
+      "text": "im",
+      "type": 1
+    },
+    {
+      "id": 319,
+      "text": "čĊ",
+      "type": 1
+    },
+    {
+      "id": 321,
+      "text": "il",
+      "type": 1
+    },
+    {
+      "id": 323,
+      "text": "Ġand",
+      "type": 1
+    },
+    {
+      "id": 325,
+      "text": "se",
+      "type": 1
+    },
+    {
+      "id": 326,
+      "text": "Ġl",
+      "type": 1
+    },
+    {
+      "id": 327,
+      "text": "ex",
+      "type": 1
+    },
+    {
+      "id": 330,
+      "text": "Ġ\"",
+      "type": 1
+    },
+    {
+      "id": 331,
+      "text": "ch",
+      "type": 1
+    },
+    {
+      "id": 332,
+      "text": "ut",
+      "type": 1
+    },
+    {
+      "id": 336,
+      "text": "em",
+      "type": 1
+    },
+    {
+      "id": 342,
+      "text": "Ġg",
+      "type": 1
+    },
+    {
+      "id": 344,
+      "text": "iv",
+      "type": 1
+    },
+    {
+      "id": 346,
+      "text": "ce",
+      "type": 1
+    },
+    {
+      "id": 347,
+      "text": "od",
+      "type": 1
+    },
+    {
+      "id": 348,
+      "text": "Ġv",
+      "type": 1
+    },
+    {
+      "id": 349,
+      "text": "ate",
+      "type": 1
+    },
+    {
+      "id": 350,
+      "text": "ĠT",
+      "type": 1
+    },
+    {
+      "id": 352,
+      "text": "ay",
+      "type": 1
+    },
+    {
+      "id": 354,
+      "text": "ot",
+      "type": 1
+    },
+    {
+      "id": 355,
+      "text": "us",
+      "type": 1
+    },
+    {
+      "id": 356,
+      "text": "ĠC",
+      "type": 1
+    },
+    {
+      "id": 358,
+      "text": "ĠI",
+      "type": 1
+    },
+    {
+      "id": 359,
+      "text": "un",
+      "type": 1
+    },
+    {
+      "id": 360,
+      "text": "ul",
+      "type": 1
+    },
+    {
+      "id": 361,
+      "text": "ue",
+      "type": 1
+    },
+    {
+      "id": 362,
+      "text": "ĠA",
+      "type": 1
+    },
+    {
+      "id": 363,
+      "text": "ow",
+      "type": 1
+    },
+    {
+      "id": 364,
+      "text": "Ġ'",
+      "type": 1
+    },
+    {
+      "id": 369,
+      "text": "Ġfor",
+      "type": 1
+    },
+    {
+      "id": 370,
+      "text": "ab",
+      "type": 1
+    },
+    {
+      "id": 372,
+      "text": "um",
+      "type": 1
+    },
+    {
+      "id": 373,
+      "text": "ame",
+      "type": 1
+    },
+    {
+      "id": 374,
+      "text": "Ġis",
+      "type": 1
+    },
+    {
+      "id": 375,
+      "text": "pe",
+      "type": 1
+    },
+    {
+      "id": 378,
+      "text": "âĢ",
+      "type": 1
+    },
+    {
+      "id": 379,
+      "text": "Ġy",
+      "type": 1
+    },
+    {
+      "id": 380,
+      "text": "ist",
+      "type": 1
+    },
+    {
+      "id": 383,
+      "text": "he",
+      "type": 1
+    },
+    {
+      "id": 384,
+      "text": "Ġe",
+      "type": 1
+    },
+    {
+      "id": 385,
+      "text": "lo",
+      "type": 1
+    },
+    {
+      "id": 386,
+      "text": "ĠM",
+      "type": 1
+    },
+    {
+      "id": 389,
+      "text": "Ġon",
+      "type": 1
+    },
+    {
+      "id": 391,
+      "text": "ap",
+      "type": 1
+    },
+    {
+      "id": 395,
+      "text": "ass",
+      "type": 1
+    },
+    {
+      "id": 397,
+      "text": ">Ċ",
+      "type": 1
+    },
+    {
+      "id": 398,
+      "text": "ly",
+      "type": 1
+    },
+    {
+      "id": 402,
+      "text": "av",
+      "type": 1
+    },
+    {
+      "id": 404,
+      "text": "ir",
+      "type": 1
+    },
+    {
+      "id": 406,
+      "text": "nt",
+      "type": 1
+    },
+    {
+      "id": 408,
+      "text": "end",
+      "type": 1
+    },
+    {
+      "id": 409,
+      "text": "Ġde",
+      "type": 1
+    },
+    {
+      "id": 410,
+      "text": "ith",
+      "type": 1
+    },
+    {
+      "id": 411,
+      "text": "out",
+      "type": 1
+    },
+    {
+      "id": 423,
+      "text": "ver",
+      "type": 1
+    },
+    {
+      "id": 427,
+      "text": "ext",
+      "type": 1
+    },
+    {
+      "id": 429,
+      "text": "Ġthat",
+      "type": 1
+    },
+    {
+      "id": 432,
+      "text": "Ġit",
+      "type": 1
+    },
+    {
+      "id": 435,
+      "text": "Ġr",
+      "type": 1
+    },
+    {
+      "id": 437,
+      "text": "and",
+      "type": 1
+    },
+    {
+      "id": 438,
+      "text": "Ġas",
+      "type": 1
+    },
+    {
+      "id": 444,
+      "text": "ĠL",
+      "type": 1
+    },
+    {
+      "id": 446,
+      "text": "qu",
+      "type": 1
+    },
+    {
+      "id": 448,
+      "text": "Ġwith",
+      "type": 1
+    },
+    {
+      "id": 454,
+      "text": "up",
+      "type": 1
+    },
+    {
+      "id": 460,
+      "text": "ore",
+      "type": 1
+    },
+    {
+      "id": 461,
+      "text": "ri",
+      "type": 1
+    },
+    {
+      "id": 465,
+      "text": "ter",
+      "type": 1
+    },
+    {
+      "id": 467,
+      "text": "ĠW",
+      "type": 1
+    },
+    {
+      "id": 468,
+      "text": "ĠE",
+      "type": 1
+    },
+    {
+      "id": 469,
+      "text": "Ġcom",
+      "type": 1
+    },
+    {
+      "id": 471,
+      "text": "art",
+      "type": 1
+    },
+    {
+      "id": 472,
+      "text": "ĠH",
+      "type": 1
+    },
+    {
+      "id": 483,
+      "text": "ill",
+      "type": 1
+    },
+    {
+      "id": 488,
+      "text": "Ġ+",
+      "type": 1
+    },
+    {
+      "id": 496,
+      "text": "..",
+      "type": 1
+    },
+    {
+      "id": 498,
+      "text": "Ġyou",
+      "type": 1
+    },
+    {
+      "id": 506,
+      "text": "ĠO",
+      "type": 1
+    },
+    {
+      "id": 507,
+      "text": "ld",
+      "type": 1
+    },
+    {
+      "id": 511,
+      "text": "Ġse",
+      "type": 1
+    },
+    {
+      "id": 512,
+      "text": "Ġle",
+      "type": 1
+    },
+    {
+      "id": 517,
+      "text": "ant",
+      "type": 1
+    },
+    {
+      "id": 523,
+      "text": "ave",
+      "type": 1
+    },
+    {
+      "id": 525,
+      "text": "Ġare",
+      "type": 1
+    },
+    {
+      "id": 526,
+      "text": "Ġint",
+      "type": 1
+    },
+    {
+      "id": 533,
+      "text": "ive",
+      "type": 1
+    },
+    {
+      "id": 537,
+      "text": "Ġnot",
+      "type": 1
+    },
+    {
+      "id": 538,
+      "text": "og",
+      "type": 1
+    },
+    {
+      "id": 539,
+      "text": "ord",
+      "type": 1
+    },
+    {
+      "id": 541,
+      "text": "all",
+      "type": 1
+    },
+    {
+      "id": 545,
+      "text": "ime",
+      "type": 1
+    },
+    {
+      "id": 546,
+      "text": "are",
+      "type": 1
+    },
+    {
+      "id": 553,
+      "text": "Ġby",
+      "type": 1
+    },
+    {
+      "id": 557,
+      "text": "Ġsh",
+      "type": 1
+    },
+    {
+      "id": 562,
+      "text": "ok",
+      "type": 1
+    },
+    {
+      "id": 566,
+      "text": "Ġhe",
+      "type": 1
+    },
+    {
+      "id": 567,
+      "text": "ard",
+      "type": 1
+    },
+    {
+      "id": 572,
+      "text": "Ġwas",
+      "type": 1
+    },
+    {
+      "id": 575,
+      "text": "Ġu",
+      "type": 1
+    },
+    {
+      "id": 576,
+      "text": "ĠThe",
+      "type": 1
+    },
+    {
+      "id": 577,
+      "text": "ide",
+      "type": 1
+    },
+    {
+      "id": 579,
+      "text": "ib",
+      "type": 1
+    },
+    {
+      "id": 581,
+      "text": "rou",
+      "type": 1
+    },
+    {
+      "id": 585,
+      "text": "ak",
+      "type": 1
+    },
+    {
+      "id": 586,
+      "text": "ve",
+      "type": 1
+    },
+    {
+      "id": 587,
+      "text": "ath",
+      "type": 1
+    },
+    {
+      "id": 597,
+      "text": "yst",
+      "type": 1
+    },
+    {
+      "id": 610,
+      "text": "ach",
+      "type": 1
+    },
+    {
+      "id": 612,
+      "text": "ystem",
+      "type": 1
+    },
+    {
+      "id": 616,
+      "text": "ould",
+      "type": 1
+    },
+    {
+      "id": 625,
+      "text": "Ġpl",
+      "type": 1
+    },
+    {
+      "id": 629,
+      "text": "ount",
+      "type": 1
+    },
+    {
+      "id": 631,
+      "text": "dd",
+      "type": 1
+    },
+    {
+      "id": 646,
+      "text": "Ġcan",
+      "type": 1
+    },
+    {
+      "id": 651,
+      "text": "row",
+      "type": 1
+    },
+    {
+      "id": 652,
+      "text": "ber",
+      "type": 1
+    },
+    {
+      "id": 657,
+      "text": "ated",
+      "type": 1
+    },
+    {
+      "id": 676,
+      "text": "app",
+      "type": 1
+    },
+    {
+      "id": 686,
+      "text": "Ġwill",
+      "type": 1
+    },
+    {
+      "id": 693,
+      "text": "Re",
+      "type": 1
+    },
+    {
+      "id": 700,
+      "text": "Ġout",
+      "type": 1
+    },
+    {
+      "id": 705,
+      "text": "Ġup",
+      "type": 1
+    },
+    {
+      "id": 706,
+      "text": "ax",
+      "type": 1
+    },
+    {
+      "id": 714,
+      "text": "Ġbut",
+      "type": 1
+    },
+    {
+      "id": 715,
+      "text": "ĠĊ",
+      "type": 1
+    },
+    {
+      "id": 716,
+      "text": "Ġ_",
+      "type": 1
+    },
+    {
+      "id": 723,
+      "text": "ft",
+      "type": 1
+    },
+    {
+      "id": 752,
+      "text": "Ġme",
+      "type": 1
+    },
+    {
+      "id": 765,
+      "text": "ree",
+      "type": 1
+    },
+    {
+      "id": 766,
+      "text": "ink",
+      "type": 1
+    },
+    {
+      "id": 773,
+      "text": "Ġso",
+      "type": 1
+    },
+    {
+      "id": 775,
+      "text": "Ġlo",
+      "type": 1
+    },
+    {
+      "id": 779,
+      "text": "own",
+      "type": 1
+    },
+    {
+      "id": 787,
+      "text": "RE",
+      "type": 1
+    },
+    {
+      "id": 806,
+      "text": "Ġhis",
+      "type": 1
+    },
+    {
+      "id": 809,
+      "text": "ĠY",
+      "type": 1
+    },
+    {
+      "id": 811,
+      "text": "ne",
+      "type": 1
+    },
+    {
+      "id": 822,
+      "text": "Ġsa",
+      "type": 1
+    },
+    {
+      "id": 823,
+      "text": "ef",
+      "type": 1
+    },
+    {
+      "id": 824,
+      "text": "fo",
+      "type": 1
+    },
+    {
+      "id": 829,
+      "text": "Ġname",
+      "type": 1
+    },
+    {
+      "id": 832,
+      "text": "led",
+      "type": 1
+    },
+    {
+      "id": 838,
+      "text": "ark",
+      "type": 1
+    },
+    {
+      "id": 847,
+      "text": "Ġmy",
+      "type": 1
+    },
+    {
+      "id": 864,
+      "text": "irst",
+      "type": 1
+    },
+    {
+      "id": 872,
+      "text": "user",
+      "type": 1
+    },
+    {
+      "id": 882,
+      "text": "Ġtime",
+      "type": 1
+    },
+    {
+      "id": 883,
+      "text": "Ġman",
+      "type": 1
+    },
+    {
+      "id": 890,
+      "text": "umber",
+      "type": 1
+    },
+    {
+      "id": 900,
+      "text": "nder",
+      "type": 1
+    },
+    {
+      "id": 922,
+      "text": "Ġqu",
+      "type": 1
+    },
+    {
+      "id": 924,
+      "text": "ca",
+      "type": 1
+    },
+    {
+      "id": 926,
+      "text": "Ġro",
+      "type": 1
+    },
+    {
+      "id": 942,
+      "text": "ays",
+      "type": 1
+    },
+    {
+      "id": 962,
+      "text": "ater",
+      "type": 1
+    },
+    {
+      "id": 963,
+      "text": "Ã©",
+      "type": 1
+    },
+    {
+      "id": 1038,
+      "text": "iss",
+      "type": 1
+    },
+    {
+      "id": 1046,
+      "text": "fter",
+      "type": 1
+    },
+    {
+      "id": 1049,
+      "text": "round",
+      "type": 1
+    },
+    {
+      "id": 1053,
+      "text": "Ġsaid",
+      "type": 1
+    },
+    {
+      "id": 1059,
+      "text": "Ġher",
+      "type": 1
+    },
+    {
+      "id": 1071,
+      "text": "Ġass",
+      "type": 1
+    },
+    {
+      "id": 1081,
+      "text": "Ġgr",
+      "type": 1
+    },
+    {
+      "id": 1112,
+      "text": "...",
+      "type": 1
+    },
+    {
+      "id": 1119,
+      "text": "Ġinto",
+      "type": 1
+    },
+    {
+      "id": 1152,
+      "text": "Ġfe",
+      "type": 1
+    },
+    {
+      "id": 1156,
+      "text": "Ġfirst",
+      "type": 1
+    },
+    {
+      "id": 1158,
+      "text": "word",
+      "type": 1
+    },
+    {
+      "id": 1177,
+      "text": "Ġ--",
+      "type": 1
+    },
+    {
+      "id": 1204,
+      "text": "very",
+      "type": 1
+    },
+    {
+      "id": 1207,
+      "text": "ĠQ",
+      "type": 1
+    },
+    {
+      "id": 1212,
+      "text": "Ġunder",
+      "type": 1
+    },
+    {
+      "id": 1229,
+      "text": "ning",
+      "type": 1
+    },
+    {
+      "id": 1260,
+      "text": "ĠHe",
+      "type": 1
+    },
+    {
+      "id": 1261,
+      "text": "_st",
+      "type": 1
+    },
+    {
+      "id": 1262,
+      "text": "ful",
+      "type": 1
+    },
+    {
+      "id": 1267,
+      "text": "elp",
+      "type": 1
+    },
+    {
+      "id": 1277,
+      "text": "ãĢ",
+      "type": 1
+    },
+    {
+      "id": 1278,
+      "text": "ĠÐ",
+      "type": 1
+    },
+    {
+      "id": 1299,
+      "text": "Ġrem",
+      "type": 1
+    },
+    {
+      "id": 1315,
+      "text": "ait",
+      "type": 1
+    },
+    {
+      "id": 1340,
+      "text": "Ġshe",
+      "type": 1
+    },
+    {
+      "id": 1370,
+      "text": "az",
+      "type": 1
+    },
+    {
+      "id": 1372,
+      "text": "Ġnumber",
+      "type": 1
+    },
+    {
+      "id": 1377,
+      "text": "ember",
+      "type": 1
+    },
+    {
+      "id": 1385,
+      "text": "orld",
+      "type": 1
+    },
+    {
+      "id": 1386,
+      "text": "ood",
+      "type": 1
+    },
+    {
+      "id": 1401,
+      "text": "Ġlook",
+      "type": 1
+    },
+    {
+      "id": 1410,
+      "text": "Ġcould",
+      "type": 1
+    },
+    {
+      "id": 1442,
+      "text": "itt",
+      "type": 1
+    },
+    {
+      "id": 1443,
+      "text": "Ġap",
+      "type": 1
+    },
+    {
+      "id": 1446,
+      "text": "ĠYou",
+      "type": 1
+    },
+    {
+      "id": 1486,
+      "text": "Ġplay",
+      "type": 1
+    },
+    {
+      "id": 1490,
+      "text": "Ġsee",
+      "type": 1
+    },
+    {
+      "id": 1492,
+      "text": "Ġhelp",
+      "type": 1
+    },
+    {
+      "id": 1495,
+      "text": "Ġdown",
+      "type": 1
+    },
+    {
+      "id": 1501,
+      "text": "Ġbl",
+      "type": 1
+    },
+    {
+      "id": 1504,
+      "text": "Ðµ",
+      "type": 1
+    },
+    {
+      "id": 1521,
+      "text": "Ġdid",
+      "type": 1
+    },
+    {
+      "id": 1525,
+      "text": "Ġsm",
+      "type": 1
+    },
+    {
+      "id": 1530,
+      "text": "ouse",
+      "type": 1
+    },
+    {
+      "id": 1541,
+      "text": "ily",
+      "type": 1
+    },
+    {
+      "id": 1572,
+      "text": "ĉĊ",
+      "type": 1
+    },
+    {
+      "id": 1605,
+      "text": "ared",
+      "type": 1
+    },
+    {
+      "id": 1608,
+      "text": "ited",
+      "type": 1
+    },
+    {
+      "id": 1616,
+      "text": "Ġway",
+      "type": 1
+    },
+    {
+      "id": 1622,
+      "text": "Ġdec",
+      "type": 1
+    },
+    {
+      "id": 1639,
+      "text": "Wh",
+      "type": 1
+    },
+    {
+      "id": 1657,
+      "text": "Ġmany",
+      "type": 1
+    },
+    {
+      "id": 1674,
+      "text": "ĠAl",
+      "type": 1
+    },
+    {
+      "id": 1744,
+      "text": "Ġthink",
+      "type": 1
+    },
+    {
+      "id": 1784,
+      "text": "><",
+      "type": 1
+    },
+    {
+      "id": 1792,
+      "text": "ÑĤ",
+      "type": 1
+    },
+    {
+      "id": 1802,
+      "text": "Ð¸",
+      "type": 1
+    },
+    {
+      "id": 1817,
+      "text": "Ġeach",
+      "type": 1
+    },
+    {
+      "id": 1852,
+      "text": "Ġsame",
+      "type": 1
+    },
+    {
+      "id": 1856,
+      "text": "ather",
+      "type": 1
+    },
+    {
+      "id": 1859,
+      "text": "fe",
+      "type": 1
+    },
+    {
+      "id": 1879,
+      "text": "Ġworld",
+      "type": 1
+    },
+    {
+      "id": 1884,
+      "text": "Ġcre",
+      "type": 1
+    },
+    {
+      "id": 1899,
+      "text": "Ġday",
+      "type": 1
+    },
+    {
+      "id": 1925,
+      "text": "On",
+      "type": 1
+    },
+    {
+      "id": 2098,
+      "text": "Ġvis",
+      "type": 1
+    },
+    {
+      "id": 2162,
+      "text": "Ġca",
+      "type": 1
+    },
+    {
+      "id": 2184,
+      "text": "ÑĢ",
+      "type": 1
+    },
+    {
+      "id": 2212,
+      "text": "Add",
+      "type": 1
+    },
+    {
+      "id": 2221,
+      "text": "ived",
+      "type": 1
+    },
+    {
+      "id": 2233,
+      "text": "ĉb",
+      "type": 1
+    },
+    {
+      "id": 2238,
+      "text": "Ġtoo",
+      "type": 1
+    },
+    {
+      "id": 2241,
+      "text": "Ġfore",
+      "type": 1
+    },
+    {
+      "id": 2255,
+      "text": "Ġhapp",
+      "type": 1
+    },
+    {
+      "id": 2257,
+      "text": "bar",
+      "type": 1
+    },
+    {
+      "id": 2310,
+      "text": "Ġold",
+      "type": 1
+    },
+    {
+      "id": 2326,
+      "text": "Ġthree",
+      "type": 1
+    },
+    {
+      "id": 2377,
+      "text": "ittle",
+      "type": 1
+    },
+    {
+      "id": 2379,
+      "text": "ĠThey",
+      "type": 1
+    },
+    {
+      "id": 2406,
+      "text": "Ġtri",
+      "type": 1
+    },
+    {
+      "id": 2410,
+      "text": "ĠAd",
+      "type": 1
+    },
+    {
+      "id": 2435,
+      "text": "ĠCl",
+      "type": 1
+    },
+    {
+      "id": 2507,
+      "text": "Count",
+      "type": 1
+    },
+    {
+      "id": 2518,
+      "text": "Ġred",
+      "type": 1
+    },
+    {
+      "id": 2525,
+      "text": "Ġcome",
+      "type": 1
+    },
+    {
+      "id": 2541,
+      "text": "ply",
+      "type": 1
+    },
+    {
+      "id": 2577,
+      "text": "af",
+      "type": 1
+    },
+    {
+      "id": 2585,
+      "text": "ĠHow",
+      "type": 1
+    },
+    {
+      "id": 2603,
+      "text": "ird",
+      "type": 1
+    },
+    {
+      "id": 2610,
+      "text": "You",
+      "type": 1
+    },
+    {
+      "id": 2613,
+      "text": "Ġsmall",
+      "type": 1
+    },
+    {
+      "id": 2624,
+      "text": "oo",
+      "type": 1
+    },
+    {
+      "id": 2632,
+      "text": "Ġlittle",
+      "type": 1
+    },
+    {
+      "id": 2633,
+      "text": "Ġfri",
+      "type": 1
+    },
+    {
+      "id": 2642,
+      "text": "Ġappe",
+      "type": 1
+    },
+    {
+      "id": 2776,
+      "text": "'m",
+      "type": 1
+    },
+    {
+      "id": 2816,
+      "text": "Ġgre",
+      "type": 1
+    },
+    {
+      "id": 2849,
+      "text": "Ġdays",
+      "type": 1
+    },
+    {
+      "id": 2928,
+      "text": "!!",
+      "type": 1
+    },
+    {
+      "id": 2950,
+      "text": "oud",
+      "type": 1
+    },
+    {
+      "id": 2968,
+      "text": "Ġgive",
+      "type": 1
+    },
+    {
+      "id": 3003,
+      "text": "'ve",
+      "type": 1
+    },
+    {
+      "id": 3015,
+      "text": "Ġwater",
+      "type": 1
+    },
+    {
+      "id": 3041,
+      "text": "Ġfar",
+      "type": 1
+    },
+    {
+      "id": 3116,
+      "text": "Ġmiss",
+      "type": 1
+    },
+    {
+      "id": 3367,
+      "text": "Ġmeet",
+      "type": 1
+    },
+    {
+      "id": 3465,
+      "text": "Ġcreated",
+      "type": 1
+    },
+    {
+      "id": 3490,
+      "text": "ä¸",
+      "type": 1
+    },
+    {
+      "id": 3753,
+      "text": "Ġhouse",
+      "type": 1
+    },
+    {
+      "id": 3776,
+      "text": "ĠOne",
+      "type": 1
+    },
+    {
+      "id": 3783,
+      "text": "Ġwait",
+      "type": 1
+    },
+    {
+      "id": 3838,
+      "text": "What",
+      "type": 1
+    },
+    {
+      "id": 3891,
+      "text": "iet",
+      "type": 1
+    },
+    {
+      "id": 4086,
+      "text": "LL",
+      "type": 1
+    },
+    {
+      "id": 4102,
+      "text": "Âł",
+      "type": 1
+    },
+    {
+      "id": 4172,
+      "text": "'d",
+      "type": 1
+    },
+    {
+      "id": 4238,
+      "text": "Ġfriend",
+      "type": 1
+    },
+    {
+      "id": 4266,
+      "text": "rew",
+      "type": 1
+    },
+    {
+      "id": 4313,
+      "text": "Ġmor",
+      "type": 1
+    },
+    {
+      "id": 4364,
+      "text": "rief",
+      "type": 1
+    },
+    {
+      "id": 4385,
+      "text": "cd",
+      "type": 1
+    },
+    {
+      "id": 4489,
+      "text": "bit",
+      "type": 1
+    },
+    {
+      "id": 4490,
+      "text": "ided",
+      "type": 1
+    },
+    {
+      "id": 4636,
+      "text": "ĠAfter",
+      "type": 1
+    },
+    {
+      "id": 4791,
+      "text": "ello",
+      "type": 1
+    },
+    {
+      "id": 4830,
+      "text": "rown",
+      "type": 1
+    },
+    {
+      "id": 4906,
+      "text": "_start",
+      "type": 1
+    },
+    {
+      "id": 4910,
+      "text": "Ġground",
+      "type": 1
+    },
+    {
+      "id": 4916,
+      "text": "Ġtree",
+      "type": 1
+    },
+    {
+      "id": 4935,
+      "text": "Ġball",
+      "type": 1
+    },
+    {
+      "id": 5050,
+      "text": "My",
+      "type": 1
+    },
+    {
+      "id": 5193,
+      "text": "Ġupon",
+      "type": 1
+    },
+    {
+      "id": 5474,
+      "text": "Ð²",
+      "type": 1
+    },
+    {
+      "id": 5502,
+      "text": "à¤",
+      "type": 1
+    },
+    {
+      "id": 5545,
+      "text": "Ġreach",
+      "type": 1
+    },
+    {
+      "id": 5562,
+      "text": "Ġdog",
+      "type": 1
+    },
+    {
+      "id": 5703,
+      "text": "Ø§",
+      "type": 1
+    },
+    {
+      "id": 5847,
+      "text": "Next",
+      "type": 1
+    },
+    {
+      "id": 6008,
+      "text": "Ġplant",
+      "type": 1
+    },
+    {
+      "id": 6099,
+      "text": "Ġremember",
+      "type": 1
+    },
+    {
+      "id": 6118,
+      "text": "Ġpark",
+      "type": 1
+    },
+    {
+      "id": 6176,
+      "text": "Ġgreen",
+      "type": 1
+    },
+    {
+      "id": 6213,
+      "text": "_end",
+      "type": 1
+    },
+    {
+      "id": 6247,
+      "text": "Ġhappy",
+      "type": 1
+    },
+    {
+      "id": 6303,
+      "text": "Ġblue",
+      "type": 1
+    },
+    {
+      "id": 6342,
+      "text": "Ġplayed",
+      "type": 1
+    },
+    {
+      "id": 6441,
+      "text": "iny",
+      "type": 1
+    },
+    {
+      "id": 6464,
+      "text": "Gr",
+      "type": 1
+    },
+    {
+      "id": 6551,
+      "text": "Ġgave",
+      "type": 1
+    },
+    {
+      "id": 6556,
+      "text": "Ġmorning",
+      "type": 1
+    },
+    {
+      "id": 6590,
+      "text": "Rem",
+      "type": 1
+    },
+    {
+      "id": 6595,
+      "text": "pa",
+      "type": 1
+    },
+    {
+      "id": 6635,
+      "text": "Ġdecided",
+      "type": 1
+    },
+    {
+      "id": 6662,
+      "text": "Ġgrand",
+      "type": 1
+    },
+    {
+      "id": 6679,
+      "text": "Ġtried",
+      "type": 1
+    },
+    {
+      "id": 6767,
+      "text": "eds",
+      "type": 1
+    },
+    {
+      "id": 7015,
+      "text": "Ġsun",
+      "type": 1
+    },
+    {
+      "id": 7209,
+      "text": "ĠEvery",
+      "type": 1
+    },
+    {
+      "id": 7402,
+      "text": "Ġmissing",
+      "type": 1
+    },
+    {
+      "id": 7487,
+      "text": "ĠMax",
+      "type": 1
+    },
+    {
+      "id": 7578,
+      "text": "Ġsat",
+      "type": 1
+    },
+    {
+      "id": 7579,
+      "text": "Ġwood",
+      "type": 1
+    },
+    {
+      "id": 7789,
+      "text": "Ġassist",
+      "type": 1
+    },
+    {
+      "id": 7975,
+      "text": "foo",
+      "type": 1
+    },
+    {
+      "id": 8178,
+      "text": "ÐµÑĤ",
+      "type": 1
+    },
+    {
+      "id": 8341,
+      "text": "arden",
+      "type": 1
+    },
+    {
+      "id": 8364,
+      "text": "ĠTom",
+      "type": 1
+    },
+    {
+      "id": 8519,
+      "text": "ä½",
+      "type": 1
+    },
+    {
+      "id": 8532,
+      "text": "ÙĦ",
+      "type": 1
+    },
+    {
+      "id": 8689,
+      "text": "ĉĠĠ",
+      "type": 1
+    },
+    {
+      "id": 8691,
+      "text": "endo",
+      "type": 1
+    },
+    {
+      "id": 8803,
+      "text": "ĠØ",
+      "type": 1
+    },
+    {
+      "id": 8910,
+      "text": "Ġhelped",
+      "type": 1
+    },
+    {
+      "id": 8948,
+      "text": "system",
+      "type": 1
+    },
+    {
+      "id": 9057,
+      "text": "Ġbes",
+      "type": 1
+    },
+    {
+      "id": 9284,
+      "text": "ðŁ",
+      "type": 1
+    },
+    {
+      "id": 9707,
+      "text": "Hello",
+      "type": 1
+    },
+    {
+      "id": 9723,
+      "text": "Ġappeared",
+      "type": 1
+    },
+    {
+      "id": 9814,
+      "text": "Ġbrief",
+      "type": 1
+    },
+    {
+      "id": 10176,
+      "text": "Ùħ",
+      "type": 1
+    },
+    {
+      "id": 10320,
+      "text": "Ġseed",
+      "type": 1
+    },
+    {
+      "id": 10613,
+      "text": "Ġran",
+      "type": 1
+    },
+    {
+      "id": 10950,
+      "text": "Ġhelpful",
+      "type": 1
+    },
+    {
+      "id": 10962,
+      "text": "Ġlay",
+      "type": 1
+    },
+    {
+      "id": 11071,
+      "text": "Ø±",
+      "type": 1
+    },
+    {
+      "id": 11162,
+      "text": "ĠðŁ",
+      "type": 1
+    },
+    {
+      "id": 11202,
+      "text": "istant",
+      "type": 1
+    },
+    {
+      "id": 11310,
+      "text": "ĠÐ¼",
+      "type": 1
+    },
+    {
+      "id": 11340,
+      "text": "Ġquiet",
+      "type": 1
+    },
+    {
+      "id": 11958,
+      "text": "Ġbird",
+      "type": 1
+    },
+    {
+      "id": 11994,
+      "text": "Ġvisited",
+      "type": 1
+    },
+    {
+      "id": 12004,
+      "text": "aba",
+      "type": 1
+    },
+    {
+      "id": 12069,
+      "text": "!!!",
+      "type": 1
+    },
+    {
+      "id": 12163,
+      "text": "Ġlived",
+      "type": 1
+    },
+    {
+      "id": 12522,
+      "text": "Once",
+      "type": 1
+    },
+    {
+      "id": 12619,
+      "text": "à¥",
+      "type": 1
+    },
+    {
+      "id": 13272,
+      "text": "'S",
+      "type": 1
+    },
+    {
+      "id": 13551,
+      "text": "Ġgarden",
+      "type": 1
+    },
+    {
+      "id": 13638,
+      "text": "Ġforest",
+      "type": 1
+    },
+    {
+      "id": 13673,
+      "text": "Ġtiny",
+      "type": 1
+    },
+    {
+      "id": 13876,
+      "text": "Ġbrown",
+      "type": 1
+    },
+    {
+      "id": 14817,
+      "text": "ĠCloud",
+      "type": 1
+    },
+    {
+      "id": 14925,
+      "text": "Ġà¤",
+      "type": 1
+    },
+    {
+      "id": 14990,
+      "text": "hello",
+      "type": 1
+    },
+    {
+      "id": 15229,
+      "text": "Ġfoo",
+      "type": 1
+    },
+    {
+      "id": 15933,
+      "text": "Ġleaf",
+      "type": 1
+    },
+    {
+      "id": 16948,
+      "text": "wen",
+      "type": 1
+    },
+    {
+      "id": 17323,
+      "text": "'T",
+      "type": 1
+    },
+    {
+      "id": 17476,
+      "text": "ĠĉĊ",
+      "type": 1
+    },
+    {
+      "id": 17679,
+      "text": "Ġrol",
+      "type": 1
+    },
+    {
+      "id": 17847,
+      "text": "Ġassistant",
+      "type": 1
+    },
+    {
+      "id": 18126,
+      "text": "Ġgate",
+      "type": 1
+    },
+    {
+      "id": 19056,
+      "text": "Ġseeds",
+      "type": 1
+    },
+    {
+      "id": 19677,
+      "text": "ĠWE",
+      "type": 1
+    },
+    {
+      "id": 19949,
+      "text": "abbit",
+      "type": 1
+    },
+    {
+      "id": 20841,
+      "text": "Reply",
+      "type": 1
+    },
+    {
+      "id": 21360,
+      "text": "Ø¨",
+      "type": 1
+    },
+    {
+      "id": 21927,
+      "text": "ĠHello",
+      "type": 1
+    },
+    {
+      "id": 22192,
+      "text": "Ġthrew",
+      "type": 1
+    },
+    {
+      "id": 22360,
+      "text": "Ġwooden",
+      "type": 1
+    },
+    {
+      "id": 22419,
+      "text": "ĠÐŁ",
+      "type": 1
+    },
+    {
+      "id": 22441,
+      "text": "ãĢĢ",
+      "type": 1
+    },
+    {
+      "id": 22447,
+      "text": "Ġrolled",
+      "type": 1
+    },
+    {
+      "id": 23017,
+      "text": "father",
+      "type": 1
+    },
+    {
+      "id": 23224,
+      "text": "Ø¹",
+      "type": 1
+    },
+    {
+      "id": 23364,
+      "text": "ĠÙħ",
+      "type": 1
+    },
+    {
+      "id": 24732,
+      "text": "Tom",
+      "type": 1
+    },
+    {
+      "id": 26753,
+      "text": "Ġbriefly",
+      "type": 1
+    },
+    {
+      "id": 26991,
+      "text": "Ð¸Ð²",
+      "type": 1
+    },
+    {
+      "id": 27095,
+      "text": "å¥",
+      "type": 1
+    },
+    {
+      "id": 27846,
+      "text": "ĠØ¨",
+      "type": 1
+    },
+    {
+      "id": 28260,
+      "text": "ibaba",
+      "type": 1
+    },
+    {
+      "id": 28590,
+      "text": "Remember",
+      "type": 1
+    },
+    {
+      "id": 29215,
+      "text": "Ġwaited",
+      "type": 1
+    },
+    {
+      "id": 29388,
+      "text": "Ġbeside",
+      "type": 1
+    },
+    {
+      "id": 29456,
+      "text": "Â²",
+      "type": 1
+    },
+    {
+      "id": 29607,
+      "text": "à¥į",
+      "type": 1
+    },
+    {
+      "id": 29825,
+      "text": "ØŃ",
+      "type": 1
+    },
+    {
+      "id": 30484,
+      "text": "à¥įà¤",
+      "type": 1
+    },
+    {
+      "id": 31382,
+      "text": "Ø§ÙĦ",
+      "type": 1
+    },
+    {
+      "id": 34370,
+      "text": "à¥ĩ",
+      "type": 1
+    },
+    {
+      "id": 34829,
+      "text": "...čĊ",
+      "type": 1
+    },
+    {
+      "id": 37850,
+      "text": "Ġgrandfather",
+      "type": 1
+    },
+    {
+      "id": 37871,
+      "text": "Ġoak",
+      "type": 1
+    },
+    {
+      "id": 38724,
+      "text": "Ġrabbit",
+      "type": 1
+    },
+    {
+      "id": 39098,
+      "text": "çķ",
+      "type": 1
+    },
+    {
+      "id": 40151,
+      "text": "Grand",
+      "type": 1
+    },
+    {
+      "id": 40930,
+      "text": "Ġcafe",
+      "type": 1
+    },
+    {
+      "id": 41199,
+      "text": "Ġshiny",
+      "type": 1
+    },
+    {
+      "id": 47290,
+      "text": "ĠLily",
+      "type": 1
+    },
+    {
+      "id": 49776,
+      "text": "Ġfeather",
+      "type": 1
+    },
+    {
+      "id": 50247,
+      "text": "Ġbaz",
+      "type": 1
+    },
+    {
+      "id": 51149,
+      "text": "ĠAda",
+      "type": 1
+    },
+    {
+      "id": 52801,
+      "text": "å¥½",
+      "type": 1
+    },
+    {
+      "id": 53839,
+      "text": "Ìģ",
+      "type": 1
+    },
+    {
+      "id": 54364,
+      "text": "ĠAlibaba",
+      "type": 1
+    },
+    {
+      "id": 56568,
+      "text": "ä½ł",
+      "type": 1
+    },
+    {
+      "id": 57390,
+      "text": "!?",
+      "type": 1
+    },
+    {
+      "id": 58858,
+      "text": "fÃ©",
+      "type": 1
+    },
+    {
+      "id": 61804,
+      "text": "ĠðŁĳ",
+      "type": 1
+    },
+    {
+      "id": 70467,
+      "text": "âħ",
+      "type": 1
+    },
+    {
+      "id": 77091,
+      "text": "assistant",
+      "type": 1
+    },
+    {
+      "id": 77646,
+      "text": "Ð¸ÑĢ",
+      "type": 1
+    },
+    {
+      "id": 78368,
+      "text": "à¤¸",
+      "type": 1
+    },
+    {
+      "id": 79484,
+      "text": "ĠÐŁÑĢ",
+      "type": 1
+    },
+    {
+      "id": 87244,
+      "text": "à¤®",
+      "type": 1
+    },
+    {
+      "id": 90709,
+      "text": "ĉbar",
+      "type": 1
+    },
+    {
+      "id": 94153,
+      "text": "'RE",
+      "type": 1
+    },
+    {
+      "id": 97120,
+      "text": "çķĮ",
+      "type": 1
+    },
+    {
+      "id": 99244,
+      "text": "ä¸ĸ",
+      "type": 1
+    },
+    {
+      "id": 99489,
+      "text": "ä¸ĸçķĮ",
+      "type": 1
+    },
+    {
+      "id": 108386,
+      "text": "ä½łå¥½",
+      "type": 1
+    },
+    {
+      "id": 123811,
+      "text": "ðŁĳ",
+      "type": 1
+    },
+    {
+      "id": 123934,
+      "text": "ðĲ",
+      "type": 1
+    },
+    {
+      "id": 124476,
+      "text": "ĠØ¨Ø§ÙĦ",
+      "type": 1
+    },
+    {
+      "id": 124671,
+      "text": "Ø¨Ø§",
+      "type": 1
+    },
+    {
+      "id": 124839,
+      "text": "Ø§ÙĦÙħ",
+      "type": 1
+    },
+    {
+      "id": 126190,
+      "text": "ðĲį",
+      "type": 1
+    },
+    {
+      "id": 126860,
+      "text": "Ø±ØŃ",
+      "type": 1
+    },
+    {
+      "id": 129634,
+      "text": "Ø¹Ø§ÙĦÙħ",
+      "type": 1
+    },
+    {
+      "id": 137144,
+      "text": "ĠÐ¼Ð¸ÑĢ",
+      "type": 1
+    },
+    {
+      "id": 145233,
+      "text": "ðŁĳ©",
+      "type": 1
+    },
+    {
+      "id": 145665,
+      "text": "ðŁĳ§",
+      "type": 1
+    },
+    {
+      "id": 145988,
+      "text": "ðŁĳ¦",
+      "type": 1
+    },
+    {
+      "id": 151643,
+      "text": "<|endoftext|>",
+      "type": 3
+    },
+    {
+      "id": 151644,
+      "text": "<|im_start|>",
+      "type": 3
+    },
+    {
+      "id": 151645,
+      "text": "<|im_end|>",
+      "type": 3
+    },
+    {
+      "id": 151646,
+      "text": "<|object_ref_start|>",
+      "type": 3
+    },
+    {
+      "id": 151647,
+      "text": "<|object_ref_end|>",
+      "type": 3
+    },
+    {
+      "id": 151648,
+      "text": "<|box_start|>",
+      "type": 3
+    },
+    {
+      "id": 151649,
+      "text": "<|box_end|>",
+      "type": 3
+    },
+    {
+      "id": 151650,
+      "text": "<|quad_start|>",
+      "type": 3
+    },
+    {
+      "id": 151651,
+      "text": "<|quad_end|>",
+      "type": 3
+    },
+    {
+      "id": 151652,
+      "text": "<|vision_start|>",
+      "type": 3
+    },
+    {
+      "id": 151653,
+      "text": "<|vision_end|>",
+      "type": 3
+    },
+    {
+      "id": 151654,
+      "text": "<|vision_pad|>",
+      "type": 3
+    },
+    {
+      "id": 151655,
+      "text": "<|image_pad|>",
+      "type": 3
+    },
+    {
+      "id": 151656,
+      "text": "<|video_pad|>",
+      "type": 3
+    },
+    {
+      "id": 151657,
+      "text": "<tool_call>",
+      "type": 4
+    },
+    {
+      "id": 151658,
+      "text": "</tool_call>",
+      "type": 4
+    },
+    {
+      "id": 151659,
+      "text": "<|fim_prefix|>",
+      "type": 3
+    },
+    {
+      "id": 151660,
+      "text": "<|fim_middle|>",
+      "type": 3
+    },
+    {
+      "id": 151661,
+      "text": "<|fim_suffix|>",
+      "type": 3
+    },
+    {
+      "id": 151662,
+      "text": "<|fim_pad|>",
+      "type": 3
+    },
+    {
+      "id": 151663,
+      "text": "<|repo_name|>",
+      "type": 3
+    },
+    {
+      "id": 151664,
+      "text": "<|file_sep|>",
+      "type": 3
+    },
+    {
+      "id": 151665,
+      "text": "[PAD151665]",
+      "type": 5
+    },
+    {
+      "id": 151666,
+      "text": "[PAD151666]",
+      "type": 5
+    },
+    {
+      "id": 151667,
+      "text": "[PAD151667]",
+      "type": 5
+    },
+    {
+      "id": 151668,
+      "text": "[PAD151668]",
+      "type": 5
+    },
+    {
+      "id": 151669,
+      "text": "[PAD151669]",
+      "type": 5
+    },
+    {
+      "id": 151670,
+      "text": "[PAD151670]",
+      "type": 5
+    },
+    {
+      "id": 151671,
+      "text": "[PAD151671]",
+      "type": 5
+    },
+    {
+      "id": 151672,
+      "text": "[PAD151672]",
+      "type": 5
+    },
+    {
+      "id": 151673,
+      "text": "[PAD151673]",
+      "type": 5
+    },
+    {
+      "id": 151674,
+      "text": "[PAD151674]",
+      "type": 5
+    },
+    {
+      "id": 151675,
+      "text": "[PAD151675]",
+      "type": 5
+    },
+    {
+      "id": 151676,
+      "text": "[PAD151676]",
+      "type": 5
+    },
+    {
+      "id": 151677,
+      "text": "[PAD151677]",
+      "type": 5
+    },
+    {
+      "id": 151678,
+      "text": "[PAD151678]",
+      "type": 5
+    },
+    {
+      "id": 151679,
+      "text": "[PAD151679]",
+      "type": 5
+    },
+    {
+      "id": 151680,
+      "text": "[PAD151680]",
+      "type": 5
+    },
+    {
+      "id": 151681,
+      "text": "[PAD151681]",
+      "type": 5
+    },
+    {
+      "id": 151682,
+      "text": "[PAD151682]",
+      "type": 5
+    },
+    {
+      "id": 151683,
+      "text": "[PAD151683]",
+      "type": 5
+    },
+    {
+      "id": 151684,
+      "text": "[PAD151684]",
+      "type": 5
+    },
+    {
+      "id": 151685,
+      "text": "[PAD151685]",
+      "type": 5
+    },
+    {
+      "id": 151686,
+      "text": "[PAD151686]",
+      "type": 5
+    },
+    {
+      "id": 151687,
+      "text": "[PAD151687]",
+      "type": 5
+    },
+    {
+      "id": 151688,
+      "text": "[PAD151688]",
+      "type": 5
+    },
+    {
+      "id": 151689,
+      "text": "[PAD151689]",
+      "type": 5
+    },
+    {
+      "id": 151690,
+      "text": "[PAD151690]",
+      "type": 5
+    },
+    {
+      "id": 151691,
+      "text": "[PAD151691]",
+      "type": 5
+    },
+    {
+      "id": 151692,
+      "text": "[PAD151692]",
+      "type": 5
+    },
+    {
+      "id": 151693,
+      "text": "[PAD151693]",
+      "type": 5
+    },
+    {
+      "id": 151694,
+      "text": "[PAD151694]",
+      "type": 5
+    },
+    {
+      "id": 151695,
+      "text": "[PAD151695]",
+      "type": 5
+    },
+    {
+      "id": 151696,
+      "text": "[PAD151696]",
+      "type": 5
+    },
+    {
+      "id": 151697,
+      "text": "[PAD151697]",
+      "type": 5
+    },
+    {
+      "id": 151698,
+      "text": "[PAD151698]",
+      "type": 5
+    },
+    {
+      "id": 151699,
+      "text": "[PAD151699]",
+      "type": 5
+    },
+    {
+      "id": 151700,
+      "text": "[PAD151700]",
+      "type": 5
+    },
+    {
+      "id": 151701,
+      "text": "[PAD151701]",
+      "type": 5
+    },
+    {
+      "id": 151702,
+      "text": "[PAD151702]",
+      "type": 5
+    },
+    {
+      "id": 151703,
+      "text": "[PAD151703]",
+      "type": 5
+    },
+    {
+      "id": 151704,
+      "text": "[PAD151704]",
+      "type": 5
+    },
+    {
+      "id": 151705,
+      "text": "[PAD151705]",
+      "type": 5
+    },
+    {
+      "id": 151706,
+      "text": "[PAD151706]",
+      "type": 5
+    },
+    {
+      "id": 151707,
+      "text": "[PAD151707]",
+      "type": 5
+    },
+    {
+      "id": 151708,
+      "text": "[PAD151708]",
+      "type": 5
+    },
+    {
+      "id": 151709,
+      "text": "[PAD151709]",
+      "type": 5
+    },
+    {
+      "id": 151710,
+      "text": "[PAD151710]",
+      "type": 5
+    },
+    {
+      "id": 151711,
+      "text": "[PAD151711]",
+      "type": 5
+    },
+    {
+      "id": 151712,
+      "text": "[PAD151712]",
+      "type": 5
+    },
+    {
+      "id": 151713,
+      "text": "[PAD151713]",
+      "type": 5
+    },
+    {
+      "id": 151714,
+      "text": "[PAD151714]",
+      "type": 5
+    },
+    {
+      "id": 151715,
+      "text": "[PAD151715]",
+      "type": 5
+    },
+    {
+      "id": 151716,
+      "text": "[PAD151716]",
+      "type": 5
+    },
+    {
+      "id": 151717,
+      "text": "[PAD151717]",
+      "type": 5
+    },
+    {
+      "id": 151718,
+      "text": "[PAD151718]",
+      "type": 5
+    },
+    {
+      "id": 151719,
+      "text": "[PAD151719]",
+      "type": 5
+    },
+    {
+      "id": 151720,
+      "text": "[PAD151720]",
+      "type": 5
+    },
+    {
+      "id": 151721,
+      "text": "[PAD151721]",
+      "type": 5
+    },
+    {
+      "id": 151722,
+      "text": "[PAD151722]",
+      "type": 5
+    },
+    {
+      "id": 151723,
+      "text": "[PAD151723]",
+      "type": 5
+    },
+    {
+      "id": 151724,
+      "text": "[PAD151724]",
+      "type": 5
+    },
+    {
+      "id": 151725,
+      "text": "[PAD151725]",
+      "type": 5
+    },
+    {
+      "id": 151726,
+      "text": "[PAD151726]",
+      "type": 5
+    },
+    {
+      "id": 151727,
+      "text": "[PAD151727]",
+      "type": 5
+    },
+    {
+      "id": 151728,
+      "text": "[PAD151728]",
+      "type": 5
+    },
+    {
+      "id": 151729,
+      "text": "[PAD151729]",
+      "type": 5
+    },
+    {
+      "id": 151730,
+      "text": "[PAD151730]",
+      "type": 5
+    },
+    {
+      "id": 151731,
+      "text": "[PAD151731]",
+      "type": 5
+    },
+    {
+      "id": 151732,
+      "text": "[PAD151732]",
+      "type": 5
+    },
+    {
+      "id": 151733,
+      "text": "[PAD151733]",
+      "type": 5
+    },
+    {
+      "id": 151734,
+      "text": "[PAD151734]",
+      "type": 5
+    },
+    {
+      "id": 151735,
+      "text": "[PAD151735]",
+      "type": 5
+    },
+    {
+      "id": 151736,
+      "text": "[PAD151736]",
+      "type": 5
+    },
+    {
+      "id": 151737,
+      "text": "[PAD151737]",
+      "type": 5
+    },
+    {
+      "id": 151738,
+      "text": "[PAD151738]",
+      "type": 5
+    },
+    {
+      "id": 151739,
+      "text": "[PAD151739]",
+      "type": 5
+    },
+    {
+      "id": 151740,
+      "text": "[PAD151740]",
+      "type": 5
+    },
+    {
+      "id": 151741,
+      "text": "[PAD151741]",
+      "type": 5
+    },
+    {
+      "id": 151742,
+      "text": "[PAD151742]",
+      "type": 5
+    },
+    {
+      "id": 151743,
+      "text": "[PAD151743]",
+      "type": 5
+    },
+    {
+      "id": 151744,
+      "text": "[PAD151744]",
+      "type": 5
+    },
+    {
+      "id": 151745,
+      "text": "[PAD151745]",
+      "type": 5
+    },
+    {
+      "id": 151746,
+      "text": "[PAD151746]",
+      "type": 5
+    },
+    {
+      "id": 151747,
+      "text": "[PAD151747]",
+      "type": 5
+    },
+    {
+      "id": 151748,
+      "text": "[PAD151748]",
+      "type": 5
+    },
+    {
+      "id": 151749,
+      "text": "[PAD151749]",
+      "type": 5
+    },
+    {
+      "id": 151750,
+      "text": "[PAD151750]",
+      "type": 5
+    },
+    {
+      "id": 151751,
+      "text": "[PAD151751]",
+      "type": 5
+    },
+    {
+      "id": 151752,
+      "text": "[PAD151752]",
+      "type": 5
+    },
+    {
+      "id": 151753,
+      "text": "[PAD151753]",
+      "type": 5
+    },
+    {
+      "id": 151754,
+      "text": "[PAD151754]",
+      "type": 5
+    },
+    {
+      "id": 151755,
+      "text": "[PAD151755]",
+      "type": 5
+    },
+    {
+      "id": 151756,
+      "text": "[PAD151756]",
+      "type": 5
+    },
+    {
+      "id": 151757,
+      "text": "[PAD151757]",
+      "type": 5
+    },
+    {
+      "id": 151758,
+      "text": "[PAD151758]",
+      "type": 5
+    },
+    {
+      "id": 151759,
+      "text": "[PAD151759]",
+      "type": 5
+    },
+    {
+      "id": 151760,
+      "text": "[PAD151760]",
+      "type": 5
+    },
+    {
+      "id": 151761,
+      "text": "[PAD151761]",
+      "type": 5
+    },
+    {
+      "id": 151762,
+      "text": "[PAD151762]",
+      "type": 5
+    },
+    {
+      "id": 151763,
+      "text": "[PAD151763]",
+      "type": 5
+    },
+    {
+      "id": 151764,
+      "text": "[PAD151764]",
+      "type": 5
+    },
+    {
+      "id": 151765,
+      "text": "[PAD151765]",
+      "type": 5
+    },
+    {
+      "id": 151766,
+      "text": "[PAD151766]",
+      "type": 5
+    },
+    {
+      "id": 151767,
+      "text": "[PAD151767]",
+      "type": 5
+    },
+    {
+      "id": 151768,
+      "text": "[PAD151768]",
+      "type": 5
+    },
+    {
+      "id": 151769,
+      "text": "[PAD151769]",
+      "type": 5
+    },
+    {
+      "id": 151770,
+      "text": "[PAD151770]",
+      "type": 5
+    },
+    {
+      "id": 151771,
+      "text": "[PAD151771]",
+      "type": 5
+    },
+    {
+      "id": 151772,
+      "text": "[PAD151772]",
+      "type": 5
+    },
+    {
+      "id": 151773,
+      "text": "[PAD151773]",
+      "type": 5
+    },
+    {
+      "id": 151774,
+      "text": "[PAD151774]",
+      "type": 5
+    },
+    {
+      "id": 151775,
+      "text": "[PAD151775]",
+      "type": 5
+    },
+    {
+      "id": 151776,
+      "text": "[PAD151776]",
+      "type": 5
+    },
+    {
+      "id": 151777,
+      "text": "[PAD151777]",
+      "type": 5
+    },
+    {
+      "id": 151778,
+      "text": "[PAD151778]",
+      "type": 5
+    },
+    {
+      "id": 151779,
+      "text": "[PAD151779]",
+      "type": 5
+    },
+    {
+      "id": 151780,
+      "text": "[PAD151780]",
+      "type": 5
+    },
+    {
+      "id": 151781,
+      "text": "[PAD151781]",
+      "type": 5
+    },
+    {
+      "id": 151782,
+      "text": "[PAD151782]",
+      "type": 5
+    },
+    {
+      "id": 151783,
+      "text": "[PAD151783]",
+      "type": 5
+    },
+    {
+      "id": 151784,
+      "text": "[PAD151784]",
+      "type": 5
+    },
+    {
+      "id": 151785,
+      "text": "[PAD151785]",
+      "type": 5
+    },
+    {
+      "id": 151786,
+      "text": "[PAD151786]",
+      "type": 5
+    },
+    {
+      "id": 151787,
+      "text": "[PAD151787]",
+      "type": 5
+    },
+    {
+      "id": 151788,
+      "text": "[PAD151788]",
+      "type": 5
+    },
+    {
+      "id": 151789,
+      "text": "[PAD151789]",
+      "type": 5
+    },
+    {
+      "id": 151790,
+      "text": "[PAD151790]",
+      "type": 5
+    },
+    {
+      "id": 151791,
+      "text": "[PAD151791]",
+      "type": 5
+    },
+    {
+      "id": 151792,
+      "text": "[PAD151792]",
+      "type": 5
+    },
+    {
+      "id": 151793,
+      "text": "[PAD151793]",
+      "type": 5
+    },
+    {
+      "id": 151794,
+      "text": "[PAD151794]",
+      "type": 5
+    },
+    {
+      "id": 151795,
+      "text": "[PAD151795]",
+      "type": 5
+    },
+    {
+      "id": 151796,
+      "text": "[PAD151796]",
+      "type": 5
+    },
+    {
+      "id": 151797,
+      "text": "[PAD151797]",
+      "type": 5
+    },
+    {
+      "id": 151798,
+      "text": "[PAD151798]",
+      "type": 5
+    },
+    {
+      "id": 151799,
+      "text": "[PAD151799]",
+      "type": 5
+    },
+    {
+      "id": 151800,
+      "text": "[PAD151800]",
+      "type": 5
+    },
+    {
+      "id": 151801,
+      "text": "[PAD151801]",
+      "type": 5
+    },
+    {
+      "id": 151802,
+      "text": "[PAD151802]",
+      "type": 5
+    },
+    {
+      "id": 151803,
+      "text": "[PAD151803]",
+      "type": 5
+    },
+    {
+      "id": 151804,
+      "text": "[PAD151804]",
+      "type": 5
+    },
+    {
+      "id": 151805,
+      "text": "[PAD151805]",
+      "type": 5
+    },
+    {
+      "id": 151806,
+      "text": "[PAD151806]",
+      "type": 5
+    },
+    {
+      "id": 151807,
+      "text": "[PAD151807]",
+      "type": 5
+    },
+    {
+      "id": 151808,
+      "text": "[PAD151808]",
+      "type": 5
+    },
+    {
+      "id": 151809,
+      "text": "[PAD151809]",
+      "type": 5
+    },
+    {
+      "id": 151810,
+      "text": "[PAD151810]",
+      "type": 5
+    },
+    {
+      "id": 151811,
+      "text": "[PAD151811]",
+      "type": 5
+    },
+    {
+      "id": 151812,
+      "text": "[PAD151812]",
+      "type": 5
+    },
+    {
+      "id": 151813,
+      "text": "[PAD151813]",
+      "type": 5
+    },
+    {
+      "id": 151814,
+      "text": "[PAD151814]",
+      "type": 5
+    },
+    {
+      "id": 151815,
+      "text": "[PAD151815]",
+      "type": 5
+    },
+    {
+      "id": 151816,
+      "text": "[PAD151816]",
+      "type": 5
+    },
+    {
+      "id": 151817,
+      "text": "[PAD151817]",
+      "type": 5
+    },
+    {
+      "id": 151818,
+      "text": "[PAD151818]",
+      "type": 5
+    },
+    {
+      "id": 151819,
+      "text": "[PAD151819]",
+      "type": 5
+    },
+    {
+      "id": 151820,
+      "text": "[PAD151820]",
+      "type": 5
+    },
+    {
+      "id": 151821,
+      "text": "[PAD151821]",
+      "type": 5
+    },
+    {
+      "id": 151822,
+      "text": "[PAD151822]",
+      "type": 5
+    },
+    {
+      "id": 151823,
+      "text": "[PAD151823]",
+      "type": 5
+    },
+    {
+      "id": 151824,
+      "text": "[PAD151824]",
+      "type": 5
+    },
+    {
+      "id": 151825,
+      "text": "[PAD151825]",
+      "type": 5
+    },
+    {
+      "id": 151826,
+      "text": "[PAD151826]",
+      "type": 5
+    },
+    {
+      "id": 151827,
+      "text": "[PAD151827]",
+      "type": 5
+    },
+    {
+      "id": 151828,
+      "text": "[PAD151828]",
+      "type": 5
+    },
+    {
+      "id": 151829,
+      "text": "[PAD151829]",
+      "type": 5
+    },
+    {
+      "id": 151830,
+      "text": "[PAD151830]",
+      "type": 5
+    },
+    {
+      "id": 151831,
+      "text": "[PAD151831]",
+      "type": 5
+    },
+    {
+      "id": 151832,
+      "text": "[PAD151832]",
+      "type": 5
+    },
+    {
+      "id": 151833,
+      "text": "[PAD151833]",
+      "type": 5
+    },
+    {
+      "id": 151834,
+      "text": "[PAD151834]",
+      "type": 5
+    },
+    {
+      "id": 151835,
+      "text": "[PAD151835]",
+      "type": 5
+    },
+    {
+      "id": 151836,
+      "text": "[PAD151836]",
+      "type": 5
+    },
+    {
+      "id": 151837,
+      "text": "[PAD151837]",
+      "type": 5
+    },
+    {
+      "id": 151838,
+      "text": "[PAD151838]",
+      "type": 5
+    },
+    {
+      "id": 151839,
+      "text": "[PAD151839]",
+      "type": 5
+    },
+    {
+      "id": 151840,
+      "text": "[PAD151840]",
+      "type": 5
+    },
+    {
+      "id": 151841,
+      "text": "[PAD151841]",
+      "type": 5
+    },
+    {
+      "id": 151842,
+      "text": "[PAD151842]",
+      "type": 5
+    },
+    {
+      "id": 151843,
+      "text": "[PAD151843]",
+      "type": 5
+    },
+    {
+      "id": 151844,
+      "text": "[PAD151844]",
+      "type": 5
+    },
+    {
+      "id": 151845,
+      "text": "[PAD151845]",
+      "type": 5
+    },
+    {
+      "id": 151846,
+      "text": "[PAD151846]",
+      "type": 5
+    },
+    {
+      "id": 151847,
+      "text": "[PAD151847]",
+      "type": 5
+    },
+    {
+      "id": 151848,
+      "text": "[PAD151848]",
+      "type": 5
+    },
+    {
+      "id": 151849,
+      "text": "[PAD151849]",
+      "type": 5
+    },
+    {
+      "id": 151850,
+      "text": "[PAD151850]",
+      "type": 5
+    },
+    {
+      "id": 151851,
+      "text": "[PAD151851]",
+      "type": 5
+    },
+    {
+      "id": 151852,
+      "text": "[PAD151852]",
+      "type": 5
+    },
+    {
+      "id": 151853,
+      "text": "[PAD151853]",
+      "type": 5
+    },
+    {
+      "id": 151854,
+      "text": "[PAD151854]",
+      "type": 5
+    },
+    {
+      "id": 151855,
+      "text": "[PAD151855]",
+      "type": 5
+    },
+    {
+      "id": 151856,
+      "text": "[PAD151856]",
+      "type": 5
+    },
+    {
+      "id": 151857,
+      "text": "[PAD151857]",
+      "type": 5
+    },
+    {
+      "id": 151858,
+      "text": "[PAD151858]",
+      "type": 5
+    },
+    {
+      "id": 151859,
+      "text": "[PAD151859]",
+      "type": 5
+    },
+    {
+      "id": 151860,
+      "text": "[PAD151860]",
+      "type": 5
+    },
+    {
+      "id": 151861,
+      "text": "[PAD151861]",
+      "type": 5
+    },
+    {
+      "id": 151862,
+      "text": "[PAD151862]",
+      "type": 5
+    },
+    {
+      "id": 151863,
+      "text": "[PAD151863]",
+      "type": 5
+    },
+    {
+      "id": 151864,
+      "text": "[PAD151864]",
+      "type": 5
+    },
+    {
+      "id": 151865,
+      "text": "[PAD151865]",
+      "type": 5
+    },
+    {
+      "id": 151866,
+      "text": "[PAD151866]",
+      "type": 5
+    },
+    {
+      "id": 151867,
+      "text": "[PAD151867]",
+      "type": 5
+    },
+    {
+      "id": 151868,
+      "text": "[PAD151868]",
+      "type": 5
+    },
+    {
+      "id": 151869,
+      "text": "[PAD151869]",
+      "type": 5
+    },
+    {
+      "id": 151870,
+      "text": "[PAD151870]",
+      "type": 5
+    },
+    {
+      "id": 151871,
+      "text": "[PAD151871]",
+      "type": 5
+    },
+    {
+      "id": 151872,
+      "text": "[PAD151872]",
+      "type": 5
+    },
+    {
+      "id": 151873,
+      "text": "[PAD151873]",
+      "type": 5
+    },
+    {
+      "id": 151874,
+      "text": "[PAD151874]",
+      "type": 5
+    },
+    {
+      "id": 151875,
+      "text": "[PAD151875]",
+      "type": 5
+    },
+    {
+      "id": 151876,
+      "text": "[PAD151876]",
+      "type": 5
+    },
+    {
+      "id": 151877,
+      "text": "[PAD151877]",
+      "type": 5
+    },
+    {
+      "id": 151878,
+      "text": "[PAD151878]",
+      "type": 5
+    },
+    {
+      "id": 151879,
+      "text": "[PAD151879]",
+      "type": 5
+    },
+    {
+      "id": 151880,
+      "text": "[PAD151880]",
+      "type": 5
+    },
+    {
+      "id": 151881,
+      "text": "[PAD151881]",
+      "type": 5
+    },
+    {
+      "id": 151882,
+      "text": "[PAD151882]",
+      "type": 5
+    },
+    {
+      "id": 151883,
+      "text": "[PAD151883]",
+      "type": 5
+    },
+    {
+      "id": 151884,
+      "text": "[PAD151884]",
+      "type": 5
+    },
+    {
+      "id": 151885,
+      "text": "[PAD151885]",
+      "type": 5
+    },
+    {
+      "id": 151886,
+      "text": "[PAD151886]",
+      "type": 5
+    },
+    {
+      "id": 151887,
+      "text": "[PAD151887]",
+      "type": 5
+    },
+    {
+      "id": 151888,
+      "text": "[PAD151888]",
+      "type": 5
+    },
+    {
+      "id": 151889,
+      "text": "[PAD151889]",
+      "type": 5
+    },
+    {
+      "id": 151890,
+      "text": "[PAD151890]",
+      "type": 5
+    },
+    {
+      "id": 151891,
+      "text": "[PAD151891]",
+      "type": 5
+    },
+    {
+      "id": 151892,
+      "text": "[PAD151892]",
+      "type": 5
+    },
+    {
+      "id": 151893,
+      "text": "[PAD151893]",
+      "type": 5
+    },
+    {
+      "id": 151894,
+      "text": "[PAD151894]",
+      "type": 5
+    },
+    {
+      "id": 151895,
+      "text": "[PAD151895]",
+      "type": 5
+    },
+    {
+      "id": 151896,
+      "text": "[PAD151896]",
+      "type": 5
+    },
+    {
+      "id": 151897,
+      "text": "[PAD151897]",
+      "type": 5
+    },
+    {
+      "id": 151898,
+      "text": "[PAD151898]",
+      "type": 5
+    },
+    {
+      "id": 151899,
+      "text": "[PAD151899]",
+      "type": 5
+    },
+    {
+      "id": 151900,
+      "text": "[PAD151900]",
+      "type": 5
+    },
+    {
+      "id": 151901,
+      "text": "[PAD151901]",
+      "type": 5
+    },
+    {
+      "id": 151902,
+      "text": "[PAD151902]",
+      "type": 5
+    },
+    {
+      "id": 151903,
+      "text": "[PAD151903]",
+      "type": 5
+    },
+    {
+      "id": 151904,
+      "text": "[PAD151904]",
+      "type": 5
+    },
+    {
+      "id": 151905,
+      "text": "[PAD151905]",
+      "type": 5
+    },
+    {
+      "id": 151906,
+      "text": "[PAD151906]",
+      "type": 5
+    },
+    {
+      "id": 151907,
+      "text": "[PAD151907]",
+      "type": 5
+    },
+    {
+      "id": 151908,
+      "text": "[PAD151908]",
+      "type": 5
+    },
+    {
+      "id": 151909,
+      "text": "[PAD151909]",
+      "type": 5
+    },
+    {
+      "id": 151910,
+      "text": "[PAD151910]",
+      "type": 5
+    },
+    {
+      "id": 151911,
+      "text": "[PAD151911]",
+      "type": 5
+    },
+    {
+      "id": 151912,
+      "text": "[PAD151912]",
+      "type": 5
+    },
+    {
+      "id": 151913,
+      "text": "[PAD151913]",
+      "type": 5
+    },
+    {
+      "id": 151914,
+      "text": "[PAD151914]",
+      "type": 5
+    },
+    {
+      "id": 151915,
+      "text": "[PAD151915]",
+      "type": 5
+    },
+    {
+      "id": 151916,
+      "text": "[PAD151916]",
+      "type": 5
+    },
+    {
+      "id": 151917,
+      "text": "[PAD151917]",
+      "type": 5
+    },
+    {
+      "id": 151918,
+      "text": "[PAD151918]",
+      "type": 5
+    },
+    {
+      "id": 151919,
+      "text": "[PAD151919]",
+      "type": 5
+    },
+    {
+      "id": 151920,
+      "text": "[PAD151920]",
+      "type": 5
+    },
+    {
+      "id": 151921,
+      "text": "[PAD151921]",
+      "type": 5
+    },
+    {
+      "id": 151922,
+      "text": "[PAD151922]",
+      "type": 5
+    },
+    {
+      "id": 151923,
+      "text": "[PAD151923]",
+      "type": 5
+    },
+    {
+      "id": 151924,
+      "text": "[PAD151924]",
+      "type": 5
+    },
+    {
+      "id": 151925,
+      "text": "[PAD151925]",
+      "type": 5
+    },
+    {
+      "id": 151926,
+      "text": "[PAD151926]",
+      "type": 5
+    },
+    {
+      "id": 151927,
+      "text": "[PAD151927]",
+      "type": 5
+    },
+    {
+      "id": 151928,
+      "text": "[PAD151928]",
+      "type": 5
+    },
+    {
+      "id": 151929,
+      "text": "[PAD151929]",
+      "type": 5
+    },
+    {
+      "id": 151930,
+      "text": "[PAD151930]",
+      "type": 5
+    },
+    {
+      "id": 151931,
+      "text": "[PAD151931]",
+      "type": 5
+    },
+    {
+      "id": 151932,
+      "text": "[PAD151932]",
+      "type": 5
+    },
+    {
+      "id": 151933,
+      "text": "[PAD151933]",
+      "type": 5
+    },
+    {
+      "id": 151934,
+      "text": "[PAD151934]",
+      "type": 5
+    },
+    {
+      "id": 151935,
+      "text": "[PAD151935]",
+      "type": 5
+    }
+  ],
+  "merges": [
+    "Ġ Ġ",
+    "i n",
+    "Ġ t",
+    "e r",
+    "o n",
+    "Ġ a",
+    "r e",
+    "a t",
+    "s t",
+    "e n",
+    "o r",
+    "Ġt h",
+    "Ċ Ċ",
+    "Ġ c",
+    "l e",
+    "Ġ s",
+    "i t",
+    "a n",
+    "a r",
+    "a l",
+    "Ġth e",
+    "Ġ p",
+    "Ġ f",
+    "o u",
+    "Ġ =",
+    "i s",
+    "in g",
+    "e s",
+    "Ġ w",
+    "e d",
+    "Ġ b",
+    "Ġ d",
+    "e t",
+    "Ġ m",
+    "Ġ o",
+    "r o",
+    "a s",
+    "e l",
+    "n d",
+    "Ġ in",
+    "Ġ h",
+    "i d",
+    "Ġ n",
+    "a m",
+    "Ġt o",
+    "Ġ re",
+    "- -",
+    "Ġo f",
+    "o m",
+    "i m",
+    "č Ċ",
+    "i l",
+    "Ġa nd",
+    "s e",
+    "Ġ l",
+    "e x",
+    "Ġ \"",
+    "c h",
+    "u t",
+    "e m",
+    "Ġ g",
+    "i v",
+    "c e",
+    "o d",
+    "Ġ v",
+    "at e",
+    "Ġ T",
+    "a y",
+    "o t",
+    "u s",
+    "Ġ C",
+    "Ġ I",
+    "u n",
+    "u l",
+    "u e",
+    "Ġ A",
+    "o w",
+    "Ġ '",
+    "Ġf or",
+    "a b",
+    "u m",
+    "am e",
+    "Ġ is",
+    "p e",
+    "â Ģ",
+    "Ġ y",
+    "i st",
+    "h e",
+    "Ġ e",
+    "l o",
+    "Ġ M",
+    "Ġ on",
+    "a p",
+    "as s",
+    "> Ċ",
+    "l y",
+    "a v",
+    "i r",
+    "n t",
+    "en d",
+    "Ġd e",
+    "it h",
+    "ou t",
+    "v er",
+    "ex t",
+    "Ġth at",
+    "Ġ it",
+    "Ġ r",
+    "an d",
+    "Ġa s",
+    "Ġ L",
+    "q u",
+    "Ġw ith",
+    "u p",
+    "o re",
+    "r i",
+    "t er",
+    "Ġ W",
+    "Ġ E",
+    "Ġc om",
+    "ar t",
+    "Ġ H",
+    "il l",
+    "Ġ +",
+    ". .",
+    "Ġy ou",
+    "Ġ O",
+    "l d",
+    "Ġs e",
+    "Ġ le",
+    "an t",
+    "av e",
+    "Ġa re",
+    "Ġin t",
+    "iv e",
+    "Ġn ot",
+    "o g",
+    "or d",
+    "al l",
+    "im e",
+    "a re",
+    "Ġb y",
+    "Ġs h",
+    "o k",
+    "Ġh e",
+    "ar d",
+    "Ġw as",
+    "Ġ u",
+    "ĠT he",
+    "id e",
+    "i b",
+    "r ou",
+    "a k",
+    "v e",
+    "at h",
+    "y st",
+    "a ch",
+    "yst em",
+    "ou ld",
+    "Ġp l",
+    "ou nt",
+    "d d",
+    "Ġc an",
+    "ro w",
+    "b er",
+    "at ed",
+    "ap p",
+    "Ġw ill",
+    "R e",
+    "Ġ out",
+    "Ġ up",
+    "a x",
+    "Ġb ut",
+    "Ġ Ċ",
+    "Ġ _",
+    "f t",
+    "Ġm e",
+    "re e",
+    "in k",
+    "Ġs o",
+    "Ġl o",
+    "ow n",
+    "R E",
+    "Ġh is",
+    "Ġ Y",
+    "n e",
+    "Ġs a",
+    "e f",
+    "f o",
+    "Ġn ame",
+    "le d",
+    "ar k",
+    "Ġm y",
+    "ir st",
+    "us er",
+    "Ġt ime",
+    "Ġm an",
+    "um ber",
+    "nd er",
+    "Ġ qu",
+    "c a",
+    "Ġ ro",
+    "ay s",
+    "at er",
+    "Ã ©",
+    "is s",
+    "f ter",
+    "rou nd",
+    "Ġsa id",
+    "Ġh er",
+    "Ġas s",
+    "Ġg r",
+    ".. .",
+    "Ġint o",
+    "Ġf e",
+    "Ġf irst",
+    "w ord",
+    "Ġ --",
+    "ver y",
+    "Ġ Q",
+    "Ġu nder",
+    "n ing",
+    "ĠH e",
+    "_ st",
+    "f ul",
+    "el p",
+    "ã Ģ",
+    "Ġ Ð",
+    "Ġre m",
+    "a it",
+    "Ġs he",
+    "a z",
+    "Ġn umber",
+    "em ber",
+    "or ld",
+    "o od",
+    "Ġlo ok",
+    "Ġc ould",
+    "it t",
+    "Ġa p",
+    "ĠY ou",
+    "Ġpl ay",
+    "Ġse e",
+    "Ġh elp",
+    "Ġd own",
+    "Ġb l",
+    "Ð µ",
+    "Ġd id",
+    "Ġs m",
+    "ou se",
+    "il y",
+    "ĉ Ċ",
+    "are d",
+    "it ed",
+    "Ġw ay",
+    "Ġde c",
+    "W h",
+    "Ġman y",
+    "ĠA l",
+    "Ġth ink",
+    "> <",
+    "Ñ Ĥ",
+    "Ð ¸",
+    "Ġe ach",
+    "Ġs ame",
+    "ath er",
+    "f e",
+    "Ġw orld",
+    "Ġc re",
+    "Ġd ay",
+    "O n",
+    "Ġv is",
+    "Ġc a",
+    "Ñ Ģ",
+    "A dd",
+    "iv ed",
+    "ĉ b",
+    "Ġto o",
+    "Ġf ore",
+    "Ġh app",
+    "b ar",
+    "Ġo ld",
+    "Ġth ree",
+    "itt le",
+    "ĠThe y",
+    "Ġt ri",
+    "ĠA d",
+    "ĠC l",
+    "C ount",
+    "Ġre d",
+    "Ġcom e",
+    "p ly",
+    "a f",
+    "ĠH ow",
+    "ir d",
+    "Y ou",
+    "Ġsm all",
+    "o o",
+    "Ġl ittle",
+    "Ġf ri",
+    "Ġap pe",
+    "' m",
+    "Ġg re",
+    "Ġd ays",
+    "! !",
+    "ou d",
+    "Ġg ive",
+    "' ve",
+    "Ġw ater",
+    "Ġf ar",
+    "Ġm iss",
+    "Ġme et",
+    "Ġcre ated",
+    "ä ¸",
+    "Ġh ouse",
+    "ĠO ne",
+    "Ġw ait",
+    "Wh at",
+    "i et",
+    "L L",
+    "Â ł",
+    "' d",
+    "Ġfri end",
+    "re w",
+    "Ġm or",
+    "ri ef",
+    "c d",
+    "b it",
+    "id ed",
+    "ĠA fter",
+    "el lo",
+    "row n",
+    "_st art",
+    "Ġg round",
+    "Ġt ree",
+    "Ġb all",
+    "M y",
+    "Ġup on",
+    "Ð ²",
+    "à ¤",
+    "Ġre ach",
+    "Ġd og",
+    "Ø §",
+    "N ext",
+    "Ġpl ant",
+    "Ġrem ember",
+    "Ġp ark",
+    "Ġgre en",
+    "_ end",
+    "Ġhapp y",
+    "Ġbl ue",
+    "Ġplay ed",
+    "in y",
+    "G r",
+    "Ġg ave",
+    "Ġmor ning",
+    "R em",
+    "p a",
+    "Ġdec ided",
+    "Ġgr and",
+    "Ġtri ed",
+    "ed s",
+    "Ġs un",
+    "ĠE very",
+    "Ġmiss ing",
+    "ĠM ax",
+    "Ġs at",
+    "Ġw ood",
+    "Ġass ist",
+    "fo o",
+    "Ðµ ÑĤ",
+    "ard en",
+    "ĠT om",
+    "ä ½",
+    "Ù Ħ",
+    "ĉ ĠĠ",
+    "end o",
+    "Ġ Ø",
+    "Ġhelp ed",
+    "s ystem",
+    "Ġb es",
+    "ð Ł",
+    "H ello",
+    "Ġappe ared",
+    "Ġb rief",
+    "Ù ħ",
+    "Ġse ed",
+    "Ġr an",
+    "Ġhelp ful",
+    "Ġl ay",
+    "Ø ±",
+    "Ġ ðŁ",
+    "ist ant",
+    "ĠÐ ¼",
+    "Ġqu iet",
+    "Ġb ird",
+    "Ġvis ited",
+    "ab a",
+    "!! !",
+    "Ġl ived",
+    "On ce",
+    "à ¥",
+    "' S",
+    "Ġg arden",
+    "Ġfore st",
+    "Ġt iny",
+    "Ġb rown",
+    "ĠCl oud",
+    "Ġ à¤",
+    "h ello",
+    "Ġf oo",
+    "Ġle af",
+    "w en",
+    "' T",
+    "Ġ ĉĊ",
+    "Ġro l",
+    "Ġassist ant",
+    "Ġg ate",
+    "Ġse eds",
+    "ĠW E",
+    "ab bit",
+    "Re ply",
+    "Ø ¨",
+    "ĠH ello",
+    "Ġth rew",
+    "Ġwood en",
+    "ĠÐ Ł",
+    "ãĢ Ģ",
+    "Ġrol led",
+    "f ather",
+    "Ø ¹",
+    "Ġ Ùħ",
+    "T om",
+    "Ġbrief ly",
+    "Ð¸ Ð²",
+    "å ¥",
+    "ĠØ ¨",
+    "ib aba",
+    "Rem ember",
+    "Ġwait ed",
+    "Ġbes ide",
+    "Â ²",
+    "à¥ į",
+    "Ø Ń",
+    "à¥į à¤",
+    "Ø§ ÙĦ",
+    "à¥ ĩ",
+    "... čĊ",
+    "Ġgrand father",
+    "Ġo ak",
+    "Ġr abbit",
+    "ç ķ",
+    "Gr and",
+    "Ġca fe",
+    "Ġsh iny",
+    "ĠL ily",
+    "Ġfe ather",
+    "Ġb az",
+    "ĠAd a",
+    "å¥ ½",
+    "Ì ģ",
+    "ĠAl ibaba",
+    "ä½ ł",
+    "! ?",
+    "f Ã©",
+    "ĠðŁ ĳ",
+    "â ħ",
+    "ass istant",
+    "Ð¸ ÑĢ",
+    "à¤ ¸",
+    "ĠÐŁ ÑĢ",
+    "à¤ ®",
+    "ĉb ar",
+    "' RE",
+    "çķ Į",
+    "ä¸ ĸ",
+    "ä¸ĸ çķĮ",
+    "ä½ł å¥½",
+    "ðŁ ĳ",
+    "ð Ĳ",
+    "ĠØ¨ Ø§ÙĦ",
+    "Ø¨ Ø§",
+    "Ø§ÙĦ Ùħ",
+    "ðĲ į",
+    "Ø± ØŃ",
+    "Ø¹ Ø§ÙĦÙħ",
+    "ĠÐ¼ Ð¸ÑĢ",
+    "ðŁĳ ©",
+    "ðŁĳ §",
+    "ðŁĳ ¦"
+  ]
+}

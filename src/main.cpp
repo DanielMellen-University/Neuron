@@ -9,6 +9,7 @@
 #include <string_view>
 
 #include "neuron/model.hpp"
+#include "neuron/chat.hpp"
 #include "neuron/tokenizer.hpp"
 #include "neuron/version.hpp"
 
@@ -20,7 +21,14 @@ void print_usage() {
       "       neuron tokenize -m MODEL -p PROMPT [--no-add-special] [--no-parse-special]\n"
       "       neuron logits -m MODEL -p PROMPT --output FILE [--ctx-size N]\n"
       "\n"
-      "Dense llama GGUF models with F32/F16 weights and llama vocabularies.\n"
+      "       neuron run -m MODEL --chat -p PROMPT [--system TEXT] -n N --greedy\n"
+      "       neuron tokenize|template -m MODEL --chat [--message ROLE TEXT]... [-p TEXT]\n"
+      "\n"
+      "Dense llama and Qwen2 GGUF models with F32/F16 weights.\n"
+      "--prompt-file FILE reads prompt bytes instead of -p.\n"
+      "--chat applies Qwen2.5 ChatML; repeated --message flags supply history.\n"
+      "--system replaces the default system text; -p adds a final user message.\n"
+      "--recompute checks generation by evaluating the full sequence at every step.\n"
       "--json emits prompt/generated token IDs and timings. logits writes raw F32.\n"
       "--ctx-size defaults to 2048, matching the M1 reference context.\n");
 }
@@ -46,9 +54,12 @@ int execute(int argc, char** argv) {
     print_usage(); return 0;
   }
   const std::string command = argv[1];
-  if (command != "run" && command != "tokenize" && command != "logits") throw std::invalid_argument("unknown command: " + command);
+  if (command != "run" && command != "tokenize" && command != "logits" && command != "template") throw std::invalid_argument("unknown command: " + command);
   std::string path, prompt, output;
   bool has_prompt = false, greedy = false, json = false, add_special = true, parse_special = true;
+  bool chat = false, recompute = false, has_system = false;
+  std::string system;
+  std::vector<neuron::ChatMessage> messages;
   std::size_t predict = 128, context = 2048;
   for (int i = 2; i < argc; ++i) {
     const std::string_view option = argv[i];
@@ -58,8 +69,18 @@ int execute(int argc, char** argv) {
     };
     if (option == "-m") path = value();
     else if (option == "-p") { prompt = value(); has_prompt = true; }
+    else if (option == "--prompt-file") {
+      const auto prompt_path = value();
+      std::ifstream stream(prompt_path, std::ios::binary);
+      if (!stream) throw std::invalid_argument("cannot read prompt file: " + prompt_path);
+      prompt.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()); has_prompt = true;
+    }
     else if (option == "-n" && command == "run") predict = count(value());
-    else if (option == "--ctx-size" && command != "tokenize") context = count(value());
+    else if (option == "--chat") chat = true;
+    else if (option == "--system") { system = value(); has_system = true; chat = true; }
+    else if (option == "--message") { const auto role = value(); messages.push_back({role, value()}); chat = true; }
+    else if (option == "--recompute" && command == "run") recompute = true;
+    else if (option == "--ctx-size" && command != "tokenize" && command != "template") context = count(value());
     else if (option == "--output" && command == "logits") output = value();
     else if (option == "--greedy" && command == "run") greedy = true;
     else if (option == "--json" && command == "run") json = true;
@@ -67,17 +88,30 @@ int execute(int argc, char** argv) {
     else if (option == "--no-parse-special" && command == "tokenize") parse_special = false;
     else throw std::invalid_argument("unknown option: " + std::string(option));
   }
-  if (path.empty() || !has_prompt) throw std::invalid_argument("-m MODEL and -p PROMPT are required");
-  if (command == "tokenize") {
-    neuron::Gguf file(path); neuron::Tokenizer tokenizer(file);
-    ids(tokenizer.encode(prompt, add_special, parse_special)); std::printf("\n"); return 0;
+  if (path.empty() || (!has_prompt && messages.empty()))
+    throw std::invalid_argument("-m MODEL and a prompt (-p or --message) are required");
+  if (command == "template" && !chat) throw std::invalid_argument("template requires --chat");
+  // Validate and tokenize before loading weights or allocating a model cache.
+  neuron::Gguf file(path);
+  neuron::Tokenizer tokenizer(file);
+  if (chat) {
+    if (file.at("general.architecture").string() != "qwen2") throw std::invalid_argument("--chat requires a Qwen2 model");
+    if (has_system) {
+      if (!messages.empty() && messages.front().role == "system")
+        throw std::invalid_argument("use either --system or a leading system message");
+      messages.insert(messages.begin(), {"system", system});
+    }
+    if (has_prompt) messages.push_back({"user", prompt});
+    prompt = neuron::qwen2_chat(messages);
   }
+  if (command == "template") { std::fwrite(prompt.data(), 1, prompt.size(), stdout); return 0; }
+  const auto tokens = tokenizer.encode(prompt, add_special, parse_special);
+  if (command == "tokenize") { ids(tokens); std::printf("\n"); return 0; }
   if (command == "run" && !greedy) throw std::invalid_argument("run requires --greedy");
   if (command == "logits" && output.empty()) throw std::invalid_argument("logits requires --output FILE");
-  neuron::Model model(path, context); neuron::Tokenizer tokenizer(model.file());
-  const auto tokens = tokenizer.encode(prompt);
-  if (command == "run" && (tokens.size() > model.config().context || predict > model.config().context - tokens.size()))
+  if (tokens.size() > context || (command == "run" && predict > context - tokens.size()))
     throw std::invalid_argument("prompt plus requested generation exceeds context limit; use --ctx-size to override explicitly");
+  neuron::Model model(path, context);
   const auto start = Clock::now(); auto logits = model.forward(tokens); const double prompt_seconds = seconds(start);
   if (command == "logits") {
     std::ofstream stream(output, std::ios::binary);
@@ -85,18 +119,31 @@ int execute(int argc, char** argv) {
     if (!stream) throw std::runtime_error("cannot write logits: " + output);
     return 0;
   }
-  std::vector<std::int32_t> generated;
+  struct TopTwo { std::int32_t first, second; float gap; };
+  std::vector<TopTwo> top2;
+  std::vector<std::int32_t> generated, sequence = tokens;
   const auto generation_start = Clock::now();
   for (std::size_t i = 0; i < predict; ++i) {
     const auto next = static_cast<std::int32_t>(std::max_element(logits.begin(), logits.end()) - logits.begin());
-    if (next == tokenizer.eos()) break;
+    std::int32_t second = next;
+    for (std::size_t t = 0; t < logits.size(); ++t)
+      if (static_cast<std::int32_t>(t) != next && (second == next || logits[t] > logits[static_cast<std::size_t>(second)])) second = static_cast<std::int32_t>(t);
+    top2.push_back({next, second, logits[static_cast<std::size_t>(next)] - logits[static_cast<std::size_t>(second)]});
+    if (tokenizer.is_eog(next)) break;
     generated.push_back(next);
     if (!json) { const auto piece = tokenizer.piece(next); std::fwrite(piece.data(), 1, piece.size(), stdout); std::fflush(stdout); }
-    if (i + 1 < predict) logits = model.step(next);
+    if (i + 1 < predict) {
+      if (recompute) { sequence.push_back(next); logits = model.forward(sequence); }
+      else logits = model.step(next);
+    }
   }
   const double generation_seconds = seconds(generation_start);
   if (json) {
     std::printf("{\"prompt_tokens\":"); ids(tokens); std::printf(",\"generated_tokens\":"); ids(generated);
+    std::printf(",\"top2\":[");
+    for (std::size_t i = 0; i < top2.size(); ++i)
+      std::printf("%s{\"first\":%d,\"second\":%d,\"gap\":%.9g}", i == 0 ? "" : ",", top2[i].first, top2[i].second, static_cast<double>(top2[i].gap));
+    std::printf("]");
     const double steps = static_cast<double>(generated.empty() ? 0 : generated.size() - 1);
     std::printf(",\"timings\":{\"prompt_n\":%zu,\"prompt_ms\":%.9g,\"predicted_n\":%zu,\"predicted_ms\":%.9g,\"prompt_per_second\":%.9g,\"predicted_per_second\":%.9g}}\n",
                 tokens.size(), prompt_seconds * 1000, generated.size(), generation_seconds * 1000,

@@ -78,6 +78,7 @@ neuron::Vocabulary bpe_vocab() {
     const auto at = merge.find(' ');
     v.tokens.push_back({merge.substr(0, at) + merge.substr(at + 1), 0, 1});
   }
+  for (const auto* text : {"<|fim_pad|>", "<|fim_repo|>", "<|file_sep|>"}) v.tokens.push_back({text,0,3});
   return v;
 }
 }
@@ -99,6 +100,7 @@ NEURON_TEST(byte_bpe_rank_regex_boundaries_and_decode) {
   CHECK((t.encode("<|im_start|>abc<|im_end|>") == std::vector<std::int32_t>{1,id("abc"),2}));
   CHECK(t.encode("<|im_start|>", false, false).size() > 1);
   CHECK(t.is_eog(0)); CHECK(t.is_eog(2)); CHECK(!t.is_eog(1)); CHECK(!t.is_eog(-1));
+  CHECK(t.is_eog(id("<|fim_pad|>"))); CHECK(t.is_eog(id("<|fim_repo|>"))); CHECK(t.is_eog(id("<|file_sep|>")));
   for (const std::string& text : std::vector<std::string>{"café 世界 🐈", "a\u00a0b\u2003c", "1234567890", "\t \r\n  abc  ", std::string("\0\x01", 2)})
     CHECK_EQ(t.decode(t.encode(text)), text);
   CHECK_THROWS_AS(t.encode(std::string("\xff", 1)), std::runtime_error);
