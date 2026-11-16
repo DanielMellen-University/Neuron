@@ -9,7 +9,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | Milestone | Status |
 | --- | --- |
 | M0 Skeleton: build, CI, test harness, README, roadmap | done |
-| M1 llama.cpp baseline and harness | not started |
+| M1 llama.cpp baseline and harness | done |
 | M2 TinyStories FP32 forward pass and tokenizer | not started |
 | M3 Qwen2.5 1.5B load, chat template, KV cache | not started |
 | M4 int8 and 4-bit quantization | not started |
@@ -20,6 +20,12 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 ## M1: llama.cpp baseline and harness
 
 Goal: a fixed reference to measure Neuron against, and the tooling to compare against it.
+
+Completed on Ghost: pinned download and build scripts, three fixed prompts,
+greedy reference tokens and measured speeds at 1, 4 and 8 threads, and a
+model-free compare test suite in CTest. [bench/BASELINE.md](bench/BASELINE.md)
+records the inputs, power state, results, reproduction commands and local
+validation. Neuron inference remains work for M2 onward.
 
 Acceptance criteria:
 
