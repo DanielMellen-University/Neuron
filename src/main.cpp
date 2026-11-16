@@ -9,6 +9,7 @@
 #include <string_view>
 
 #include "neuron/model.hpp"
+#include "neuron/perplexity.hpp"
 #include "neuron/chat.hpp"
 #include "neuron/tokenizer.hpp"
 #include "neuron/version.hpp"
@@ -24,7 +25,8 @@ void print_usage() {
       "       neuron run -m MODEL --chat -p PROMPT [--system TEXT] -n N --greedy\n"
       "       neuron tokenize|template -m MODEL --chat [--message ROLE TEXT]... [-p TEXT]\n"
       "\n"
-      "Dense llama and Qwen2 GGUF models with F32/F16 weights.\n"
+      "       neuron perplexity -m MODEL --prompt-file FILE --ctx-size N [--chunks N]\n"
+      "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0 weights.\n"
       "--prompt-file FILE reads prompt bytes instead of -p.\n"
       "--chat applies Qwen2.5 ChatML; repeated --message flags supply history.\n"
       "--system replaces the default system text; -p adds a final user message.\n"
@@ -54,13 +56,13 @@ int execute(int argc, char** argv) {
     print_usage(); return 0;
   }
   const std::string command = argv[1];
-  if (command != "run" && command != "tokenize" && command != "logits" && command != "template") throw std::invalid_argument("unknown command: " + command);
+  if (command != "run" && command != "tokenize" && command != "logits" && command != "template" && command != "perplexity") throw std::invalid_argument("unknown command: " + command);
   std::string path, prompt, output;
   bool has_prompt = false, greedy = false, json = false, add_special = true, parse_special = true;
   bool chat = false, recompute = false, has_system = false;
   std::string system;
   std::vector<neuron::ChatMessage> messages;
-  std::size_t predict = 128, context = 2048;
+  std::size_t predict = 128, context = 2048, chunks = 0;
   for (int i = 2; i < argc; ++i) {
     const std::string_view option = argv[i];
     auto value = [&]() -> std::string {
@@ -76,9 +78,10 @@ int execute(int argc, char** argv) {
       prompt.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()); has_prompt = true;
     }
     else if (option == "-n" && command == "run") predict = count(value());
-    else if (option == "--chat") chat = true;
-    else if (option == "--system") { system = value(); has_system = true; chat = true; }
-    else if (option == "--message") { const auto role = value(); messages.push_back({role, value()}); chat = true; }
+    else if (option == "--chunks" && command == "perplexity") chunks = count(value());
+    else if (option == "--chat" && command != "perplexity") chat = true;
+    else if (option == "--system" && command != "perplexity") { system = value(); has_system = true; chat = true; }
+    else if (option == "--message" && command != "perplexity") { const auto role = value(); messages.push_back({role, value()}); chat = true; }
     else if (option == "--recompute" && command == "run") recompute = true;
     else if (option == "--ctx-size" && command != "tokenize" && command != "template") context = count(value());
     else if (option == "--output" && command == "logits") output = value();
@@ -109,6 +112,15 @@ int execute(int argc, char** argv) {
   if (command == "tokenize") { ids(tokens); std::printf("\n"); return 0; }
   if (command == "run" && !greedy) throw std::invalid_argument("run requires --greedy");
   if (command == "logits" && output.empty()) throw std::invalid_argument("logits requires --output FILE");
+  if (command == "perplexity") {
+    neuron::Model model(path, context);
+    const auto start = Clock::now();
+    const auto result = neuron::perplexity(model, tokens, chunks);
+    std::printf("{\"context\":%zu,\"chunks\":%zu,\"scored_tokens\":%zu,\"nll\":%.17g,\"perplexity\":%.17g,\"seconds\":%.9g,\"tokens\":",
+                context, result.chunks, result.scored_tokens, result.negative_log_likelihood, result.value(), seconds(start));
+    ids(tokens); std::printf("}\n");
+    return 0;
+  }
   if (tokens.size() > context || (command == "run" && predict > context - tokens.size()))
     throw std::invalid_argument("prompt plus requested generation exceeds context limit; use --ctx-size to override explicitly");
   neuron::Model model(path, context);

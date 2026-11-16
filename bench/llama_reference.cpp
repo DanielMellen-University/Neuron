@@ -6,6 +6,8 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cmath>
+#include <chrono>
 #include <cstdio>
 #include <cstring>
 #include <fstream>
@@ -16,10 +18,10 @@
 
 int main(int argc, char** argv) {
   try {
-    if (argc < 3) throw std::runtime_error("usage: llama-reference MODEL TEXT [--logits FILE] [--generate N] [--chat FILE --render FILE] [--no-add-special] [--no-parse-special] [--cache-f16]");
+    if (argc < 3) throw std::runtime_error("usage: llama-reference MODEL TEXT [--logits FILE] [--generate N] [--perplexity CONTEXT --chunks N] [--chat FILE --render FILE] [--no-add-special] [--no-parse-special] [--cache-f16]");
     bool add_special = true, parse_special = true, cache_f16 = false;
     std::string output, chat, rendered, prompt_file;
-    int generate = 0;
+    int generate = 0, ppl_context = 0, chunks = 0;
     for (int i = 3; i < argc; ++i) {
       const std::string option = argv[i];
       if (option == "--no-add-special") add_special = false;
@@ -29,6 +31,8 @@ int main(int argc, char** argv) {
       else if (option == "--prompt-file" && i + 1 < argc) prompt_file = argv[++i];
       else if (option == "--chat" && i + 1 < argc) chat = argv[++i];
       else if (option == "--render" && i + 1 < argc) rendered = argv[++i];
+      else if (option == "--perplexity" && i + 1 < argc) ppl_context = std::stoi(argv[++i]);
+      else if (option == "--chunks" && i + 1 < argc) chunks = std::stoi(argv[++i]);
       else if (option == "--generate" && i + 1 < argc) generate = std::stoi(argv[++i]);
       else throw std::runtime_error("unknown option: " + option);
     }
@@ -38,7 +42,7 @@ int main(int argc, char** argv) {
     overrides[0].tag = LLAMA_KV_OVERRIDE_TYPE_INT;
     std::strcpy(overrides[0].key, "llama.context_length"); overrides[0].val_i64 = 2048;
     auto mp = llama_model_default_params(); mp.n_gpu_layers = 0; mp.kv_overrides = overrides;
-    mp.vocab_only = output.empty() && generate == 0;
+    mp.vocab_only = output.empty() && generate == 0 && ppl_context == 0;
     std::unique_ptr<llama_model, decltype(&llama_model_free)> model(llama_model_load_from_file(argv[1], mp), llama_model_free);
     if (!model) throw std::runtime_error("model load failed");
     const auto* vocab = llama_model_get_vocab(model.get());
@@ -75,6 +79,45 @@ int main(int argc, char** argv) {
     result["generated_tokens"] = nlohmann::json::array();
     result["top2"] = nlohmann::json::array();
     std::string generated_text;
+    if (ppl_context != 0) {
+      if (ppl_context < 2 || ppl_context % 2 != 0 || chunks < 0)
+        throw std::runtime_error("perplexity needs an even context >= 2 and nonnegative chunks");
+      const auto context = static_cast<std::size_t>(ppl_context);
+      const auto available = tokens.size() / context;
+      const auto count = chunks == 0 ? available : static_cast<std::size_t>(chunks);
+      if (count == 0 || count > available) throw std::runtime_error("too few complete chunks");
+      auto cp = llama_context_default_params();
+      cp.n_ctx = static_cast<std::uint32_t>(context); cp.n_batch = 1; cp.n_ubatch = 1;
+      cp.n_threads = cp.n_threads_batch = 1;
+      cp.flash_attn_type = LLAMA_FLASH_ATTN_TYPE_DISABLED;
+      cp.type_k = cp.type_v = GGML_TYPE_F32;
+      std::unique_ptr<llama_context, decltype(&llama_free)> ctx(llama_init_from_model(model.get(), cp), llama_free);
+      if (!ctx) throw std::runtime_error("context creation failed");
+      const auto start = std::chrono::steady_clock::now();
+      double nll = 0;
+      std::size_t scored = 0;
+      for (std::size_t chunk = 0; chunk < count; ++chunk) {
+        llama_memory_clear(llama_get_memory(ctx.get()), true);
+        for (std::size_t i = 0; i + 1 < context; ++i) {
+          auto batch = llama_batch_get_one(tokens.data() + chunk * context + i, 1);
+          if (llama_decode(ctx.get(), batch) != 0) throw std::runtime_error("decode failed");
+          if (i + 1 < context / 2) continue;
+          const auto* logits = llama_get_logits_ith(ctx.get(), -1);
+          const auto size = llama_vocab_n_tokens(vocab);
+          const double maximum = *std::max_element(logits, logits + size);
+          double sum = 0;
+          for (int j = 0; j < size; ++j) sum += std::exp(static_cast<double>(logits[j]) - maximum);
+          nll += std::log(sum) + maximum - logits[tokens[chunk * context + i + 1]];
+          ++scored;
+        }
+      }
+      const double elapsed = std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count();
+      nlohmann::json report{{"context", context}, {"chunks", count}, {"scored_tokens", scored},
+                            {"nll", nll}, {"perplexity", std::exp(nll / static_cast<double>(scored))},
+                            {"seconds", elapsed}, {"tokens", tokens}};
+      std::printf("%s\n", report.dump().c_str());
+      return 0;
+    }
     if (!output.empty() || generate > 0) {
       if (tokens.empty() || tokens.size() + static_cast<std::size_t>(generate) > 2048)
         throw std::runtime_error("prompt plus generation exceeds context");

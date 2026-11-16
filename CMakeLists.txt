@@ -54,6 +54,7 @@ add_library(neuron
   src/kernels.cpp
   src/model.cpp
   src/quant.cpp
+  src/perplexity.cpp
   src/tokenizer.cpp
   src/tensor.cpp
   src/version.cpp)
