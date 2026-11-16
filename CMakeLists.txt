@@ -51,6 +51,7 @@ configure_file(include/neuron/config.hpp.in
 add_library(neuron
   src/gguf.cpp
   src/kernels.cpp
+  src/model.cpp
   src/tokenizer.cpp
   src/tensor.cpp
   src/version.cpp)
