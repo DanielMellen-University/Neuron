@@ -1,0 +1,291 @@
+{
+  "model_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+  "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+  "renderer": "common_chat_templates_apply, use_jinja=true, GGUF tokenizer.chat_template, add_generation_prompt=true",
+  "cases": [
+    {
+      "id": "three-turn-default",
+      "messages": [
+        {
+          "role": "user",
+          "content": "My name is Ada."
+        },
+        {
+          "role": "assistant",
+          "content": "Hello Ada. How can I help?"
+        },
+        {
+          "role": "user",
+          "content": "What is my name?"
+        }
+      ],
+      "tokens": [
+        151644,
+        8948,
+        198,
+        2610,
+        525,
+        1207,
+        16948,
+        11,
+        3465,
+        553,
+        54364,
+        14817,
+        13,
+        1446,
+        525,
+        264,
+        10950,
+        17847,
+        13,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        5050,
+        829,
+        374,
+        51149,
+        13,
+        151645,
+        198,
+        151644,
+        77091,
+        198,
+        9707,
+        51149,
+        13,
+        2585,
+        646,
+        358,
+        1492,
+        30,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        3838,
+        374,
+        847,
+        829,
+        30,
+        151645,
+        198,
+        151644,
+        77091,
+        198
+      ],
+      "rendered": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nMy name is Ada.<|im_end|>\n<|im_start|>assistant\nHello Ada. How can I help?<|im_end|>\n<|im_start|>user\nWhat is my name?<|im_end|>\n<|im_start|>assistant\n"
+    },
+    {
+      "id": "three-exchanges-default",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Remember the number 7."
+        },
+        {
+          "role": "assistant",
+          "content": "I will remember 7."
+        },
+        {
+          "role": "user",
+          "content": "Add 5 to it."
+        },
+        {
+          "role": "assistant",
+          "content": "7 + 5 = 12."
+        },
+        {
+          "role": "user",
+          "content": "What number did I first give you?"
+        }
+      ],
+      "tokens": [
+        151644,
+        8948,
+        198,
+        2610,
+        525,
+        1207,
+        16948,
+        11,
+        3465,
+        553,
+        54364,
+        14817,
+        13,
+        1446,
+        525,
+        264,
+        10950,
+        17847,
+        13,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        28590,
+        279,
+        1372,
+        220,
+        22,
+        13,
+        151645,
+        198,
+        151644,
+        77091,
+        198,
+        40,
+        686,
+        6099,
+        220,
+        22,
+        13,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        2212,
+        220,
+        20,
+        311,
+        432,
+        13,
+        151645,
+        198,
+        151644,
+        77091,
+        198,
+        22,
+        488,
+        220,
+        20,
+        284,
+        220,
+        16,
+        17,
+        13,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        3838,
+        1372,
+        1521,
+        358,
+        1156,
+        2968,
+        498,
+        30,
+        151645,
+        198,
+        151644,
+        77091,
+        198
+      ],
+      "rendered": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nRemember the number 7.<|im_end|>\n<|im_start|>assistant\nI will remember 7.<|im_end|>\n<|im_start|>user\nAdd 5 to it.<|im_end|>\n<|im_start|>assistant\n7 + 5 = 12.<|im_end|>\n<|im_start|>user\nWhat number did I first give you?<|im_end|>\n<|im_start|>assistant\n"
+    },
+    {
+      "id": "explicit-system",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Reply briefly."
+        },
+        {
+          "role": "user",
+          "content": "Hello, 世界! 123"
+        },
+        {
+          "role": "assistant",
+          "content": "Hello!"
+        },
+        {
+          "role": "user",
+          "content": "Count to three."
+        }
+      ],
+      "tokens": [
+        151644,
+        8948,
+        198,
+        20841,
+        26753,
+        13,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        9707,
+        11,
+        220,
+        99489,
+        0,
+        220,
+        16,
+        17,
+        18,
+        151645,
+        198,
+        151644,
+        77091,
+        198,
+        9707,
+        0,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        2507,
+        311,
+        2326,
+        13,
+        151645,
+        198,
+        151644,
+        77091,
+        198
+      ],
+      "rendered": "<|im_start|>system\nReply briefly.<|im_end|>\n<|im_start|>user\nHello, 世界! 123<|im_end|>\n<|im_start|>assistant\nHello!<|im_end|>\n<|im_start|>user\nCount to three.<|im_end|>\n<|im_start|>assistant\n"
+    },
+    {
+      "id": "empty-system",
+      "messages": [
+        {
+          "role": "system",
+          "content": ""
+        },
+        {
+          "role": "user",
+          "content": "Hello"
+        }
+      ],
+      "tokens": [
+        151644,
+        8948,
+        198,
+        151645,
+        198,
+        151644,
+        872,
+        198,
+        9707,
+        151645,
+        198,
+        151644,
+        77091,
+        198
+      ],
+      "rendered": "<|im_start|>system\n<|im_end|>\n<|im_start|>user\nHello<|im_end|>\n<|im_start|>assistant\n"
+    }
+  ]
+}

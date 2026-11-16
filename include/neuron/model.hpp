@@ -12,9 +12,10 @@ namespace neuron {
 struct ModelConfig {
   std::size_t width, hidden, layers, heads, kv_heads, head_size, rotary_dims, vocabulary, context;
   float rms_epsilon, rope_base;
+  bool rope_neox;
 };
 
-// Dense llama transformer. F32 weights stay mapped; F16 weights are converted
+// Dense llama or Qwen2 transformer. F32 weights stay mapped; F16 weights are converted
 // once on load. Activations and the single-sequence K/V state use FP32.
 class Model {
  public:
@@ -33,7 +34,7 @@ class Model {
     std::span<const float> data;
   };
   struct Layer {
-    Weight attn_norm, q, k, v, attn_output, ffn_norm, gate, up, down;
+    Weight attn_norm, q, k, v, q_bias, k_bias, v_bias, attn_output, ffn_norm, gate, up, down;
     std::vector<float> keys, values;
   };
   Weight load(const std::string& name, std::initializer_list<std::uint64_t> dimensions);

@@ -49,6 +49,7 @@ configure_file(include/neuron/config.hpp.in
   ${CMAKE_CURRENT_BINARY_DIR}/generated/neuron/config.hpp @ONLY)
 
 add_library(neuron
+  src/chat.cpp
   src/gguf.cpp
   src/kernels.cpp
   src/model.cpp

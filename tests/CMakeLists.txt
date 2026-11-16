@@ -8,7 +8,9 @@ endfunction()
 neuron_add_test(test_gguf)
 neuron_add_test(test_kernels)
 neuron_add_test(test_tokenizer)
+neuron_add_test(test_unicode)
 neuron_add_test(test_model)
+neuron_add_test(test_chat)
 neuron_add_test(test_shape)
 neuron_add_test(test_version)
 
@@ -22,3 +24,6 @@ set_tests_properties(cli_rejects_unknown_args PROPERTIES WILL_FAIL TRUE)
 find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter)
 add_test(NAME test_harness_compare
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_harness.py)
+
+add_test(NAME test_qwen_fixtures
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_qwen_fixtures.py $<TARGET_FILE:neuron_cli>)

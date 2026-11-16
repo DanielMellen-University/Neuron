@@ -1,0 +1,846 @@
+{
+  "model_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+  "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+  "reference_tool_sha256": "04937116870430ff6a7c212f335eed6653563e0a340a0677a4ba1c1c6bf7fafe",
+  "threads": 1,
+  "context": 2048,
+  "kv_type": "F32",
+  "flash_attention": false,
+  "prompt_format": "raw completion; no chat template",
+  "greedy": true,
+  "n_predict": 32,
+  "machine_before": {
+    "utc": "2026-11-16T08:42:32.695681+00:00",
+    "load_average": [
+      1.224609375,
+      1.06591796875,
+      0.6845703125
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "notes": "Scalar Neuron 2048-position memory run active on another core. Correctness collection; no speed claim.",
+  "runs": [
+    {
+      "generated_text": " search for her friend. She followed the feather to a small pond where she found the bird. The rabbit and the bird were very happy to see each other again",
+      "generated_tokens": [
+        2711,
+        369,
+        1059,
+        4238,
+        13,
+        2932,
+        8110,
+        279,
+        49776,
+        311,
+        264,
+        2613,
+        35570,
+        1380,
+        1340,
+        1730,
+        279,
+        11958,
+        13,
+        576,
+        38724,
+        323,
+        279,
+        11958,
+        1033,
+        1602,
+        6247,
+        311,
+        1490,
+        1817,
+        1008,
+        1549
+      ],
+      "prompt_tokens": [
+        12522,
+        5193,
+        264,
+        882,
+        11,
+        264,
+        2632,
+        38724,
+        12163,
+        29388,
+        264,
+        11340,
+        13638,
+        13,
+        7209,
+        6556,
+        11,
+        1340,
+        11994,
+        279,
+        1852,
+        2310,
+        37871,
+        4916,
+        311,
+        3367,
+        1059,
+        4238,
+        11,
+        264,
+        2613,
+        13876,
+        11958,
+        13,
+        3776,
+        1899,
+        11,
+        279,
+        11958,
+        572,
+        7402,
+        11,
+        323,
+        264,
+        41199,
+        6303,
+        49776,
+        10962,
+        389,
+        279,
+        4910,
+        13,
+        576,
+        38724,
+        6635,
+        311
+      ],
+      "top2": [
+        {
+          "first": 2711,
+          "gap": 0.18030548095703125,
+          "second": 1477
+        },
+        {
+          "first": 369,
+          "gap": 2.607645034790039,
+          "second": 279
+        },
+        {
+          "first": 1059,
+          "gap": 0.042118072509765625,
+          "second": 279
+        },
+        {
+          "first": 4238,
+          "gap": 2.4748458862304688,
+          "second": 13
+        },
+        {
+          "first": 13,
+          "gap": 0.4282989501953125,
+          "second": 323
+        },
+        {
+          "first": 2932,
+          "gap": 1.7825145721435547,
+          "second": 4636
+        },
+        {
+          "first": 8110,
+          "gap": 0.13097000122070312,
+          "second": 1730
+        },
+        {
+          "first": 279,
+          "gap": 1.967813491821289,
+          "second": 264
+        },
+        {
+          "first": 49776,
+          "gap": 1.9127998352050781,
+          "second": 8849
+        },
+        {
+          "first": 311,
+          "gap": 0.7211036682128906,
+          "second": 323
+        },
+        {
+          "first": 264,
+          "gap": 1.3860836029052734,
+          "second": 279
+        },
+        {
+          "first": 2613,
+          "gap": 1.2337207794189453,
+          "second": 14046
+        },
+        {
+          "first": 35570,
+          "gap": 0.11461448669433594,
+          "second": 32750
+        },
+        {
+          "first": 1380,
+          "gap": 0.20470428466796875,
+          "second": 11
+        },
+        {
+          "first": 1340,
+          "gap": 1.3790607452392578,
+          "second": 279
+        },
+        {
+          "first": 1730,
+          "gap": 1.4400138854980469,
+          "second": 5485
+        },
+        {
+          "first": 279,
+          "gap": 1.4588394165039062,
+          "second": 1059
+        },
+        {
+          "first": 11958,
+          "gap": 3.886699676513672,
+          "second": 2632
+        },
+        {
+          "first": 13,
+          "gap": 0.6202278137207031,
+          "second": 11
+        },
+        {
+          "first": 576,
+          "gap": 0.8822917938232422,
+          "second": 2932
+        },
+        {
+          "first": 38724,
+          "gap": 0.04462432861328125,
+          "second": 11958
+        },
+        {
+          "first": 323,
+          "gap": 0.3046894073486328,
+          "second": 572
+        },
+        {
+          "first": 279,
+          "gap": 2.298044204711914,
+          "second": 11958
+        },
+        {
+          "first": 11958,
+          "gap": 3.935688018798828,
+          "second": 13876
+        },
+        {
+          "first": 1033,
+          "gap": 0.1992511749267578,
+          "second": 6116
+        },
+        {
+          "first": 1602,
+          "gap": 0.926910400390625,
+          "second": 76879
+        },
+        {
+          "first": 6247,
+          "gap": 2.5521678924560547,
+          "second": 12421
+        },
+        {
+          "first": 311,
+          "gap": 3.6059837341308594,
+          "second": 323
+        },
+        {
+          "first": 1490,
+          "gap": 1.3125648498535156,
+          "second": 387
+        },
+        {
+          "first": 1817,
+          "gap": 6.439849853515625,
+          "second": 825
+        },
+        {
+          "first": 1008,
+          "gap": 9.358638763427734,
+          "second": 2441
+        },
+        {
+          "first": 1549,
+          "gap": 0.4474983215332031,
+          "second": 13
+        }
+      ],
+      "prompt_id": "rabbit",
+      "text": "Once upon a time, a little rabbit lived beside a quiet forest. Every morning, she visited the same old oak tree to meet her friend, a small brown bird. One day, the bird was missing, and a shiny blue feather lay on the ground. The rabbit decided to",
+      "command": [
+        "/tmp/neuron-m3-reference",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+        "Once upon a time, a little rabbit lived beside a quiet forest. Every morning, she visited the same old oak tree to meet her friend, a small brown bird. One day, the bird was missing, and a shiny blue feather lay on the ground. The rabbit decided to",
+        "--generate",
+        "32"
+      ]
+    },
+    {
+      "generated_text": " \" Her grandfather came and saw the tiny green leaf. He said, \"It's beautiful, but it's not a tree yet. \" Lily said, \"",
+      "generated_tokens": [
+        330,
+        6252,
+        37850,
+        3697,
+        323,
+        5485,
+        279,
+        13673,
+        6176,
+        15933,
+        13,
+        1260,
+        1053,
+        11,
+        330,
+        2132,
+        594,
+        6233,
+        11,
+        714,
+        432,
+        594,
+        537,
+        264,
+        4916,
+        3602,
+        13,
+        330,
+        47290,
+        1053,
+        11,
+        330
+      ],
+      "prompt_tokens": [
+        43,
+        1541,
+        8910,
+        1059,
+        37850,
+        6008,
+        19056,
+        304,
+        279,
+        13551,
+        13,
+        2379,
+        6551,
+        1817,
+        10320,
+        264,
+        2632,
+        3015,
+        323,
+        29215,
+        369,
+        279,
+        7015,
+        311,
+        2525,
+        700,
+        13,
+        4636,
+        1657,
+        2849,
+        11,
+        264,
+        13673,
+        6176,
+        15933,
+        9723,
+        13,
+        47290,
+        572,
+        773,
+        6247,
+        429,
+        1340,
+        10613,
+        1119,
+        279,
+        3753,
+        323,
+        1053,
+        11,
+        330,
+        40151,
+        6595,
+        11,
+        2525,
+        323,
+        1401,
+        0
+      ],
+      "top2": [
+        {
+          "first": 330,
+          "gap": 0.0011386871337890625,
+          "second": 358
+        },
+        {
+          "first": 6252,
+          "gap": 1.3465862274169922,
+          "second": 10304
+        },
+        {
+          "first": 37850,
+          "gap": 1.9832401275634766,
+          "second": 6662
+        },
+        {
+          "first": 3697,
+          "gap": 0.8328781127929688,
+          "second": 10613
+        },
+        {
+          "first": 323,
+          "gap": 0.19120025634765625,
+          "second": 700
+        },
+        {
+          "first": 5485,
+          "gap": 0.46506500244140625,
+          "second": 6966
+        },
+        {
+          "first": 279,
+          "gap": 1.4671096801757812,
+          "second": 264
+        },
+        {
+          "first": 13673,
+          "gap": 0.16997718811035156,
+          "second": 2632
+        },
+        {
+          "first": 6176,
+          "gap": 1.7095928192138672,
+          "second": 15933
+        },
+        {
+          "first": 15933,
+          "gap": 4.725400924682617,
+          "second": 10901
+        },
+        {
+          "first": 13,
+          "gap": 1.820596694946289,
+          "second": 11
+        },
+        {
+          "first": 1260,
+          "gap": 0.8901042938232422,
+          "second": 330
+        },
+        {
+          "first": 1053,
+          "gap": 0.42938995361328125,
+          "second": 572
+        },
+        {
+          "first": 11,
+          "gap": 2.931629180908203,
+          "second": 311
+        },
+        {
+          "first": 330,
+          "gap": 6.897928237915039,
+          "second": 1036
+        },
+        {
+          "first": 2132,
+          "gap": 0.2445545196533203,
+          "second": 40
+        },
+        {
+          "first": 594,
+          "gap": 1.6920719146728516,
+          "second": 5868
+        },
+        {
+          "first": 6233,
+          "gap": 0.48712730407714844,
+          "second": 264
+        },
+        {
+          "first": 11,
+          "gap": 0.5467739105224609,
+          "second": 0
+        },
+        {
+          "first": 714,
+          "gap": 1.135183334350586,
+          "second": 47290
+        },
+        {
+          "first": 432,
+          "gap": 1.1372718811035156,
+          "second": 358
+        },
+        {
+          "first": 594,
+          "gap": 1.1610908508300781,
+          "second": 3880
+        },
+        {
+          "first": 537,
+          "gap": 0.153045654296875,
+          "second": 2058
+        },
+        {
+          "first": 264,
+          "gap": 0.8566322326660156,
+          "second": 5527
+        },
+        {
+          "first": 4916,
+          "gap": 0.31926727294921875,
+          "second": 6008
+        },
+        {
+          "first": 3602,
+          "gap": 1.0194168090820312,
+          "second": 13
+        },
+        {
+          "first": 13,
+          "gap": 0.4894428253173828,
+          "second": 1189
+        },
+        {
+          "first": 330,
+          "gap": 2.6166114807128906,
+          "second": 1084
+        },
+        {
+          "first": 47290,
+          "gap": 0.9751319885253906,
+          "second": 330
+        },
+        {
+          "first": 1053,
+          "gap": 1.7911605834960938,
+          "second": 19995
+        },
+        {
+          "first": 11,
+          "gap": 5.739618301391602,
+          "second": 311
+        },
+        {
+          "first": 330,
+          "gap": 7.54182243347168,
+          "second": 1036
+        }
+      ],
+      "prompt_id": "garden",
+      "text": "Lily helped her grandfather plant seeds in the garden. They gave each seed a little water and waited for the sun to come out. After many days, a tiny green leaf appeared. Lily was so happy that she ran into the house and said, \"Grandpa, come and look!",
+      "command": [
+        "/tmp/neuron-m3-reference",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+        "Lily helped her grandfather plant seeds in the garden. They gave each seed a little water and waited for the sun to come out. After many days, a tiny green leaf appeared. Lily was so happy that she ran into the house and said, \"Grandpa, come and look!",
+        "--generate",
+        "32"
+      ]
+    },
+    {
+      "generated_text": " get the ball back. He remembered that he had a small box of toys in his backpack. He took the box and threw it under the gate. The ball",
+      "generated_tokens": [
+        633,
+        279,
+        4935,
+        1182,
+        13,
+        1260,
+        26471,
+        429,
+        566,
+        1030,
+        264,
+        2613,
+        3745,
+        315,
+        23069,
+        304,
+        806,
+        33136,
+        13,
+        1260,
+        3867,
+        279,
+        3745,
+        323,
+        22192,
+        432,
+        1212,
+        279,
+        18126,
+        13,
+        576,
+        4935
+      ],
+      "prompt_tokens": [
+        24732,
+        323,
+        806,
+        5562,
+        7487,
+        6342,
+        448,
+        264,
+        2518,
+        4935,
+        304,
+        279,
+        6118,
+        13,
+        8364,
+        22192,
+        279,
+        4935,
+        2238,
+        3041,
+        11,
+        323,
+        432,
+        22447,
+        1212,
+        264,
+        22360,
+        18126,
+        13,
+        7487,
+        1410,
+        1490,
+        432,
+        11,
+        714,
+        566,
+        1410,
+        537,
+        5545,
+        432,
+        13,
+        8364,
+        7578,
+        1495,
+        29388,
+        806,
+        5562,
+        323,
+        6679,
+        311,
+        1744,
+        315,
+        264,
+        1616,
+        311
+      ],
+      "top2": [
+        {
+          "first": 633,
+          "gap": 1.1136016845703125,
+          "second": 1492
+        },
+        {
+          "first": 279,
+          "gap": 3.6848220825195312,
+          "second": 7487
+        },
+        {
+          "first": 4935,
+          "gap": 5.371095657348633,
+          "second": 2518
+        },
+        {
+          "first": 1182,
+          "gap": 0.3594036102294922,
+          "second": 700
+        },
+        {
+          "first": 13,
+          "gap": 1.510894775390625,
+          "second": 311
+        },
+        {
+          "first": 1260,
+          "gap": 1.1604270935058594,
+          "second": 4710
+        },
+        {
+          "first": 26471,
+          "gap": 0.21011734008789062,
+          "second": 6966
+        },
+        {
+          "first": 429,
+          "gap": 1.3112411499023438,
+          "second": 264
+        },
+        {
+          "first": 566,
+          "gap": 0.4362354278564453,
+          "second": 806
+        },
+        {
+          "first": 1030,
+          "gap": 2.664236068725586,
+          "second": 3055
+        },
+        {
+          "first": 264,
+          "gap": 1.9469108581542969,
+          "second": 3884
+        },
+        {
+          "first": 2613,
+          "gap": 0.7128582000732422,
+          "second": 2518
+        },
+        {
+          "first": 3745,
+          "gap": 0.2378215789794922,
+          "second": 35765
+        },
+        {
+          "first": 315,
+          "gap": 0.2405223846435547,
+          "second": 448
+        },
+        {
+          "first": 23069,
+          "gap": 0.30298614501953125,
+          "second": 7375
+        },
+        {
+          "first": 304,
+          "gap": 0.4920330047607422,
+          "second": 1212
+        },
+        {
+          "first": 806,
+          "gap": 1.2044715881347656,
+          "second": 279
+        },
+        {
+          "first": 33136,
+          "gap": 0.15946578979492188,
+          "second": 3054
+        },
+        {
+          "first": 13,
+          "gap": 1.9119796752929688,
+          "second": 11
+        },
+        {
+          "first": 1260,
+          "gap": 1.0377521514892578,
+          "second": 8364
+        },
+        {
+          "first": 3867,
+          "gap": 0.8594970703125,
+          "second": 8930
+        },
+        {
+          "first": 279,
+          "gap": 0.13359642028808594,
+          "second": 700
+        },
+        {
+          "first": 3745,
+          "gap": 1.700887680053711,
+          "second": 4935
+        },
+        {
+          "first": 323,
+          "gap": 1.2251739501953125,
+          "second": 700
+        },
+        {
+          "first": 22192,
+          "gap": 0.094573974609375,
+          "second": 2182
+        },
+        {
+          "first": 432,
+          "gap": 2.8320674896240234,
+          "second": 279
+        },
+        {
+          "first": 1212,
+          "gap": 1.4138660430908203,
+          "second": 916
+        },
+        {
+          "first": 279,
+          "gap": 6.650032043457031,
+          "second": 264
+        },
+        {
+          "first": 18126,
+          "gap": 2.7414684295654297,
+          "second": 22360
+        },
+        {
+          "first": 13,
+          "gap": 0.9157218933105469,
+          "second": 11
+        },
+        {
+          "first": 576,
+          "gap": 1.7541389465332031,
+          "second": 7487
+        },
+        {
+          "first": 4935,
+          "gap": 0.4219856262207031,
+          "second": 3745
+        }
+      ],
+      "prompt_id": "ball",
+      "text": "Tom and his dog Max played with a red ball in the park. Tom threw the ball too far, and it rolled under a wooden gate. Max could see it, but he could not reach it. Tom sat down beside his dog and tried to think of a way to",
+      "command": [
+        "/tmp/neuron-m3-reference",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+        "Tom and his dog Max played with a red ball in the park. Tom threw the ball too far, and it rolled under a wooden gate. Max could see it, but he could not reach it. Tom sat down beside his dog and tried to think of a way to",
+        "--generate",
+        "32"
+      ]
+    }
+  ],
+  "machine_after": {
+    "utc": "2026-11-16T08:43:01.008912+00:00",
+    "load_average": [
+      2.9091796875,
+      1.4658203125,
+      0.82958984375
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  }
+}

@@ -49,3 +49,15 @@ NEURON_TEST(rope_adjacent_pairs_heads_and_partial_rotation) {
   auto unchanged = x; rope(x, 6, 4, 0); CHECK(x == unchanged);
   CHECK_THROWS_AS(rope(x, 6, 3, 0), std::invalid_argument);
 }
+
+NEURON_TEST(rope_neox_split_halves_and_multiple_heads) {
+  std::array<float, 12> x{1,0,0,1,7,8, 2,0,0,2,9,10};
+  rope(x, 6, 4, 1, 16, true);
+  CHECK_LT(std::abs(x[0] - std::cos(1.0f)), 1e-6f);
+  CHECK_LT(std::abs(x[2] - std::sin(1.0f)), 1e-6f);
+  CHECK_LT(std::abs(x[1] + std::sin(0.25f)), 1e-6f);
+  CHECK_LT(std::abs(x[3] - std::cos(0.25f)), 1e-6f);
+  CHECK_LT(std::abs(x[6] - 2 * std::cos(1.0f)), 1e-6f);
+  CHECK_LT(std::abs(x[9] - 2 * std::cos(0.25f)), 1e-6f);
+  CHECK_EQ(x[4], 7.0f); CHECK_EQ(x[10], 9.0f);
+}

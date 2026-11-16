@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pinned unquantized models for the M1 reference. Requires curl and sha256sum.
+# Pinned unquantized models for M1 and M3. Requires curl and sha256sum.
 set -euo pipefail
 
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
@@ -32,3 +32,6 @@ fetch stories15M.gguf \
 fetch SmolLM2-135M-Instruct-f16.gguf \
     f535f83ec568d040f88ddc04a199fa6da90923bbb41d4dcaed02caa924d6ef57 \
     https://huggingface.co/bartowski/SmolLM2-135M-Instruct-GGUF/resolve/09816acd5d99df7be770d85ea30822623dab342c/SmolLM2-135M-Instruct-f16.gguf
+fetch Qwen2.5-1.5B-Instruct-f16.gguf \
+    b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee \
+    https://huggingface.co/bartowski/Qwen2.5-1.5B-Instruct-GGUF/resolve/9eadc66189c7641e1ddd226b8267a9119b2ce2d4/Qwen2.5-1.5B-Instruct-f16.gguf

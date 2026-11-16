@@ -1,0 +1,161 @@
+{
+  "gcc_version": "11.4.0",
+  "configurations": [
+    {
+      "name": "werror",
+      "configure": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m3",
+        "-DCMAKE_CXX_COMPILER=g++",
+        "-DNEURON_WERROR=ON"
+      ],
+      "build": [
+        "cmake",
+        "--build",
+        "build-m3",
+        "-j",
+        "3"
+      ],
+      "test": [
+        "ctest",
+        "--test-dir",
+        "build-m3",
+        "--output-on-failure"
+      ],
+      "ctest_passed": 12,
+      "ctest_failed": 0,
+      "log_sha256": "ead19d608393dc828501df8190f43c53e1c60a8560dc327298b69e36e5196535"
+    },
+    {
+      "name": "default",
+      "configure": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m3-default",
+        "-DCMAKE_CXX_COMPILER=g++"
+      ],
+      "build": [
+        "cmake",
+        "--build",
+        "build-m3-default",
+        "-j",
+        "2"
+      ],
+      "test": [
+        "ctest",
+        "--test-dir",
+        "build-m3-default",
+        "--output-on-failure"
+      ],
+      "ctest_passed": 12,
+      "ctest_failed": 0,
+      "log_sha256": "91eb90f0a30746e97d2d5024a74e1ced923b5c6424b8144fd10cf047848beeb1"
+    },
+    {
+      "name": "sanitize",
+      "configure": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m3-sanitize",
+        "-DCMAKE_CXX_COMPILER=g++",
+        "-DNEURON_WERROR=ON",
+        "-DNEURON_SANITIZE=ON",
+        "-DCMAKE_BUILD_TYPE=Debug"
+      ],
+      "build": [
+        "cmake",
+        "--build",
+        "build-m3-sanitize",
+        "-j",
+        "2"
+      ],
+      "test": [
+        "ctest",
+        "--test-dir",
+        "build-m3-sanitize",
+        "--output-on-failure"
+      ],
+      "ctest_passed": 12,
+      "ctest_failed": 0,
+      "log_sha256": "1b0c91daa08c1fb330983fe8adfb36acb4308817fc2f5b2d3aa3aa581954db08"
+    },
+    {
+      "name": "avx2",
+      "configure": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m3-avx2",
+        "-DCMAKE_CXX_COMPILER=g++",
+        "-DNEURON_WERROR=ON",
+        "-DNEURON_AVX2=ON"
+      ],
+      "build": [
+        "cmake",
+        "--build",
+        "build-m3-avx2",
+        "-j",
+        "2"
+      ],
+      "test": [
+        "ctest",
+        "--test-dir",
+        "build-m3-avx2",
+        "--output-on-failure"
+      ],
+      "ctest_passed": 12,
+      "ctest_failed": 0,
+      "log_sha256": "361ba749a60e6523c69f1fcf7f9fb6a7b3adc8c2e6a3977e6ff136d7c2dc5fa6"
+    },
+    {
+      "name": "avx512",
+      "configure": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m3-avx512",
+        "-DCMAKE_CXX_COMPILER=g++",
+        "-DNEURON_WERROR=ON",
+        "-DNEURON_AVX512=ON"
+      ],
+      "build": [
+        "cmake",
+        "--build",
+        "build-m3-avx512",
+        "-j",
+        "2"
+      ],
+      "test": [
+        "ctest",
+        "--test-dir",
+        "build-m3-avx512",
+        "--output-on-failure"
+      ],
+      "ctest_passed": 12,
+      "ctest_failed": 0,
+      "log_sha256": "2579b0ec0692c19966f1948a0fc687226bc32b8d5a86eff6fb88793a3774d681"
+    }
+  ],
+  "clang": {
+    "version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+    "compile_only": true,
+    "translation_units": 16,
+    "werror": true,
+    "test_log_sha256": "cd7e0caa8000031d9ff86ebb0dba7b8e0299ca37688517c8a5163f9054d74c50",
+    "link_note": "Local Clang cannot link. CI covers Clang linking and runtime tests."
+  },
+  "weights_and_size_guard": {
+    "passed": true,
+    "max_file_bytes": 1048576,
+    "tracked_and_pending_files_checked": true
+  }
+}

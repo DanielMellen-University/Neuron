@@ -9,16 +9,17 @@
 #include <utility>
 
 namespace {
-fixture::Bytes tiny_model(bool half, bool tied = false) {
+fixture::Bytes tiny_model(bool half, bool tied = false, bool qwen = false) {
   fixture::Bytes b;
-  b.header(tied ? 11 : 12, 11);
-  b.text("general.architecture", "llama");
-  b.uint("llama.embedding_length", 4); b.uint("llama.feed_forward_length", 4);
-  b.uint("llama.block_count", 1); b.uint("llama.attention.head_count", 2);
-  b.uint("llama.attention.head_count_kv", 1); b.uint("llama.rope.dimension_count", 2);
-  b.uint("llama.context_length", 4);
-  b.key("llama.attention.layer_norm_rms_epsilon", 6); b.put(0.75f);
-  b.key("llama.rope.freq_base", 6); b.put(10000.0f);
+  b.header((tied ? 11u : 12u) + (qwen ? 3u : 0u), 11);
+  const std::string key = qwen ? "qwen2." : "llama.";
+  b.text("general.architecture", qwen ? "qwen2" : "llama");
+  b.uint(key + "embedding_length", 4); b.uint(key + "feed_forward_length", 4);
+  b.uint(key + "block_count", 1); b.uint(key + "attention.head_count", 2);
+  b.uint(key + "attention.head_count_kv", 1); b.uint(key + "rope.dimension_count", 2);
+  b.uint(key + "context_length", 4);
+  b.key(key + "attention.layer_norm_rms_epsilon", 6); b.put(0.75f);
+  b.key(key + "rope.freq_base", 6); b.put(10000.0f);
   b.key("tokenizer.ggml.tokens", 9); b.put<std::uint32_t>(8); b.put<std::uint64_t>(3);
   b.string("a"); b.string("b"); b.string("c");
   struct Tensor { std::string name; std::vector<std::uint64_t> dims; std::vector<float> values; };
@@ -36,6 +37,13 @@ fixture::Bytes tiny_model(bool half, bool tied = false) {
     {"blk.0.ffn_up.weight", {4,4}, std::vector<float>(16,0)},
     {"blk.0.ffn_down.weight", {4,4}, std::vector<float>(16,0)}};
   if (!tied) tensors.push_back({"output.weight", {4,3}, {1,0,0,0, 0,1,0,0, 0,0,1,0}});
+  if (qwen) {
+    tensors.push_back({"blk.0.attn_q.bias", {4}, {1,0,0,1}});
+    tensors.push_back({"blk.0.attn_k.bias", {2}, {0,1}});
+    tensors.push_back({"blk.0.attn_v.bias", {2}, {1,0}});
+    tensors[3].values = identity;
+    tensors[4].values = {1,0,0,0, 0,1,0,0};
+  }
   std::uint64_t offset = 0;
   for (const auto& t : tensors) {
     b.tensor(t.name, t.dims, half ? 1 : 0, offset);
@@ -77,7 +85,13 @@ NEURON_TEST(context_token_and_shape_errors) {
   CHECK_THROWS_AS(m.step(-1), std::runtime_error); CHECK_EQ(m.position(), 0u);
   CHECK_THROWS_AS(m.step(3), std::runtime_error);
   for (int i = 0; i < 4; ++i) m.step(0, false);
-  CHECK_THROWS_AS(m.step(0), std::runtime_error);
+  try {
+    m.step(0);
+    CHECK(false);
+  } catch (const std::runtime_error& error) {
+    CHECK(std::string(error.what()).find("context limit exceeded (4 tokens)") != std::string::npos);
+  }
+  CHECK_EQ(m.position(), 4u);
   const std::array<std::int32_t, 5> too_long{}; CHECK_THROWS_AS(m.forward(too_long), std::runtime_error);
   CHECK_THROWS_AS(m.forward({}), std::runtime_error);
   m.reset(); CHECK_EQ(m.position(), 0u);
@@ -89,4 +103,32 @@ NEURON_TEST(context_token_and_shape_errors) {
   REQUIRE(at != broken.data.end());
   broken.patch<std::uint32_t>(static_cast<std::size_t>(at - broken.data.begin()) + key.data.size() + 4, 6);
   fixture::File wrong(broken); CHECK_THROWS_AS(neuron::Model{wrong.path}, std::runtime_error);
+}
+
+NEURON_TEST(qwen2_metadata_and_qkv_bias) {
+  fixture::File f(tiny_model(false, true, true)); neuron::Model m(f.path);
+  CHECK(m.config().rope_neox); CHECK_EQ(m.config().heads, 2u); CHECK_EQ(m.config().kv_heads, 1u);
+  const auto logits = m.step(0);
+  // Single-position attention ignores Q/K. V = normalized embedding + bias
+  // = [2,0], broadcast to both heads. Residual = [3,0,2,0].
+  CHECK_LT(std::abs(logits[0] - 1.5f), 1e-6f);
+  CHECK_LT(std::abs(logits[2] - 1.0f), 1e-6f);
+}
+NEURON_TEST(cached_generation_equals_full_recomputation_for_32_tokens) {
+  for (const bool qwen : {false, true}) {
+    fixture::File f(tiny_model(false, false, qwen));
+    neuron::Model cached(f.path, 64), recomputed(f.path, 64);
+    std::vector<std::int32_t> sequence{0,1,2,0};
+    auto logits = cached.forward(sequence);
+    for (int i = 0; i < 32; ++i) {
+      const auto full = recomputed.forward(sequence);
+      CHECK(logits == full);
+      const auto next = static_cast<std::int32_t>(std::max_element(logits.begin(), logits.end()) - logits.begin());
+      const auto expected = static_cast<std::int32_t>(std::max_element(full.begin(), full.end()) - full.begin());
+      CHECK_EQ(next, expected);
+      sequence.push_back(next);
+      logits = cached.step(next);
+      CHECK_EQ(cached.position(), sequence.size());
+    }
+  }
 }

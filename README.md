@@ -10,18 +10,19 @@
 
 Neuron loads a small transformer language model and generates text on a laptop CPU, with no GPU and no inference libraries underneath. The target machine is an Intel i5-1135G7 (4 cores, 8 threads, 16 GB RAM, AVX2 and AVX-512 with VNNI). The end goal is Qwen2.5 1.5B Instruct, quantized to 4 bits, chatting at a usable speed.
 
-> **Status: M2 complete locally.** Neuron generates TinyStories text with a scalar FP32 forward pass. Its tokenizer matches llama.cpp on 51 prompt and edge cases, its final-position logits match within 1e-3, and all three M1 prompts produce the exact same 128 generated token IDs. [M2 checks](bench/M2_CHECKS.md) record the results and commands. [ROADMAP.md](ROADMAP.md) tracks what exists and what comes next.
+> **Status: M3 complete locally.** Neuron runs Qwen2.5 1.5B Instruct F16 with ChatML and a per-layer KV cache. All 63 tokenizer cases and four chat fixtures match llama.cpp, and each M1 prompt produces the same first 32 generated IDs. A two-exchange conversation recalls the prior user name. [M3 checks](bench/M3_CHECKS.md) record the commands, cache checks and full-context memory result. TinyStories still passes the [M2 exact-match checks](bench/M2_CHECKS.md). [ROADMAP.md](ROADMAP.md) tracks the acceptance criteria.
 
 ## Current features
 
 - **GGUF loading** with checked metadata and tensor tables, mapped F32 weights and F16 weights converted to FP32.
-- **Llama vocabulary tokenizer** with scores, special tokens and byte fallback.
-- **Scalar FP32 inference** with RMSNorm, adjacent-pair RoPE, causal attention, grouped-query attention and SwiGLU.
-- **Greedy CLI generation** with streaming text, JSON token IDs and a reference comparison harness.
+- **Llama and Qwen2 tokenizers** with score-based merging or byte BPE, Unicode pre-tokenization and special tokens.
+- **Scalar FP32 inference** for Llama and Qwen2 with RMSNorm, adjacent-pair or split-half RoPE, GQA, QKV bias and SwiGLU.
+- **Per-layer KV cache** with checked context bounds.
+- **Qwen2.5 ChatML** with a default or explicit system prompt and multi-turn message history.
+- **Greedy CLI generation** with streaming text, JSON token IDs, top-two logit gaps and reference checks.
 
 ## Planned features
 
-- Qwen2.5 model support, GPT-style BPE vocabularies, chat templates and multi-turn state.
 - int8 and 4-bit quantization with a measured quality check against FP32.
 - AVX-512 and VNNI kernels plus multithreading, with a speed chart for each optimization step.
 - Terminal chat, a small web chat UI and an OpenAI-compatible local HTTP server.
@@ -52,7 +53,7 @@ Build options:
 
 `./build/neuron --version` prints the instruction sets the binary was built for, for example `neuron 0.1.0 (avx512f avx512vnni avx2 fma)`.
 
-Model weights are never committed. `scripts/fetch_models.sh` downloads pinned TinyStories 15M F32 and SmolLM2 135M Instruct F16 GGUF files into the git-ignored `models/` directory and checks their SHA-256 hashes. Set `NEURON_MODELS_DIR` to use another directory.
+Model weights are never committed. `scripts/fetch_models.sh` downloads pinned TinyStories 15M F32, SmolLM2 135M Instruct F16 and Qwen2.5 1.5B Instruct F16 GGUF files into the git-ignored `models/` directory and checks their SHA-256 hashes. Set `NEURON_MODELS_DIR` to use another directory.
 
 Generate with the validated TinyStories model:
 
@@ -63,6 +64,26 @@ scripts/fetch_models.sh
 ./build/neuron run -m models/stories15M.gguf -p "Once upon a time" -n 128 --greedy --json
 ./build/neuron tokenize -m models/stories15M.gguf -p "Hello world"
 ```
+
+Run Qwen2.5 with its ChatML template:
+
+```sh
+./build/neuron run -m models/Qwen2.5-1.5B-Instruct-f16.gguf \
+  --chat -p "Say hello briefly." -n 32 --greedy
+# Supply a system prompt and previous messages for a later turn:
+./build/neuron run -m models/Qwen2.5-1.5B-Instruct-f16.gguf \
+  --system "Reply briefly." \
+  --message user "My name is Ada." --message assistant "Hello Ada." \
+  -p "What is my name?" -n 32 --greedy
+```
+
+`--message ROLE TEXT` supplies history in order; `-p` adds the final user
+message in chat mode. Omit `--system` to use the model's default system text.
+`neuron template` prints the rendered ChatML prompt with the same message
+flags, and `neuron tokenize` prints its IDs. `--prompt-file FILE` reads prompt
+bytes instead of `-p`. These commands support text-only Qwen2.5 chat.
+Interactive terminal chat remains M6 work. Qwen's F16 weights are upcast to
+FP32, so loading and scalar generation use substantial memory and time.
 
 The CLI defaults to a 2048-token context to match M1. TinyStories declares only 128 training tokens; `--ctx-size 128` enforces that smaller limit. A prompt plus requested generation exceeding the selected limit is rejected. The override leaves the model file unchanged and makes no quality claim beyond its training context.
 
@@ -76,7 +97,7 @@ python3 bench/harness.py compare bench/reference/tinystories-15m.json \
   bench/runs/tinystories.json --threads 1 --exact-match
 ```
 
-Neuron currently uses one thread. `--threads 1` selects the corresponding reference rows; it does not change Neuron's execution. [bench/M2_CHECKS.md](bench/M2_CHECKS.md) also documents the full-vocabulary logit check and tokenizer fixtures.
+Neuron currently uses one thread. `--threads 1` selects the corresponding reference rows; it does not change Neuron's execution. [bench/M2_CHECKS.md](bench/M2_CHECKS.md) also documents the full-vocabulary logit check and tokenizer fixtures. [M3 checks](bench/M3_CHECKS.md) provide the separate Qwen tokenizer, ChatML, greedy and memory commands.
 
 The [llama.cpp baseline](bench/BASELINE.md) has measured speeds, reference tokens, and exact commands to build and run the external reference engine. This requires Python 3.8+, Git, curl, GCC and CMake. `python3 bench/harness.py compare reference.json candidate.json --exact-match` compares prompt and generated token IDs and reports speed ratios. The comparison tests run without models or llama.cpp.
 
@@ -84,7 +105,7 @@ The [llama.cpp baseline](bench/BASELINE.md) has measured speeds, reference token
 
 ```mermaid
 flowchart LR
-  P[prompt] --> T[llama vocabulary tokenizer]
+  P[prompt] --> T[Llama or Qwen2 tokenizer]
   G[(GGUF file)] -->|mmap| L[model loader]
   T --> F
   L --> F[forward pass<br/>RMSNorm, attention, SwiGLU]
@@ -108,8 +129,8 @@ flowchart LR
 
 These are true today and some will stay true by design.
 
-- **TinyStories is the validated model.** The loader supports dense llama F32/F16 tensors, and the tokenizer supports llama vocabularies. Other tokenizer families, quantized weights and RoPE scaling are not supported yet.
-- **Scalar and single-threaded.** There are no optimized SIMD kernels, chat interface or server yet.
+- **Dense Llama and Qwen2 F32/F16 models only.** TinyStories and Qwen2.5 1.5B Instruct are the local check targets. Other tokenizer families, quantized weights, RoPE scaling and tool-call chat templates are not supported.
+- **Scalar and single-threaded.** There are no optimized SIMD kernels, interactive terminal chat, web UI or server yet.
 - **x86-64 Linux only.** No ARM, macOS, or Windows builds are planned.
 - **CPU only.** No CUDA, Metal, or Vulkan.
 - **Small models.** The engine targets models up to about 1.5B parameters that fit in 16 GB of RAM.
@@ -141,5 +162,6 @@ ROADMAP.md          milestones and acceptance criteria
 
 - [ROADMAP.md](ROADMAP.md): milestones M1 to M7 and their acceptance criteria
 - [bench/BASELINE.md](bench/BASELINE.md): llama.cpp reference measurements and reproduction
-- [bench/M2_CHECKS.md](bench/M2_CHECKS.md): tokenizer, logits, exact generation checks and reproduction
+- [bench/M2_CHECKS.md](bench/M2_CHECKS.md): TinyStories tokenizer, logits and exact generation checks
+- [bench/M3_CHECKS.md](bench/M3_CHECKS.md): Qwen2.5, ChatML, cache, context and memory checks
 - [LICENSE](LICENSE): MIT

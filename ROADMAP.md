@@ -11,7 +11,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | M0 Skeleton: build, CI, test harness, README, roadmap | done |
 | M1 llama.cpp baseline and harness | done |
 | M2 TinyStories FP32 forward pass and tokenizer | done |
-| M3 Qwen2.5 1.5B load, chat template, KV cache | not started |
+| M3 Qwen2.5 1.5B load, chat template, KV cache | done |
 | M4 int8 and 4-bit quantization | not started |
 | M5 AVX-512 kernels and multithreading | not started |
 | M6 Terminal chat, web UI, OpenAI-compatible server | not started |
@@ -61,6 +61,18 @@ Acceptance criteria:
 ## M3: Qwen2.5 1.5B load, chat template, KV cache
 
 Goal: the real target model runs and holds a conversation.
+
+Completed locally on Ghost: Qwen2 F16 loading with GQA and QKV bias,
+split-half RoPE, byte BPE, ChatML and a multi-turn message CLI. All 63
+tokenizer cases and four chat fixtures match llama.cpp. All three M1
+prompts match the first 32 generated IDs exactly. Cached generation matches
+full recomputation for 32 tokens in synthetic Llama/Qwen2 tests and on
+TinyStories. A real Qwen conversation recalls the prior user name.
+A full 2048-position context peaks at 9,101,076 KiB (8.68 GiB) RSS.
+All 12 CTest entries pass in default Release, Werror, sanitizer, AVX2 and
+AVX-512 builds. [M3 checks](bench/M3_CHECKS.md) record the method, exact
+commands and committed results. No M3 acceptance item remains open.
+Remote CI remains to run on the pull request.
 
 Acceptance criteria:
 
