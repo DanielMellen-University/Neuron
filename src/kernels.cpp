@@ -33,14 +33,18 @@ void matmul(std::span<const float> weights, std::span<const float> input,
 void matmul_quantized(std::span<const std::byte> weights, std::uint32_t type,
                       std::span<const float> input, std::span<float> output,
                       std::size_t rows, std::size_t cols, std::size_t batch) {
-  const auto size = quant_block_bytes(type);
-  require(rows > 0 && cols > 0 && cols % 32 == 0 && batch > 0 &&
-          weights.size() % size == 0 && product_is(rows, cols / 32, weights.size() / size) &&
+  const auto size = quant_block_bytes(type), elements = quant_block_elements(type);
+  require(rows > 0 && cols > 0 && cols % elements == 0 && batch > 0 &&
+          weights.size() % size == 0 && product_is(rows, cols / elements, weights.size() / size) &&
           product_is(batch, cols, input.size()) && product_is(batch, rows, output.size()));
   for (std::size_t b = 0; b < batch; ++b) for (std::size_t r = 0; r < rows; ++r) {
     double sum = 0;
-    for (std::size_t c = 0; c < cols; c += 32) {
-      const auto* block = weights.data() + (r * (cols / 32) + c / 32) * size;
+    for (std::size_t c = 0; c < cols; c += elements) {
+      const auto* block = weights.data() + (r * (cols / elements) + c / elements) * size;
+      if (elements == 256) {
+        sum += dot_k_block({block, size}, type, input.subspan(b * cols + c, elements));
+        continue;
+      }
       std::uint16_t bits;
       std::memcpy(&bits, block, 2);
       const float scale = f16_to_f32(bits);

@@ -181,9 +181,10 @@ Gguf::Gguf(const std::string& path) : mapping_(std::make_unique<Mapping>(path)) 
     }
     tensor.type = reader.read<std::uint32_t>();
     if (tensor.type <= 1) tensor.bytes = checked_mul(elements, tensor.type == 0 ? 4 : 2);
-    else if (tensor.type == q8_0 || tensor.type == q4_0) {
-      if (tensor.dimensions.front() % 32 != 0) fail("quantized row must be a multiple of 32 for " + tensor.name);
-      tensor.bytes = checked_mul(elements / 32, quant_block_bytes(tensor.type));
+    else if (tensor.type == q8_0 || tensor.type == q4_0 || tensor.type == q4_k || tensor.type == q6_k) {
+      const auto block = quant_block_elements(tensor.type);
+      if (tensor.dimensions.front() % block != 0) fail("quantized row has incomplete block for " + tensor.name);
+      tensor.bytes = checked_mul(elements / block, quant_block_bytes(tensor.type));
     } else fail("unsupported tensor type " + std::to_string(tensor.type) + " for " + tensor.name);
     const auto offset = reader.read<std::uint64_t>();
     if (offset > std::numeric_limits<std::size_t>::max() || offset % alignment_ != 0) fail("bad tensor offset");
@@ -235,7 +236,7 @@ float f16_to_f32(std::uint16_t bits) {
 std::vector<float> Gguf::tensor_f32(const std::string& name) const {
   const auto& t = tensor(name);
   const auto bytes = tensor_data(t);
-  const auto elements = t.type <= 1 ? t.bytes / (t.type == 0 ? 4 : 2) : t.bytes / quant_block_bytes(t.type) * 32;
+  const auto elements = t.type <= 1 ? t.bytes / (t.type == 0 ? 4 : 2) : t.bytes / quant_block_bytes(t.type) * quant_block_elements(t.type);
   std::vector<float> result(elements);
   if (t.type > 1) { dequantize(bytes, t.type, result); return result; }
   if (t.type == 0) std::memcpy(result.data(), bytes.data(), t.bytes);

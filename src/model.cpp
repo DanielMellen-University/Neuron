@@ -30,7 +30,7 @@ void Model::Weight::multiply(std::span<const float> input, std::span<float> outp
 void Model::Weight::row(std::size_t index, std::span<float> output) const {
   if (blocks.empty()) std::copy_n(data.begin() + static_cast<std::ptrdiff_t>(index * output.size()), output.size(), output.begin());
   else {
-    const auto bytes = output.size() / 32 * quant_block_bytes(type);
+    const auto bytes = output.size() / quant_block_elements(type) * quant_block_bytes(type);
     dequantize(blocks.subspan(index * bytes, bytes), type, output);
   }
 }
