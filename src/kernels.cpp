@@ -46,7 +46,7 @@ void softmax(std::span<float> values) {
   for (float& v : values) v *= scale;
 }
 void rope(std::span<float> values, std::size_t head_size, std::size_t rotary_dims,
-          std::size_t position, float base) {
+          std::size_t position, float base, bool neox) {
   require(head_size > 0 && values.size() % head_size == 0 && rotary_dims > 0 &&
           rotary_dims <= head_size && rotary_dims % 2 == 0 && std::isfinite(base) && base > 0);
   const float step = std::pow(base, -2.0f / static_cast<float>(rotary_dims));
@@ -54,9 +54,11 @@ void rope(std::span<float> values, std::size_t head_size, std::size_t rotary_dim
     float theta = static_cast<float>(position);
     for (std::size_t i = 0; i < rotary_dims; i += 2) {
       const float c = std::cos(theta), s = std::sin(theta);
-      const float x = values[h + i], y = values[h + i + 1];
-      values[h + i] = x * c - y * s;
-      values[h + i + 1] = x * s + y * c;
+      const auto a = h + (neox ? i / 2 : i);
+      const auto b = neox ? a + rotary_dims / 2 : a + 1;
+      const float x = values[a], y = values[b];
+      values[a] = x * c - y * s;
+      values[b] = x * s + y * c;
       theta *= step;
     }
   }

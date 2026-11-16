@@ -35,26 +35,29 @@ Model::Weight Model::load(const std::string& name, std::initializer_list<std::ui
   return result;
 }
 Model::Model(const std::string& path, std::size_t context_override) : file_(path) {
-  if (file_.at("general.architecture").string() != "llama") fail("only dense llama models are supported");
-  if (const auto* scaling = file_.find("llama.rope.scaling.type"))
+  const auto architecture = file_.at("general.architecture").string();
+  if (architecture != "llama" && architecture != "qwen2") fail("only dense llama and qwen2 models are supported");
+  const auto key = architecture + ".";
+  if (const auto* scaling = file_.find(key + "rope.scaling.type"))
     if (scaling->string() != "none") fail("RoPE scaling is not supported");
   auto& c = config_;
-  c.width = dimension(file_, "llama.embedding_length");
-  c.hidden = dimension(file_, "llama.feed_forward_length");
-  c.layers = dimension(file_, "llama.block_count");
-  c.heads = dimension(file_, "llama.attention.head_count");
-  c.kv_heads = file_.find("llama.attention.head_count_kv") ? dimension(file_, "llama.attention.head_count_kv") : c.heads;
+  c.rope_neox = architecture == "qwen2";
+  c.width = dimension(file_, key + "embedding_length");
+  c.hidden = dimension(file_, key + "feed_forward_length");
+  c.layers = dimension(file_, key + "block_count");
+  c.heads = dimension(file_, key + "attention.head_count");
+  c.kv_heads = file_.find(key + "attention.head_count_kv") ? dimension(file_, key + "attention.head_count_kv") : c.heads;
   if (c.width % c.heads != 0 || c.heads % c.kv_heads != 0) fail("incompatible attention head counts");
   c.head_size = c.width / c.heads;
-  c.rotary_dims = file_.find("llama.rope.dimension_count") ? dimension(file_, "llama.rope.dimension_count") : c.head_size;
+  c.rotary_dims = file_.find(key + "rope.dimension_count") ? dimension(file_, key + "rope.dimension_count") : c.head_size;
   if (c.rotary_dims > c.head_size || c.rotary_dims % 2 != 0) fail("invalid RoPE dimension count");
-  c.context = dimension(file_, "llama.context_length");
+  c.context = dimension(file_, key + "context_length");
   if (context_override > 1048576) fail("context override exceeds resource limit");
   if (context_override != 0) c.context = context_override;
   c.vocabulary = file_.at("tokenizer.ggml.tokens").array().size();
   if (c.vocabulary == 0 || c.vocabulary > static_cast<std::size_t>(INT32_MAX)) fail("invalid vocabulary size");
-  c.rms_epsilon = positive_float(file_, "llama.attention.layer_norm_rms_epsilon", 1e-5f);
-  c.rope_base = positive_float(file_, "llama.rope.freq_base", 10000);
+  c.rms_epsilon = positive_float(file_, key + "attention.layer_norm_rms_epsilon", 1e-5f);
+  c.rope_base = positive_float(file_, key + "rope.freq_base", 10000);
   const auto kv_width = c.kv_heads * c.head_size;
   embedding_ = load("token_embd.weight", {c.width, c.vocabulary});
   output_norm_ = load("output_norm.weight", {c.width});
@@ -68,6 +71,11 @@ Model::Model(const std::string& path, std::size_t context_override) : file_(path
     l.q = load(prefix + "attn_q.weight", {c.width, c.width});
     l.k = load(prefix + "attn_k.weight", {c.width, kv_width});
     l.v = load(prefix + "attn_v.weight", {c.width, kv_width});
+    if (architecture == "qwen2") {
+      l.q_bias = load(prefix + "attn_q.bias", {c.width});
+      l.k_bias = load(prefix + "attn_k.bias", {kv_width});
+      l.v_bias = load(prefix + "attn_v.bias", {kv_width});
+    }
     l.attn_output = load(prefix + "attn_output.weight", {c.width, c.width});
     l.ffn_norm = load(prefix + "ffn_norm.weight", {c.width});
     l.gate = load(prefix + "ffn_gate.weight", {c.width, c.hidden});
@@ -95,8 +103,12 @@ std::vector<float> Model::step(std::int32_t token, bool output) {
     scalar::matmul(l.q.data, normalized, q, c.width, c.width);
     scalar::matmul(l.k.data, normalized, k, kv_width, c.width);
     scalar::matmul(l.v.data, normalized, v, kv_width, c.width);
-    scalar::rope(q, c.head_size, c.rotary_dims, position_, c.rope_base);
-    scalar::rope(k, c.head_size, c.rotary_dims, position_, c.rope_base);
+    if (!l.q_bias.data.empty()) {
+      for (std::size_t d = 0; d < c.width; ++d) q[d] += l.q_bias.data[d];
+      for (std::size_t d = 0; d < kv_width; ++d) { k[d] += l.k_bias.data[d]; v[d] += l.v_bias.data[d]; }
+    }
+    scalar::rope(q, c.head_size, c.rotary_dims, position_, c.rope_base, c.rope_neox);
+    scalar::rope(k, c.head_size, c.rotary_dims, position_, c.rope_base, c.rope_neox);
     l.keys.insert(l.keys.end(), k.begin(), k.end()); l.values.insert(l.values.end(), v.begin(), v.end());
     for (std::size_t h = 0; h < c.heads; ++h) {
       const auto group = h / (c.heads / c.kv_heads);

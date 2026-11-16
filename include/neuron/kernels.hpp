@@ -11,8 +11,8 @@ void matmul(std::span<const float> weights, std::span<const float> input,
 void rmsnorm(std::span<const float> input, std::span<const float> weights,
              std::span<float> output, float epsilon);
 void softmax(std::span<float> values);
-// Llama GGUF normal RoPE: adjacent pairs within each head, with optional
+// Adjacent-pair Llama RoPE or split-half NeoX/Qwen2 RoPE, with optional
 // unrotated dimensions at the end. No context scaling.
 void rope(std::span<float> values, std::size_t head_size, std::size_t rotary_dims,
-          std::size_t position, float base = 10000.0f);
+          std::size_t position, float base = 10000.0f, bool neox = false);
 }  // namespace neuron::scalar
