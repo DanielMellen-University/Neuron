@@ -1,4 +1,5 @@
 #include "neuron/gguf.hpp"
+#include "neuron/quant.hpp"
 
 #include <algorithm>
 #include <bit>
@@ -179,8 +180,11 @@ Gguf::Gguf(const std::string& path) : mapping_(std::make_unique<Mapping>(path)) 
       tensor.dimensions.push_back(dim);
     }
     tensor.type = reader.read<std::uint32_t>();
-    if (tensor.type > 1) fail("unsupported tensor type " + std::to_string(tensor.type) + " for " + tensor.name);
-    tensor.bytes = checked_mul(elements, tensor.type == 0 ? 4 : 2);
+    if (tensor.type <= 1) tensor.bytes = checked_mul(elements, tensor.type == 0 ? 4 : 2);
+    else if (tensor.type == q8_0 || tensor.type == q4_0) {
+      if (tensor.dimensions.front() % 32 != 0) fail("quantized row must be a multiple of 32 for " + tensor.name);
+      tensor.bytes = checked_mul(elements / 32, quant_block_bytes(tensor.type));
+    } else fail("unsupported tensor type " + std::to_string(tensor.type) + " for " + tensor.name);
     const auto offset = reader.read<std::uint64_t>();
     if (offset > std::numeric_limits<std::size_t>::max() || offset % alignment_ != 0) fail("bad tensor offset");
     tensor.offset = static_cast<std::size_t>(offset);
@@ -231,7 +235,9 @@ float f16_to_f32(std::uint16_t bits) {
 std::vector<float> Gguf::tensor_f32(const std::string& name) const {
   const auto& t = tensor(name);
   const auto bytes = tensor_data(t);
-  std::vector<float> result(t.bytes / (t.type == 0 ? 4 : 2));
+  const auto elements = t.type <= 1 ? t.bytes / (t.type == 0 ? 4 : 2) : t.bytes / quant_block_bytes(t.type) * 32;
+  std::vector<float> result(elements);
+  if (t.type > 1) { dequantize(bytes, t.type, result); return result; }
   if (t.type == 0) std::memcpy(result.data(), bytes.data(), t.bytes);
   else for (std::size_t i = 0; i < result.size(); ++i) {
     std::uint16_t bits;

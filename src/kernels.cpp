@@ -1,4 +1,7 @@
 #include "neuron/kernels.hpp"
+#include "neuron/gguf.hpp"
+#include "neuron/quant.hpp"
+#include <cstring>
 
 #include <algorithm>
 #include <cmath>
@@ -25,6 +28,39 @@ void matmul(std::span<const float> weights, std::span<const float> input,
         sum += static_cast<double>(weights[r * cols + c]) * input[b * cols + c];
       output[b * rows + r] = static_cast<float>(sum);
     }
+  }
+}
+void matmul_quantized(std::span<const std::byte> weights, std::uint32_t type,
+                      std::span<const float> input, std::span<float> output,
+                      std::size_t rows, std::size_t cols, std::size_t batch) {
+  const auto size = quant_block_bytes(type);
+  require(rows > 0 && cols > 0 && cols % 32 == 0 && batch > 0 &&
+          weights.size() % size == 0 && product_is(rows, cols / 32, weights.size() / size) &&
+          product_is(batch, cols, input.size()) && product_is(batch, rows, output.size()));
+  for (std::size_t b = 0; b < batch; ++b) for (std::size_t r = 0; r < rows; ++r) {
+    double sum = 0;
+    for (std::size_t c = 0; c < cols; c += 32) {
+      const auto* block = weights.data() + (r * (cols / 32) + c / 32) * size;
+      std::uint16_t bits;
+      std::memcpy(&bits, block, 2);
+      const float scale = f16_to_f32(bits);
+      double dot = 0;
+      if (type == q8_0) {
+        for (std::size_t j = 0; j < 32; ++j) {
+          std::int8_t code;
+          std::memcpy(&code, block + 2 + j, 1);
+          dot += static_cast<double>(code) * input[b * cols + c + j];
+        }
+      } else {
+        for (std::size_t j = 0; j < 16; ++j) {
+          const auto code = std::to_integer<unsigned>(block[2 + j]);
+          dot += static_cast<double>(static_cast<int>(code & 15u) - 8) * input[b * cols + c + j];
+          dot += static_cast<double>(static_cast<int>(code >> 4) - 8) * input[b * cols + c + j + 16];
+        }
+      }
+      sum += static_cast<double>(scale) * dot;
+    }
+    output[b * rows + r] = static_cast<float>(sum);
   }
 }
 void rmsnorm(std::span<const float> input, std::span<const float> weights,

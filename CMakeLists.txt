@@ -53,6 +53,7 @@ add_library(neuron
   src/gguf.cpp
   src/kernels.cpp
   src/model.cpp
+  src/quant.cpp
   src/tokenizer.cpp
   src/tensor.cpp
   src/version.cpp)
