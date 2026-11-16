@@ -26,11 +26,12 @@ void print_usage() {
       "       neuron tokenize|template -m MODEL --chat [--message ROLE TEXT]... [-p TEXT]\n"
       "\n"
       "       neuron perplexity -m MODEL --prompt-file FILE --ctx-size N [--chunks N]\n"
-      "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0 weights.\n"
+      "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0/Q4_K/Q6_K weights.\n"
       "--prompt-file FILE reads prompt bytes instead of -p.\n"
       "--chat applies Qwen2.5 ChatML; repeated --message flags supply history.\n"
       "--system replaces the default system text; -p adds a final user message.\n"
       "--recompute checks generation by evaluating the full sequence at every step.\n"
+      "--teacher-tokens FILE replays whitespace-separated IDs while recording argmax.\n"
       "--json emits prompt/generated token IDs and timings. logits writes raw F32.\n"
       "--ctx-size defaults to 2048, matching the M1 reference context.\n");
 }
@@ -57,7 +58,7 @@ int execute(int argc, char** argv) {
   }
   const std::string command = argv[1];
   if (command != "run" && command != "tokenize" && command != "logits" && command != "template" && command != "perplexity") throw std::invalid_argument("unknown command: " + command);
-  std::string path, prompt, output;
+  std::string path, prompt, output, teacher_file;
   bool has_prompt = false, greedy = false, json = false, add_special = true, parse_special = true;
   bool chat = false, recompute = false, has_system = false;
   std::string system;
@@ -82,6 +83,7 @@ int execute(int argc, char** argv) {
     else if (option == "--chat" && command != "perplexity") chat = true;
     else if (option == "--system" && command != "perplexity") { system = value(); has_system = true; chat = true; }
     else if (option == "--message" && command != "perplexity") { const auto role = value(); messages.push_back({role, value()}); chat = true; }
+    else if (option == "--teacher-tokens" && command == "run") teacher_file = value();
     else if (option == "--recompute" && command == "run") recompute = true;
     else if (option == "--ctx-size" && command != "tokenize" && command != "template") context = count(value());
     else if (option == "--output" && command == "logits") output = value();
@@ -123,6 +125,19 @@ int execute(int argc, char** argv) {
   }
   if (tokens.size() > context || (command == "run" && predict > context - tokens.size()))
     throw std::invalid_argument("prompt plus requested generation exceeds context limit; use --ctx-size to override explicitly");
+  std::vector<std::int32_t> teacher;
+  if (!teacher_file.empty()) {
+    std::ifstream stream(teacher_file);
+    if (!stream) throw std::invalid_argument("cannot read teacher token file");
+    std::int32_t token;
+    while (stream >> token) {
+      if (token < 0 || static_cast<std::size_t>(token) >= file.at("tokenizer.ggml.tokens").array().size())
+        throw std::invalid_argument("teacher token outside vocabulary");
+      teacher.push_back(token);
+    }
+    if (!stream.eof() || teacher.size() != predict || !json || recompute)
+      throw std::invalid_argument("teacher tokens require exactly -n IDs, --json and cached generation");
+  }
   neuron::Model model(path, context);
   const auto start = Clock::now(); auto logits = model.forward(tokens); const double prompt_seconds = seconds(start);
   if (command == "logits") {
@@ -141,12 +156,12 @@ int execute(int argc, char** argv) {
     for (std::size_t t = 0; t < logits.size(); ++t)
       if (static_cast<std::int32_t>(t) != next && (second == next || logits[t] > logits[static_cast<std::size_t>(second)])) second = static_cast<std::int32_t>(t);
     top2.push_back({next, second, logits[static_cast<std::size_t>(next)] - logits[static_cast<std::size_t>(second)]});
-    if (tokenizer.is_eog(next)) break;
+    if (teacher.empty() && tokenizer.is_eog(next)) break;
     generated.push_back(next);
     if (!json) { const auto piece = tokenizer.piece(next); std::fwrite(piece.data(), 1, piece.size(), stdout); std::fflush(stdout); }
     if (i + 1 < predict) {
       if (recompute) { sequence.push_back(next); logits = model.forward(sequence); }
-      else logits = model.step(next);
+      else logits = model.step(teacher.empty() ? next : teacher[i]);
     }
   }
   const double generation_seconds = seconds(generation_start);

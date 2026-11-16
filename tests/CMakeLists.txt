@@ -28,3 +28,6 @@ add_test(NAME test_harness_compare
 
 add_test(NAME test_qwen_fixtures
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_qwen_fixtures.py $<TARGET_FILE:neuron_cli>)
+
+add_test(NAME test_m4_method
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_m4_method.py $<TARGET_FILE:neuron_cli>)
