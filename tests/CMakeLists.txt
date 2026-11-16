@@ -7,6 +7,7 @@ endfunction()
 
 neuron_add_test(test_gguf)
 neuron_add_test(test_kernels)
+neuron_add_test(test_tokenizer)
 neuron_add_test(test_shape)
 neuron_add_test(test_version)
 
