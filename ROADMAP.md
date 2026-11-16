@@ -12,7 +12,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | M1 llama.cpp baseline and harness | done |
 | M2 TinyStories FP32 forward pass and tokenizer | done |
 | M3 Qwen2.5 1.5B load, chat template, KV cache | done |
-| M4 int8 and 4-bit quantization | not started |
+| M4 int8 and 4-bit quantization | in progress |
 | M5 AVX-512 kernels and multithreading | not started |
 | M6 Terminal chat, web UI, OpenAI-compatible server | not started |
 | M7 Polish: README, benchmarks, demo GIF, blog post | not started |
@@ -84,6 +84,20 @@ Acceptance criteria:
 - Context limit is enforced with a clear error instead of out-of-bounds writes.
 
 ## M4: int8 and 4-bit quantization
+
+Q8_0/Q4_0 loading, scalar inference, block-bound and GGUF layout tests,
+and fixed-chunk perplexity evaluation are implemented. Model-free checks
+and M2/M3 regressions pass locally. [Quantization checks](bench/QUANT.md)
+record exact commands, file sizes, peak RSS and saved quality results.
+
+M4 remains in progress. Pure Q8_0 perplexity is within 0.384% of F16,
+but greedy agreement is 67.71%, below 90%. Pure Q4_0 perplexity is 19.18%
+above F16, beyond 10%, although it is within 0.409% of llama.cpp Q4_0.
+Its greedy agreement is 11.98%, below 70%. Keeping the tied embedding/output
+matrix in F16 still cannot meet int8 agreement and leaves Q4_0 perplexity
+12.90% above F16. Better quantized quality remains open. The implemented
+formats, error-bound tests, perplexity mode and benchmark records are complete;
+M4 is not marked done because the quality acceptance items are unmet.
 
 Goal: the model fits comfortably and runs faster, with a measured, bounded quality loss.
 

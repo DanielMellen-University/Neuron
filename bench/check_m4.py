@@ -82,6 +82,8 @@ def main():
     parser.add_argument('--binary', type=Path, required=True)
     parser.add_argument('--reference-tool', type=Path, required=True)
     parser.add_argument('--models-dir', type=Path, required=True)
+    parser.add_argument('--q8-model-file', type=Path, help='optional Q8_0 model with a higher-precision embedding/output matrix')
+    parser.add_argument('--q4-model-file', type=Path, help='optional Q4_0 model with a higher-precision embedding/output matrix')
     parser.add_argument('--runs-dir', type=Path, default=ROOT / 'bench/runs/m4')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--notes', required=True)
@@ -95,7 +97,8 @@ def main():
     hashes = {b: sha256(b) for b in (binary, reference)}
     rows = {}
     for name, suffix in [('F16', 'f16'), ('Q8_0', 'Q8_0'), ('Q4_0', 'Q4_0')]:
-        model = (args.models_dir / f'Qwen2.5-1.5B-Instruct-{suffix}.gguf').resolve()
+        override = args.q8_model_file if name == 'Q8_0' else args.q4_model_file if name == 'Q4_0' else None
+        model = (override or args.models_dir / f'Qwen2.5-1.5B-Instruct-{suffix}.gguf').resolve()
         model_hash = sha256(model)
         if name == 'F16' and model_hash != F16_SHA:
             raise ValueError('requires the pinned Qwen2.5 F16 model')
