@@ -66,7 +66,7 @@ class MethodTests(unittest.TestCase):
             self.assertEqual(free['generated_tokens'], [0, 0, 0, 0])
             # The model predicts the most recently fed token, including EOS.
             self.assertEqual(forced['generated_tokens'], [0, 1, 2, 0])
-            for bad in ['1 2', '-1 0 0 0', '3 0 0 0', '0 0 0 junk', '0 0 0 99999999999999999999']:
+            for bad in ['1 2', '-1 0 0 0', '3 0 0 0', '0 0 0 junk', '0 0 0 99999999999999999999', '0 0 0 0 99999999999999999999']:
                 teacher.write_text(bad)
                 result = subprocess.run(command + ['--teacher-tokens', str(teacher)], capture_output=True)
                 self.assertEqual(result.returncode, 2)

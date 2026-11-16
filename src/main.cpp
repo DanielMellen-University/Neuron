@@ -129,9 +129,12 @@ int execute(int argc, char** argv) {
   if (!teacher_file.empty()) {
     std::ifstream stream(teacher_file);
     if (!stream) throw std::invalid_argument("cannot read teacher token file");
-    std::int32_t token;
-    while (stream >> token) {
-      if (token < 0 || static_cast<std::size_t>(token) >= file.at("tokenizer.ggml.tokens").array().size())
+    std::string word;
+    while (stream >> word) {
+      std::int32_t token = 0;
+      const auto parsed = std::from_chars(word.data(), word.data() + word.size(), token);
+      if (parsed.ec != std::errc{} || parsed.ptr != word.data() + word.size() || token < 0 ||
+          static_cast<std::size_t>(token) >= file.at("tokenizer.ggml.tokens").array().size())
         throw std::invalid_argument("teacher token outside vocabulary");
       teacher.push_back(token);
     }
