@@ -4,6 +4,7 @@
 #include "neuron_test.hpp"
 #include "gguf_fixture.hpp"
 
+#include <algorithm>
 #include <limits>
 
 namespace {
@@ -56,4 +57,51 @@ NEURON_TEST(gguf_vocabulary_and_validation) {
   bad = v; bad.tokens[0].score = std::numeric_limits<float>::infinity();
   CHECK_THROWS_AS(neuron::Tokenizer{bad}, std::runtime_error);
   bad = v; bad.bos = -1; CHECK_THROWS_AS(neuron::Tokenizer{bad}, std::runtime_error);
+}
+
+namespace {
+neuron::Vocabulary bpe_vocab() {
+  neuron::Vocabulary v;
+  v.byte_bpe = true; v.add_bos = false; v.add_space_prefix = false;
+  v.bos = 0; v.eos = 2;
+  v.tokens = {{"<|endoftext|>",0,3}, {"<|im_start|>",0,3}, {"<|im_end|>",0,3}};
+  unsigned extra = 256;
+  for (unsigned i = 0; i < 256; ++i) {
+    const unsigned code = (i >= 33 && i <= 126) || (i >= 161 && i <= 172) || i >= 174 ? i : extra++;
+    std::string text;
+    if (code < 128) text += static_cast<char>(code);
+    else { text += static_cast<char>(0xc0u | (code >> 6)); text += static_cast<char>(0x80u | (code & 63u)); }
+    v.tokens.push_back({text, 0, 1});
+  }
+  v.merges = {"a b", "b c", "ab c", "Ġ a", "Ġ ab", "1 2", "! !", "!! Ċ", "Ġ Ġ", "' S", "Ġ 1"};
+  for (const auto& merge : v.merges) {
+    const auto at = merge.find(' ');
+    v.tokens.push_back({merge.substr(0, at) + merge.substr(at + 1), 0, 1});
+  }
+  return v;
+}
+}
+NEURON_TEST(byte_bpe_rank_regex_boundaries_and_decode) {
+  auto v = bpe_vocab(); neuron::Tokenizer t(v);
+  auto id = [&](const std::string& text) {
+    const auto it = std::find_if(v.tokens.begin(), v.tokens.end(), [&](const auto& token) { return token.text == text; });
+    return static_cast<std::int32_t>(it - v.tokens.begin());
+  };
+  // BPE uses merge ranks even when all token scores tie.
+  CHECK((t.encode("abc") == std::vector<std::int32_t>{id("abc")}));
+  CHECK((t.encode(" ab") == std::vector<std::int32_t>{id("Ġab")}));
+  // Qwen2 separates each digit, including a leading space.
+  CHECK((t.encode(" 12") == std::vector<std::int32_t>{id("Ġ"), id("1"), id("2")}));
+  CHECK((t.encode("!!\n") == std::vector<std::int32_t>{id("!!Ċ")}));
+  CHECK((t.encode("'S") == std::vector<std::int32_t>{id("'S")}));
+  CHECK((t.encode("  a") == std::vector<std::int32_t>{id("Ġ"), id("Ġa")}));
+  CHECK((t.encode("  ") == std::vector<std::int32_t>{id("ĠĠ")}));
+  CHECK((t.encode("<|im_start|>abc<|im_end|>") == std::vector<std::int32_t>{1,id("abc"),2}));
+  CHECK(t.encode("<|im_start|>", false, false).size() > 1);
+  CHECK(t.is_eog(0)); CHECK(t.is_eog(2)); CHECK(!t.is_eog(1)); CHECK(!t.is_eog(-1));
+  for (const std::string& text : std::vector<std::string>{"café 世界 🐈", "a\u00a0b\u2003c", "1234567890", "\t \r\n  abc  ", std::string("\0\x01", 2)})
+    CHECK_EQ(t.decode(t.encode(text)), text);
+  CHECK_THROWS_AS(t.encode(std::string("\xff", 1)), std::runtime_error);
+  v.merges.push_back("a b"); CHECK_THROWS_AS(neuron::Tokenizer{v}, std::runtime_error);
+  v = bpe_vocab(); v.merges.push_back("a missing"); CHECK_THROWS_AS(neuron::Tokenizer{v}, std::runtime_error);
 }
