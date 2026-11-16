@@ -11,6 +11,7 @@ Testing/
 # Model weights and downloads (never commit these)
 models/
 weights/
+third_party/llama.cpp/
 *.gguf
 *.ggml
 *.safetensors
@@ -23,6 +24,8 @@ weights/
 
 # Benchmark and profiling scratch
 bench-results/raw/
+bench/runs/
+__pycache__/
 perf.data*
 *.prof
 

@@ -10,7 +10,7 @@
 
 Neuron loads a small transformer language model and generates text on a laptop CPU, with no GPU and no inference libraries underneath. The target machine is an Intel i5-1135G7 (4 cores, 8 threads, 16 GB RAM, AVX2 and AVX-512 with VNNI). The end goal is Qwen2.5 1.5B Instruct, quantized to 4 bits, chatting at a usable speed.
 
-> **Status: in progress.** Today the repo has the build, CI, a test harness, and a tensor shape type. Nothing below under "Planned features" works yet. [ROADMAP.md](ROADMAP.md) tracks each milestone and what "done" means for it.
+> **Status: in progress.** Today the repo has the build, CI, unit tests, a tensor shape type, and a measured llama.cpp reference with a token comparison harness. Neuron itself does not generate text yet. Nothing below under "Planned features" works yet. [ROADMAP.md](ROADMAP.md) tracks each milestone and what "done" means for it.
 
 ## Planned features
 
@@ -24,7 +24,7 @@ Neuron loads a small transformer language model and generates text on a laptop C
 
 ## Quick start
 
-Requires CMake 3.20+ and GCC 11+ or Clang 14+ on x86-64 Linux.
+Requires CMake 3.20+, Python 3.8+ for tests, and GCC 11+ or Clang 14+ on x86-64 Linux.
 
 ```
 git clone https://github.com/DanielMellen-University/Neuron.git
@@ -48,7 +48,9 @@ Build options:
 
 `./build/neuron --version` prints the instruction sets the binary was built for, for example `neuron 0.1.0 (avx512f avx512vnni avx2 fma)`.
 
-Model weights are never committed. When model support lands, a download script will put them in the git-ignored `models/` directory.
+Model weights are never committed. `scripts/fetch_models.sh` downloads pinned TinyStories 15M F32 and SmolLM2 135M Instruct F16 GGUF files into the git-ignored `models/` directory and checks their SHA-256 hashes. Set `NEURON_MODELS_DIR` to use another directory.
+
+The [llama.cpp baseline](bench/BASELINE.md) has measured speeds, reference tokens, and exact commands to build and run the external reference engine. This requires Python 3.8+, Git, curl, GCC and CMake. `python3 bench/harness.py compare reference.json candidate.json --exact-match` compares prompt and generated token IDs and reports speed ratios. The comparison tests run without models or llama.cpp.
 
 ## How it will work
 
@@ -92,7 +94,7 @@ cmake --build build -j
 ctest --test-dir build --output-on-failure
 ```
 
-Tests use a small header-only framework in [tests/neuron_test.hpp](tests/neuron_test.hpp) (registration, `CHECK`/`REQUIRE` macros, and a runner) driven by CTest, so there are no third-party test dependencies. CI builds and tests with GCC and Clang, with and without AVX2, runs an ASan and UBSan job, checks that the AVX-512 build compiles, and rejects any committed weight file.
+C++ tests use a small header-only framework in [tests/neuron_test.hpp](tests/neuron_test.hpp) (registration, `CHECK`/`REQUIRE` macros, and a runner) driven by CTest. Harness comparison tests use Python 3.8+ and its standard library. There are no third-party test dependencies. CI builds and tests with GCC and Clang, with and without AVX2, runs an ASan and UBSan job, checks that the AVX-512 build compiles, and rejects any committed weight file.
 
 ## Project layout
 
@@ -100,6 +102,8 @@ Tests use a small header-only framework in [tests/neuron_test.hpp](tests/neuron_
 include/neuron/     public headers (tensor.hpp, version.hpp)
 src/                library sources and the neuron CLI
 tests/              unit tests and the test framework
+scripts/            pinned model downloads and external llama.cpp build
+bench/              prompts, reference tokens, comparison harness and baseline
 .github/workflows/  CI
 ROADMAP.md          milestones and acceptance criteria
 ```
@@ -107,4 +111,5 @@ ROADMAP.md          milestones and acceptance criteria
 ## Docs
 
 - [ROADMAP.md](ROADMAP.md): milestones M1 to M7 and their acceptance criteria
+- [bench/BASELINE.md](bench/BASELINE.md): llama.cpp reference measurements and reproduction
 - [LICENSE](LICENSE): MIT
