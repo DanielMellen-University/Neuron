@@ -15,7 +15,10 @@ and the output path with `bench/wikitext2-m4-v2.txt`.
 
 Tokenize with the pinned Qwen2.5 F16 vocabulary, normal add-special and
 parse-special flags, and no chat template. Evaluate the first 8,192 tokens
-as 16 independent chunks of context 512. Reset K/V for each chunk. Targets
+as 16 independent chunks of context 512. The text has 11,187 Qwen tokens.
+The SHA-256 of the first 8,192 IDs serialized as a compact JSON array is
+`a4021be8153841fa89a79f4dc118d8299f348146b95404b119b88dc0b599e316`.
+Reset K/V for each chunk. Targets
 256..511 contribute 256 losses per chunk, for 4,096 scored targets. The
 remaining tokens are ignored. Use double log-sum-exp and F32 K/V in both
 Neuron and the pinned llama.cpp adapter, one thread, no Flash Attention.

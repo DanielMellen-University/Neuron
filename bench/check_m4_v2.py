@@ -113,11 +113,20 @@ def main():
         rows[name] = data
         write_json(directory / 'partial.json', rows)
     passed = summarize(rows, prompts)
+    summaries = {}
+    for name, data in rows.items():
+        path = args.output.with_name('m4-v2-' + name + '.json')
+        write_json(path, data)
+        summaries[name] = {k: v for k, v in data.items() if k not in
+                           ['perplexity', 'llama_perplexity', 'greedy', 'teacher_forced']}
+        summaries[name].update(measurements=path.name,
+            perplexity=data['perplexity']['result']['perplexity'],
+            llama_perplexity=data['llama_perplexity']['result']['perplexity'])
     write_json(args.output, dict(method_commit='6f55c17', llama_cpp_commit=LLAMA_COMMIT,
         text_sha256=TEXT_SHA, prompts_sha256=PROMPTS_SHA, context=512, chunks=16, scored_tokens=4096,
         scored_target_positions='256..511 per independent chunk', greedy_context=256, n_predict=64,
         threads=1, kv_type='F32', flash_attention=False, prompt_format='raw completion',
-        repetitions=1, warmup_runs=0, notes=args.notes, formats=rows, acceptance=passed))
+        repetitions=1, warmup_runs=0, notes=args.notes, formats=summaries, acceptance=passed))
     print(json.dumps(passed, indent=2), flush=True)
     return 0 if passed['quality_pass'] else 1
 
