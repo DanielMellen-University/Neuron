@@ -10,7 +10,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | --- | --- |
 | M0 Skeleton: build, CI, test harness, README, roadmap | done |
 | M1 llama.cpp baseline and harness | done |
-| M2 TinyStories FP32 forward pass and tokenizer | not started |
+| M2 TinyStories FP32 forward pass and tokenizer | done |
 | M3 Qwen2.5 1.5B load, chat template, KV cache | not started |
 | M4 int8 and 4-bit quantization | not started |
 | M5 AVX-512 kernels and multithreading | not started |
@@ -25,7 +25,7 @@ Completed on Ghost: pinned download and build scripts, three fixed prompts,
 greedy reference tokens and measured speeds at 1, 4 and 8 threads, and a
 model-free compare test suite in CTest. [bench/BASELINE.md](bench/BASELINE.md)
 records the inputs, power state, results, reproduction commands and local
-validation. Neuron inference remains work for M2 onward.
+validation. M2 adds Neuron inference against that reference.
 
 Acceptance criteria:
 
@@ -40,6 +40,14 @@ Acceptance criteria:
 ## M2: TinyStories FP32 forward pass and tokenizer
 
 Goal: Neuron generates the same text as llama.cpp on a tiny model.
+
+Completed locally on Ghost: checked GGUF loading, llama vocabulary tokenization,
+scalar FP32 inference and greedy CLI generation. All 51 tokenizer cases match
+llama.cpp. Final-position logits differ by at most 9.54e-6 across three prompts.
+All 128 generated IDs match M1 for each prompt in three repetitions.
+[bench/M2_CHECKS.md](bench/M2_CHECKS.md) records the method, exact commands,
+committed results and model-free test coverage. Remote CI remains to run
+on the pull request.
 
 Acceptance criteria:
 

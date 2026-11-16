@@ -49,6 +49,10 @@ configure_file(include/neuron/config.hpp.in
   ${CMAKE_CURRENT_BINARY_DIR}/generated/neuron/config.hpp @ONLY)
 
 add_library(neuron
+  src/gguf.cpp
+  src/kernels.cpp
+  src/model.cpp
+  src/tokenizer.cpp
   src/tensor.cpp
   src/version.cpp)
 target_include_directories(neuron PUBLIC

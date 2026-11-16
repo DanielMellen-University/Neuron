@@ -1,7 +1,8 @@
 # llama.cpp baseline on Ghost
 
 Measured on 2026-11-16 UTC. These are llama.cpp speeds, not Neuron speeds.
-Neuron does not load models or generate text yet.
+These measurements predate Neuron inference. [M2 checks](M2_CHECKS.md)
+record the Neuron comparison.
 
 ## Measurements
 

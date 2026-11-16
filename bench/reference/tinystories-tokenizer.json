@@ -1,0 +1,949 @@
+{
+  "model_sha256": "61b50d457809a5194818fd22e6724b456cd7bb9a6264c52c8110684c53f3704a",
+  "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+  "add_special": true,
+  "parse_special": true,
+  "cases": [
+    {
+      "id": "rabbit",
+      "text": "Once upon a time, a little rabbit lived beside a quiet forest. Every morning, she visited the same old oak tree to meet her friend, a small brown bird. One day, the bird was missing, and a shiny blue feather lay on the ground. The rabbit decided to",
+      "tokens": [
+        1,
+        9038,
+        2501,
+        263,
+        931,
+        29892,
+        263,
+        2217,
+        27127,
+        277,
+        10600,
+        17620,
+        263,
+        11813,
+        13569,
+        29889,
+        7569,
+        7250,
+        29892,
+        1183,
+        16669,
+        278,
+        1021,
+        2030,
+        288,
+        557,
+        5447,
+        304,
+        5870,
+        902,
+        5121,
+        29892,
+        263,
+        2319,
+        17354,
+        11199,
+        29889,
+        3118,
+        2462,
+        29892,
+        278,
+        11199,
+        471,
+        4567,
+        29892,
+        322,
+        263,
+        528,
+        4901,
+        7254,
+        1238,
+        1624,
+        6568,
+        373,
+        278,
+        5962,
+        29889,
+        450,
+        27127,
+        277,
+        8459,
+        304
+      ]
+    },
+    {
+      "id": "garden",
+      "text": "Lily helped her grandfather plant seeds in the garden. They gave each seed a little water and waited for the sun to come out. After many days, a tiny green leaf appeared. Lily was so happy that she ran into the house and said, \"Grandpa, come and look!",
+      "tokens": [
+        1,
+        365,
+        2354,
+        9213,
+        902,
+        4595,
+        22212,
+        8024,
+        409,
+        5779,
+        297,
+        278,
+        16423,
+        29889,
+        2688,
+        4846,
+        1269,
+        16717,
+        263,
+        2217,
+        4094,
+        322,
+        25993,
+        363,
+        278,
+        6575,
+        304,
+        2041,
+        714,
+        29889,
+        2860,
+        1784,
+        3841,
+        29892,
+        263,
+        21577,
+        7933,
+        20447,
+        7470,
+        29889,
+        365,
+        2354,
+        471,
+        577,
+        9796,
+        393,
+        1183,
+        6350,
+        964,
+        278,
+        3699,
+        322,
+        1497,
+        29892,
+        376,
+        3338,
+        392,
+        3274,
+        29892,
+        2041,
+        322,
+        1106,
+        29991
+      ]
+    },
+    {
+      "id": "ball",
+      "text": "Tom and his dog Max played with a red ball in the park. Tom threw the ball too far, and it rolled under a wooden gate. Max could see it, but he could not reach it. Tom sat down beside his dog and tried to think of a way to",
+      "tokens": [
+        1,
+        4335,
+        322,
+        670,
+        11203,
+        5918,
+        5318,
+        411,
+        263,
+        2654,
+        8287,
+        297,
+        278,
+        14089,
+        29889,
+        4335,
+        18318,
+        278,
+        8287,
+        2086,
+        2215,
+        29892,
+        322,
+        372,
+        29081,
+        1090,
+        263,
+        27278,
+        12417,
+        29889,
+        5918,
+        1033,
+        1074,
+        372,
+        29892,
+        541,
+        540,
+        1033,
+        451,
+        6159,
+        372,
+        29889,
+        4335,
+        3290,
+        1623,
+        17620,
+        670,
+        11203,
+        322,
+        1898,
+        304,
+        1348,
+        310,
+        263,
+        982,
+        304
+      ]
+    },
+    {
+      "id": "empty",
+      "text": "",
+      "tokens": [
+        1
+      ]
+    },
+    {
+      "id": "space",
+      "text": " ",
+      "tokens": [
+        1,
+        259
+      ]
+    },
+    {
+      "id": "leading-spaces",
+      "text": "   Once upon a time",
+      "tokens": [
+        1,
+        1678,
+        9038,
+        2501,
+        263,
+        931
+      ]
+    },
+    {
+      "id": "trailing-spaces",
+      "text": "Hello  ",
+      "tokens": [
+        1,
+        15043,
+        259
+      ]
+    },
+    {
+      "id": "unicode",
+      "text": "café naïve 中文 Ελληνικά",
+      "tokens": [
+        1,
+        274,
+        28059,
+        1055,
+        30085,
+        345,
+        29871,
+        30275,
+        30333,
+        29871,
+        30311,
+        30142,
+        30142,
+        30183,
+        30133,
+        30136,
+        30173,
+        30216
+      ]
+    },
+    {
+      "id": "digits",
+      "text": "0123456789 42 3.14159",
+      "tokens": [
+        1,
+        29871,
+        29900,
+        29896,
+        29906,
+        29941,
+        29946,
+        29945,
+        29953,
+        29955,
+        29947,
+        29929,
+        29871,
+        29946,
+        29906,
+        29871,
+        29941,
+        29889,
+        29896,
+        29946,
+        29896,
+        29945,
+        29929
+      ]
+    },
+    {
+      "id": "byte-fallback",
+      "text": "🐈 🦄 􏿿",
+      "tokens": [
+        1,
+        29871,
+        243,
+        162,
+        147,
+        139,
+        29871,
+        243,
+        162,
+        169,
+        135,
+        29871,
+        247,
+        146,
+        194,
+        194
+      ]
+    },
+    {
+      "id": "whitespace",
+      "text": "a\tb\nc\r\nd",
+      "tokens": [
+        1,
+        263,
+        12,
+        29890,
+        13,
+        29883,
+        30004,
+        13,
+        29881
+      ]
+    },
+    {
+      "id": "specials",
+      "text": "<s>Hello</s> world <unk>",
+      "tokens": [
+        1,
+        1,
+        15043,
+        2,
+        29871,
+        3186,
+        29871,
+        0
+      ]
+    },
+    {
+      "id": "punctuation",
+      "text": "hello...world!?",
+      "tokens": [
+        1,
+        22172,
+        856,
+        11526,
+        29991,
+        29973
+      ]
+    },
+    {
+      "id": "combining",
+      "text": "é é",
+      "tokens": [
+        1,
+        321,
+        30103,
+        904
+      ]
+    },
+    {
+      "id": "control",
+      "text": "a\u0001b",
+      "tokens": [
+        1,
+        263,
+        4,
+        29890
+      ]
+    },
+    {
+      "id": "empty-01",
+      "text": "",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": []
+    },
+    {
+      "id": "space-01",
+      "text": " ",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        259
+      ]
+    },
+    {
+      "id": "leading-spaces-01",
+      "text": "   Once upon a time",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        1678,
+        9038,
+        2501,
+        263,
+        931
+      ]
+    },
+    {
+      "id": "trailing-spaces-01",
+      "text": "Hello  ",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        15043,
+        259
+      ]
+    },
+    {
+      "id": "unicode-01",
+      "text": "café naïve 中文 Ελληνικά",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        274,
+        28059,
+        1055,
+        30085,
+        345,
+        29871,
+        30275,
+        30333,
+        29871,
+        30311,
+        30142,
+        30142,
+        30183,
+        30133,
+        30136,
+        30173,
+        30216
+      ]
+    },
+    {
+      "id": "digits-01",
+      "text": "0123456789 42 3.14159",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        29871,
+        29900,
+        29896,
+        29906,
+        29941,
+        29946,
+        29945,
+        29953,
+        29955,
+        29947,
+        29929,
+        29871,
+        29946,
+        29906,
+        29871,
+        29941,
+        29889,
+        29896,
+        29946,
+        29896,
+        29945,
+        29929
+      ]
+    },
+    {
+      "id": "byte-fallback-01",
+      "text": "🐈 🦄 􏿿",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        29871,
+        243,
+        162,
+        147,
+        139,
+        29871,
+        243,
+        162,
+        169,
+        135,
+        29871,
+        247,
+        146,
+        194,
+        194
+      ]
+    },
+    {
+      "id": "whitespace-01",
+      "text": "a\tb\nc\r\nd",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        263,
+        12,
+        29890,
+        13,
+        29883,
+        30004,
+        13,
+        29881
+      ]
+    },
+    {
+      "id": "specials-01",
+      "text": "<s>Hello</s> world <unk>",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        1,
+        15043,
+        2,
+        29871,
+        3186,
+        29871,
+        0
+      ]
+    },
+    {
+      "id": "punctuation-01",
+      "text": "hello...world!?",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        22172,
+        856,
+        11526,
+        29991,
+        29973
+      ]
+    },
+    {
+      "id": "combining-01",
+      "text": "é é",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        321,
+        30103,
+        904
+      ]
+    },
+    {
+      "id": "control-01",
+      "text": "a\u0001b",
+      "add_special": false,
+      "parse_special": true,
+      "tokens": [
+        263,
+        4,
+        29890
+      ]
+    },
+    {
+      "id": "empty-10",
+      "text": "",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1
+      ]
+    },
+    {
+      "id": "space-10",
+      "text": " ",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        259
+      ]
+    },
+    {
+      "id": "leading-spaces-10",
+      "text": "   Once upon a time",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        1678,
+        9038,
+        2501,
+        263,
+        931
+      ]
+    },
+    {
+      "id": "trailing-spaces-10",
+      "text": "Hello  ",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        15043,
+        259
+      ]
+    },
+    {
+      "id": "unicode-10",
+      "text": "café naïve 中文 Ελληνικά",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        274,
+        28059,
+        1055,
+        30085,
+        345,
+        29871,
+        30275,
+        30333,
+        29871,
+        30311,
+        30142,
+        30142,
+        30183,
+        30133,
+        30136,
+        30173,
+        30216
+      ]
+    },
+    {
+      "id": "digits-10",
+      "text": "0123456789 42 3.14159",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        29871,
+        29900,
+        29896,
+        29906,
+        29941,
+        29946,
+        29945,
+        29953,
+        29955,
+        29947,
+        29929,
+        29871,
+        29946,
+        29906,
+        29871,
+        29941,
+        29889,
+        29896,
+        29946,
+        29896,
+        29945,
+        29929
+      ]
+    },
+    {
+      "id": "byte-fallback-10",
+      "text": "🐈 🦄 􏿿",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        29871,
+        243,
+        162,
+        147,
+        139,
+        29871,
+        243,
+        162,
+        169,
+        135,
+        29871,
+        247,
+        146,
+        194,
+        194
+      ]
+    },
+    {
+      "id": "whitespace-10",
+      "text": "a\tb\nc\r\nd",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        263,
+        12,
+        29890,
+        13,
+        29883,
+        30004,
+        13,
+        29881
+      ]
+    },
+    {
+      "id": "specials-10",
+      "text": "<s>Hello</s> world <unk>",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        529,
+        29879,
+        29958,
+        10994,
+        829,
+        29879,
+        29958,
+        3186,
+        529,
+        2960,
+        29958
+      ]
+    },
+    {
+      "id": "punctuation-10",
+      "text": "hello...world!?",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        22172,
+        856,
+        11526,
+        29991,
+        29973
+      ]
+    },
+    {
+      "id": "combining-10",
+      "text": "é é",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        321,
+        30103,
+        904
+      ]
+    },
+    {
+      "id": "control-10",
+      "text": "a\u0001b",
+      "add_special": true,
+      "parse_special": false,
+      "tokens": [
+        1,
+        263,
+        4,
+        29890
+      ]
+    },
+    {
+      "id": "empty-00",
+      "text": "",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": []
+    },
+    {
+      "id": "space-00",
+      "text": " ",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        259
+      ]
+    },
+    {
+      "id": "leading-spaces-00",
+      "text": "   Once upon a time",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        1678,
+        9038,
+        2501,
+        263,
+        931
+      ]
+    },
+    {
+      "id": "trailing-spaces-00",
+      "text": "Hello  ",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        15043,
+        259
+      ]
+    },
+    {
+      "id": "unicode-00",
+      "text": "café naïve 中文 Ελληνικά",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        274,
+        28059,
+        1055,
+        30085,
+        345,
+        29871,
+        30275,
+        30333,
+        29871,
+        30311,
+        30142,
+        30142,
+        30183,
+        30133,
+        30136,
+        30173,
+        30216
+      ]
+    },
+    {
+      "id": "digits-00",
+      "text": "0123456789 42 3.14159",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        29871,
+        29900,
+        29896,
+        29906,
+        29941,
+        29946,
+        29945,
+        29953,
+        29955,
+        29947,
+        29929,
+        29871,
+        29946,
+        29906,
+        29871,
+        29941,
+        29889,
+        29896,
+        29946,
+        29896,
+        29945,
+        29929
+      ]
+    },
+    {
+      "id": "byte-fallback-00",
+      "text": "🐈 🦄 􏿿",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        29871,
+        243,
+        162,
+        147,
+        139,
+        29871,
+        243,
+        162,
+        169,
+        135,
+        29871,
+        247,
+        146,
+        194,
+        194
+      ]
+    },
+    {
+      "id": "whitespace-00",
+      "text": "a\tb\nc\r\nd",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        263,
+        12,
+        29890,
+        13,
+        29883,
+        30004,
+        13,
+        29881
+      ]
+    },
+    {
+      "id": "specials-00",
+      "text": "<s>Hello</s> world <unk>",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        529,
+        29879,
+        29958,
+        10994,
+        829,
+        29879,
+        29958,
+        3186,
+        529,
+        2960,
+        29958
+      ]
+    },
+    {
+      "id": "punctuation-00",
+      "text": "hello...world!?",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        22172,
+        856,
+        11526,
+        29991,
+        29973
+      ]
+    },
+    {
+      "id": "combining-00",
+      "text": "é é",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        321,
+        30103,
+        904
+      ]
+    },
+    {
+      "id": "control-00",
+      "text": "a\u0001b",
+      "add_special": false,
+      "parse_special": false,
+      "tokens": [
+        263,
+        4,
+        29890
+      ]
+    }
+  ]
+}

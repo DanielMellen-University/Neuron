@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the pinned llama-server reference or compare token sequences. Stdlib only."""
+"""Run llama.cpp or Neuron and compare token sequences. Stdlib only."""
 
 import argparse
 import contextlib
@@ -286,6 +286,52 @@ def run(args):
     return 0
 
 
+def select_threads(result, threads):
+    if threads is None:
+        return result
+    if threads <= 0:
+        raise ValueError("threads must be positive")
+    return dict(result, runs=[r for r in result["runs"] if r["threads"] == threads])
+
+
+def run_neuron(args):
+    """Collect actual single-threaded Neuron runs with the M1 prompts."""
+    model = args.model_file.resolve()
+    binary = args.binary.resolve()
+    prompts = read_json(ROOT / "bench/prompts.json")
+    model_hash = sha256(model)
+    expected_hash = read_json(ROOT / "bench/reference/tinystories-15m.json")["model"]["sha256"]
+    if model_hash != expected_hash:
+        raise ValueError("run-neuron requires the pinned TinyStories model")
+    result = {
+        "schema_version": 1,
+        "model": {"id": "tinystories-15m", "file": model.name, "sha256": model_hash},
+        "engine": {"name": "neuron", "binary_sha256": sha256(binary),
+                   "version": subprocess.check_output([str(binary), "--version"], text=True).strip()},
+        "machine": {"name": "Ghost", "notes": args.notes, "before": machine_state()},
+        "settings": {"n_predict": N_PREDICT, "greedy": True, "context": 2048,
+                     "threads": 1, "repetitions": args.repetitions,
+                     "prompts_sha256": sha256(ROOT / "bench/prompts.json")},
+        "runs": [], "commands": [],
+    }
+    for repetition in range(args.repetitions):
+        for prompt in prompts:
+            command = [str(binary), "run", "-m", str(model), "-p", prompt["text"],
+                       "-n", str(N_PREDICT), "--greedy", "--json", "--ctx-size", "2048"]
+            row = json.loads(subprocess.check_output(command, text=True, timeout=120))
+            row.update(threads=1, prompt_id=prompt["id"], repetition=repetition, prompt=prompt["text"])
+            result["runs"].append(row)
+            result["commands"].append(command)
+            print(f"neuron: {prompt['id']} repetition {repetition}: {len(row['generated_tokens'])} tokens",
+                  file=sys.stderr, flush=True)
+    result["machine"]["after"] = machine_state()
+    result["summary"] = summarize(result["runs"])
+    result_rows(result)
+    write_json(args.output, result)
+    print(json.dumps(result["summary"], indent=2))
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="mode", required=True)
@@ -299,17 +345,25 @@ def main(argv=None):
     collect.add_argument("--machine", default="Ghost")
     collect.add_argument("--notes", required=True, help="other activity and benchmark conditions")
     collect.add_argument("--output", type=Path, required=True)
+    neuron = commands.add_parser("run-neuron", help="collect scalar TinyStories runs at one thread")
+    neuron.add_argument("--binary", type=Path, required=True)
+    neuron.add_argument("--model-file", type=Path, required=True)
+    neuron.add_argument("--output", type=Path, required=True)
+    neuron.add_argument("--repetitions", type=int, default=3)
+    neuron.add_argument("--notes", required=True)
     compare = commands.add_parser("compare", help="compare candidate tokens and speed to a reference")
     compare.add_argument("reference", type=Path)
     compare.add_argument("candidate", type=Path)
     compare.add_argument("--exact-match", action="store_true", help="exit 1 on any prompt or generated token mismatch")
+    compare.add_argument("--threads", type=int, help="compare only this thread count in both inputs")
     args = parser.parse_args(argv)
     try:
-        if args.mode == "run":
+        if args.mode in ("run", "run-neuron"):
             if args.repetitions < 1:
                 raise ValueError("repetitions must be positive")
-            return run(args)
-        comparison = compare_results(read_json(args.reference), read_json(args.candidate))
+            return run(args) if args.mode == "run" else run_neuron(args)
+        comparison = compare_results(select_threads(read_json(args.reference), args.threads),
+                                     select_threads(read_json(args.candidate), args.threads))
         print(json.dumps(comparison, indent=2, allow_nan=False))
         return 1 if args.exact_match and not comparison["exact_match"] else 0
     except (OSError, ValueError, KeyError, TypeError, RuntimeError, subprocess.CalledProcessError) as error:
