@@ -4,7 +4,9 @@ Measured on Ghost on 2026-11-16 UTC: Intel i5-1135G7, four cores,
 eight hardware threads, 16 GB RAM, Ubuntu 22.04 base, GCC 11.4 and
 CMake 3.22.1. Neuron uses the default Release build and one thread.
 
-## Pure-format results
+## Historical first round: 128 targets and three prompts
+
+### Pure-format results
 
 M4 remains in progress. Pure Q4_0 misses the F16 perplexity limit, and both
 quantized formats miss the required free-running greedy agreement. The
@@ -104,7 +106,7 @@ compare batched scalar products with dequantized FP32 products, and compare
 32 steps of quantized Qwen2 inference with dequantized weights, including
 QKV bias and tied/untied embeddings. All tests are model-free and run in CI.
 
-## Fixed quality method
+## Historical first-round quality method
 
 [Text provenance and regeneration](wikitext2-slice.md) pin the committed
 1,599-byte WikiText-2 test prefix and its source hash. The text has 390 Qwen
@@ -208,7 +210,7 @@ build-m4/neuron run -m "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_0.gguf" \
   -p '<prompt text>' -n 64 --greedy --json --ctx-size 256
 ```
 
-## Local validation
+## Historical first-round validation
 
 All 13 CTest entries pass in GCC default Release, Release with Werror,
 Debug with Werror and ASan/UBSan, Release with Werror and AVX2, and Release
@@ -254,7 +256,7 @@ python3 bench/check_m3.py --binary build-m4/neuron \
   --notes 'Record actual activity; tokenizer and ChatML fixtures only.'
 ```
 
-## F16 embedding/output probes
+## Historical first-round F16 embedding/output probes
 
 After the pure formats failed, one global precision change was tested:
 keep `token_embd.weight` in F16 while quantizing every other quantizable
@@ -310,3 +312,58 @@ build-m4/neuron perplexity \
 full protocol on explicit paths. Use a separate runs directory for these
 variants. The probes above stopped at a failed gate to avoid additional
 long runs that cannot make that candidate meet every threshold.
+
+## K block formats and reference bounds
+
+Q4_K (GGML type 12) stores 256 weights in 144 bytes. Two F16 values give
+superblock scale `h` and offset scale `hm`. Twelve bytes pack eight unsigned
+6-bit scales `a[g]` and eight unsigned 6-bit offsets `b[g]`. The last 128
+bytes pack four pairs of 32-weight groups into low and high nibbles.
+Weight `i` in group `g` decodes to `(h*a[g])*q[i] - hm*b[g]`, with each
+operation in FP32. The packed scale fields use their upper two bits to
+carry the upper scale/offset bits for groups 4..7.
+
+Q6_K (type 14) stores 256 weights in 210 bytes: 128 low-bit bytes, 64
+high-bit bytes, 16 signed int8 scales, and one F16 superblock scale. Each
+16-weight group decodes as `(h*a[g])*(q[i]-32)`. Four interleaved groups
+share low nibbles, high nibbles and successive two-bit fields. The signed
+scales and global scale are both honored. Rows must be multiples of 256.
+Loading checks tensor sizes and row boundaries before exposing mapped
+blocks. Embedding lookup decodes one row; scalar products decode one block
+at a time and accumulate in double precision. No whole quantized matrix
+is converted to FP32.
+
+The small reference encoder is a min/max encoder for tests, not llama.cpp's
+weighted fitting algorithm. For Q4_K group `g`, let `m[g] = -min(0,min(x))`
+and `s[g] = (max(0,max(x)) + m[g])/15`. Quantize weights using these ideal
+group parameters. Set `d=max(s)/63`, `dm=max(m)/63`, round group scales and
+offsets to 6-bit integers, and store `d,dm` in F16 as `h,hm`. A per-weight
+absolute error bound, before binary32 arithmetic tolerance, is
+
+```text
+s[g]/2 + 15*(d/2 + 63*abs(h-d)) + dm/2 + 63*abs(hm-dm)
+```
+
+For Q6_K, let `s[g]` be the signed largest-magnitude group value divided
+by -32, and `d=max(abs(s))/127`. Round group scales to signed integers
+-127..127 and store `d` as F16 `h`. Quantize weights to -32..31. Equal
+opposite extrema can clip the positive endpoint, so the bound uses a full
+local step:
+
+```text
+abs(s[g]) + 32*(d/2 + 127*abs(h-d))
+```
+
+These bounds include both levels of scale quantization and F16 rounding.
+Zero scales and underflow are covered. `test_quant` uses 6,000 deterministic
+256-weight blocks per K format across amplitudes 0, 1e-8, 1e-4, 1, 1,000
+and 100,000, including equal opposite extrema and positive, negative and
+zero groups. Binary32 tolerance is `4e-7*amplitude`. Maximum observed
+error/bound is 0.991573740 for Q4_K and 0.989739144 for Q6_K. The legacy
+32-weight checks remain 0.999477885 for Q8_0 and 1.000000000 for Q4_0.
+
+Independent GGUF fixtures vary all packed fields, compare every decoded
+weight and batched scalar product, reject every payload truncation and
+reject short rows. Synthetic Qwen2 inference compares mapped and decoded
+weights for 32 steps with QKV bias and both tied and untied output heads.
+All of these checks are model-free and run in CI.

@@ -10,8 +10,9 @@ WikiText-2 raw test source described in [wikitext2-slice.md](wikitext2-slice.md)
 cut back to the last space and followed by a newline. It is 47,996 bytes,
 SHA-256 `1b33b1af5632849304fc096a1df248379a9dd8399b129492623393ce5b115acc`.
 Source revision, Parquet hash, attribution and CC BY-SA 3.0 terms are unchanged.
-Regenerate with that document's script, replacing `[:1600]` with `[:48000]`
-and the output path with `bench/wikitext2-m4-v2.txt`.
+Regenerate with that document's script, replacing `[:1600]` with `[:48000]`,
+the expected text hash with the hash above, and the output path with
+`bench/wikitext2-m4-v2.txt`.
 
 Tokenize with the pinned Qwen2.5 F16 vocabulary, normal add-special and
 parse-special flags, and no chat template. Evaluate the first 8,192 tokens

@@ -14,7 +14,7 @@ Neuron loads a small transformer language model and generates text on a laptop C
 
 ## Current features
 
-- **GGUF loading** with checked metadata and tensor tables, mapped F32/Q8_0/Q4_0 weights and F16 weights converted to FP32.
+- **GGUF loading** with checked metadata and tensor tables, mapped F32/Q8_0/Q4_0/Q4_K/Q6_K weights and F16 weights converted to FP32.
 - **Llama and Qwen2 tokenizers** with score-based merging or byte BPE, Unicode pre-tokenization and special tokens.
 - **Scalar FP32 inference** for Llama and Qwen2 with RMSNorm, adjacent-pair or split-half RoPE, GQA, QKV bias and SwiGLU.
 - **Per-layer KV cache** with checked context bounds.
@@ -83,7 +83,7 @@ message in chat mode. Omit `--system` to use the model's default system text.
 flags, and `neuron tokenize` prints its IDs. `--prompt-file FILE` reads prompt
 bytes instead of `-p`. These commands support text-only Qwen2.5 chat.
 Interactive terminal chat remains M6 work. Qwen's F16 weights are upcast to
-FP32. Q8_0 and Q4_0 matrices stay mapped and decode during scalar products.
+FP32. Q8_0, Q4_0, Q4_K and Q6_K matrices stay mapped and decode during scalar products.
 [Quantization checks](bench/QUANT.md) document how to produce these GGUFs
 with the pinned external llama.cpp quantizer and compare their quality.
 
@@ -127,7 +127,7 @@ flowchart LR
   S -->|next token| F
   S --> O[text out]
   subgraph kernels
-    M[matmul F32, Q8_0, Q4_0 scalar<br/>planned: AVX2, AVX-512 VNNI]
+    M[matmul F32, Q8_0, Q4_0, Q4_K, Q6_K scalar<br/>planned: AVX2, AVX-512 VNNI]
   end
   F --> M
 ```
@@ -142,7 +142,7 @@ flowchart LR
 
 These are true today and some will stay true by design.
 
-- **Dense Llama and Qwen2 F32/F16/Q8_0/Q4_0 models only.** TinyStories and Qwen2.5 1.5B Instruct are the local check targets. Other tokenizer families, other quantization formats, RoPE scaling and tool-call chat templates are not supported.
+- **Dense Llama and Qwen2 F32/F16/Q8_0/Q4_0/Q4_K/Q6_K models only.** TinyStories and Qwen2.5 1.5B Instruct are the local check targets. Other tokenizer families, other quantization formats, RoPE scaling and tool-call chat templates are not supported.
 - **Scalar and single-threaded.** There are no optimized SIMD kernels, interactive terminal chat, web UI or server yet.
 - **x86-64 Linux only.** No ARM, macOS, or Windows builds are planned.
 - **CPU only.** No CUDA, Metal, or Vulkan.
@@ -177,5 +177,5 @@ ROADMAP.md          milestones and acceptance criteria
 - [bench/BASELINE.md](bench/BASELINE.md): llama.cpp reference measurements and reproduction
 - [bench/M2_CHECKS.md](bench/M2_CHECKS.md): TinyStories tokenizer, logits and exact generation checks
 - [bench/M3_CHECKS.md](bench/M3_CHECKS.md): Qwen2.5, ChatML, cache, context and memory checks
-- [bench/QUANT.md](bench/QUANT.md): Q8_0/Q4_0 formats, perplexity and greedy agreement
+- [bench/QUANT.md](bench/QUANT.md): Q8_0/Q4_0/Q4_K/Q6_K formats, perplexity and greedy agreement
 - [LICENSE](LICENSE): MIT
