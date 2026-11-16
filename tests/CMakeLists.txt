@@ -14,3 +14,7 @@ set_tests_properties(cli_version PROPERTIES
 
 add_test(NAME cli_rejects_unknown_args COMMAND neuron_cli --bogus)
 set_tests_properties(cli_rejects_unknown_args PROPERTIES WILL_FAIL TRUE)
+
+find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter)
+add_test(NAME test_harness_compare
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_harness.py)
