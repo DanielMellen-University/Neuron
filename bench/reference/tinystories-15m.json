@@ -13,7 +13,7 @@
     "version": "version: 0.9.0-dev (build 1, commit 9e9619d)\nbuilt with GNU 11.4.0 for Linux x86_64"
   },
   "machine": {
-    "name": "Ghost",
+    "name": "i5-1135G7",
     "platform": "Linux-6.8.0-149-generic-x86_64-with-glibc2.35",
     "logical_cpus": 8,
     "notes": "Otherwise idle: no builds or tests running; Codex and normal background services present. Pre-run vmstat showed 99% idle in two one-second samples.",

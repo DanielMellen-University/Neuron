@@ -11,7 +11,7 @@
     "version": "neuron 0.1.0 (baseline)"
   },
   "machine": {
-    "name": "Ghost",
+    "name": "i5-1135G7",
     "notes": "Correctness regression. Serial model processes; Codex and background services active.",
     "before": {
       "utc": "2026-11-16T11:36:10.891828+00:00",

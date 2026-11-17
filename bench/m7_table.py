@@ -48,7 +48,7 @@ def main():
             raise ValueError(f'inputs differ for {model} {quant}')
         table.append(dict(model=model, quant=quant, model_sha256=a['model']['sha256'],
                           threads=4, neuron=left, llama_cpp=right))
-    write_json(args.output, dict(machine='Ghost', rows=table,
+    write_json(args.output, dict(machine='i5-1135G7', rows=table,
         method='Rates pool token counts and milliseconds. Generation excludes the first sampled token. '
                'TinyStories reuses M1/M5; Q4_K_M reuses M5; other rows fill missing matched speed pairs in M7.'))
     print('| Model | GGUF | Neuron pp | Neuron tg | llama.cpp pp | llama.cpp tg | Records |')

@@ -117,7 +117,7 @@ def render(args):
             event += 1
         frame = Image.new('RGB', (width, height), '#16202b')
         draw = ImageDraw.Draw(frame)
-        draw.text((16, 12), 'neuron chat | ' + data['model']['file'] + ' | Ghost', font=font, fill='#a2d9b0')
+        draw.text((16, 12), 'neuron chat | ' + data['model']['file'] + ' | i5-1135G7', font=font, fill='#a2d9b0')
         draw.text((16, 38), 'AVX-512, 4 threads, context 256, reply limit 16', font=font, fill='#a9b4c0')
         for i, text in enumerate((lines + [line])[-10:]):
             draw.text((16, 77 + 22 * i), text, font=font, fill='#f0f2f5')
