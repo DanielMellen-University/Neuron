@@ -10,7 +10,7 @@
 
 Neuron loads a small transformer language model and generates text on a laptop CPU, with no GPU and no inference libraries underneath. The target machine is an Intel i5-1135G7 (4 cores, 8 threads, 16 GB RAM, AVX2 and AVX-512 with VNNI). The end goal is Qwen2.5 1.5B Instruct, quantized to 4 bits, chatting at a usable speed.
 
-> **Status: M4 in progress.** Neuron loads Q8_0, Q4_0, Q4_K and Q6_K weights. The larger fixed check scores 4,096 targets and uses twelve prompts. Q4_K_M meets both 4-bit perplexity limits, but Q8_0 and Q4_K_M free-running agreement are 71.74% and 23.44%, below 90% and 70%. Teacher forcing does not replace those criteria. [Quantization checks](bench/QUANT.md) record sizes, memory, speeds, results and local validation. [ROADMAP.md](ROADMAP.md) keeps M4 in progress.
+> **Status: M4 done, M5 next.** Neuron loads Q8_0, Q4_0, Q4_K and Q6_K weights, and its perplexity matches llama.cpp within 0.9% for each format on a fixed 4,096-target check. Free-running greedy agreement missed its targets (Q8_0 71.74% vs 90%, Q4_K_M 23.44% vs 70%); Daniel accepted M4 on Nov 16 2026 with those numbers recorded. Q4_K_M is currently slower than F16 in the scalar path. [Quantization checks](bench/QUANT.md) record sizes, memory, speeds, results and local validation.
 
 ## Current features
 

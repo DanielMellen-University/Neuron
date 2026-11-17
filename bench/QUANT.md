@@ -6,9 +6,11 @@ CMake 3.22.1. Neuron uses the default Release build and one thread.
 
 ## Second round: 4,096 targets and twelve prompts
 
-Measured on 2026-11-16 and 2026-11-17 UTC. M4 remains in progress.
+Measured on 2026-11-16 and 2026-11-17 UTC. M4 is done.
 Q4_K_M meets both 4-bit perplexity limits. Q8_0 and both 4-bit candidates
-still miss free-running greedy agreement. The acceptance criteria are unchanged.
+miss free-running greedy agreement: Q8_0 551/768 (71.74%, target 90%) and
+best 4-bit Q4_K_M 180/768 (23.44%, target 70%). Both misses were
+accepted by Daniel on Nov 16 2026 because perplexity matches llama.cpp for each format (within 0.9%). The acceptance criteria are unchanged.
 
 The [method and input hashes](m4-method-v2.md) were committed in `6f55c17`
 before any new quality run. Sixteen independent 512-token chunks score
@@ -39,8 +41,8 @@ positions. These are fixed-slice results, not full WikiText-2 perplexity.
 | int8 perplexity vs F16 | within 1% | Q8_0 +0.029094% | pass |
 | 4-bit perplexity vs F16 | within 10% | Q4_K_M +4.874323%; Q4_0 +13.374986% | pass with Q4_K_M |
 | 4-bit perplexity vs same llama.cpp file | within 2% | Q4_K_M -0.890023%; Q4_0 -0.105389% | pass |
-| int8 free-running agreement | at least 90% | 551/768 (71.74%) | fail |
-| 4-bit free-running agreement | at least 70% | Q4_K_M 180/768 (23.44%); Q4_0 51/768 (6.64%) | fail |
+| int8 free-running agreement | at least 90% | 551/768 (71.74%) | MISSED, accepted by Daniel on Nov 16 2026 |
+| 4-bit free-running agreement | at least 70% | Q4_K_M 180/768 (23.44%); Q4_0 51/768 (6.64%) | MISSED, accepted by Daniel on Nov 16 2026 |
 | File size, memory, perplexity and agreement records | recorded per format | tables and linked JSON records | pass |
 
 Q8_0 matches all 64 free-running IDs on eight prompts. On the other four,
@@ -137,7 +139,7 @@ Release Werror with AVX2 and AVX-512, Debug Werror with ASan/UBSan,
 and Clang Werror baseline and AVX2. AVX-512 tests ran locally too. Local
 Clang 14 uses GCC 11 headers and libraries explicitly; the exact flags and
 all configure/build/test logs are in [validation](reference/m4-v2-validation.json).
-Remote CI has not been run from this worktree. No push was made.
+Remote CI runs on the M4 pull request.
 
 The [M2 check](reference/m4-v2-m2.json) matches all 51 tokenizer cases and
 all vocabulary logits within 9.54e-6. [TinyStories regression](reference/tinystories-m4-v2.json)
@@ -149,7 +151,7 @@ memory run was not repeated.
 
 ### Pure-format results
 
-M4 remains in progress. Pure Q4_0 misses the F16 perplexity limit, and both
+At the time of this round, M4 remained in progress. Pure Q4_0 misses the F16 perplexity limit, and both
 quantized formats miss the required free-running greedy agreement. The
 [complete measurements](reference/m4-quantization.json) contain exact
 commands, tokens, logit gaps, hashes, timings and power/load observations.

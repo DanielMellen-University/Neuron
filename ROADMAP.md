@@ -12,7 +12,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | M1 llama.cpp baseline and harness | done |
 | M2 TinyStories FP32 forward pass and tokenizer | done |
 | M3 Qwen2.5 1.5B load, chat template, KV cache | done |
-| M4 int8 and 4-bit quantization | in progress |
+| M4 int8 and 4-bit quantization | done |
 | M5 AVX-512 kernels and multithreading | not started |
 | M6 Terminal chat, web UI, OpenAI-compatible server | not started |
 | M7 Polish: README, benchmarks, demo GIF, blog post | not started |
@@ -90,17 +90,20 @@ GGUF layout/truncation checks are implemented. All local CI configurations
 and M2/M3 regressions pass. [Quantization checks](bench/QUANT.md) record
 both rounds and the unchanged acceptance criteria.
 
-M4 remains in progress after the precommitted larger method: 4,096 scored
-WikiText-2 targets and twelve neutral prompts with 64 tokens each.
-Q8_0 perplexity is 11.584336 versus F16's 11.580966, a 0.029094% increase,
-but free-running agreement is 551/768 (71.74%), below 90%.
-Q4_K_M perplexity is 12.145460, 4.874323% above F16 and 0.890023% below
-llama.cpp on the same file, so both 4-bit perplexity limits pass. Its
-free-running agreement is 180/768 (23.44%), below 70%. Pure Q4_0 still
-misses the F16 perplexity limit at +13.374986% and has 51/768 (6.64%)
-agreement. Teacher-forced rates are 99.48%, 84.38% and 88.67% for Q8_0,
-Q4_0 and Q4_K_M; they are diagnostics and do not replace free-running
-agreement. The remaining acceptance failures are both greedy criteria.
+M4 is done. The larger precommitted method scores 4,096 WikiText-2
+targets and runs twelve neutral prompts with 64 tokens each. Perplexity
+tracks llama.cpp on the same file for every format: F16 11.580966 vs
+11.580968, Q8_0 11.584336 vs 11.614251, Q4_0 13.129919 vs 13.143771 and
+Q4_K_M 12.145460 vs 12.254528. Q8_0 is 0.029% above F16 and Q4_K_M is
+4.87% above F16, so the perplexity limits pass. Both free-running greedy
+agreement criteria were missed (see the marks below). The milestone was
+accepted by Daniel on Nov 16 2026 because perplexity matches llama.cpp for each format (within 0.9%). Teacher-forced agreement is 99.48% for Q8_0 and
+88.67% for Q4_K_M; it is a diagnostic and does not replace the criteria.
+
+Known limitation: in the current scalar path Q4_K_M is slower than F16
+(0.379621 versus 0.670816 generation tokens/s). Smaller weights do not
+make this implementation faster on their own. SIMD kernels and threading
+are M5 work.
 
 Goal: the model fits comfortably and runs faster, with a measured, bounded quality loss.
 
@@ -112,6 +115,8 @@ Acceptance criteria:
   - int8 perplexity within 1% of FP32 (or F16) perplexity.
   - 4-bit perplexity within 10% of FP32 perplexity, and within 2% of llama.cpp's perplexity for the same quant type.
   - Greedy token agreement with the FP32 run of at least 90% over the first 64 tokens across the prompt set for int8, and at least 70% for 4-bit.
+    - MISSED (int8): Q8_0 free-running agreement 551/768 (71.74%), target 90%. Accepted by Daniel on Nov 16 2026 because perplexity matches llama.cpp for each format (within 0.9%).
+    - MISSED (4-bit): best 4-bit format Q4_K_M free-running agreement 180/768 (23.44%), target 70%. Accepted by Daniel on Nov 16 2026 because perplexity matches llama.cpp for each format (within 0.9%).
 - `bench/QUANT.md` records file size, memory use, perplexity, and token agreement for each format.
 
 ## M5: AVX-512 kernels and multithreading
