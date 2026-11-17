@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="426" viewBox="0 0 820 426">
+<rect width="100%" height="100%" fill="#fff"/>
+<g font-family="sans-serif" font-size="16" fill="#182637">
+<text x="20" y="28">Qwen2.5 1.5B Q4_K_M generation on Ghost, tokens/s</text>
+<text x="20" y="76">scalar (1t)</text>
+<rect x="205" y="55" width="4.32" height="30" fill="#3478ba"/>
+<text x="219.32" y="76">0.380</text>
+<text x="20" y="124">AVX2 (1t)</text>
+<rect x="205" y="103" width="11.73" height="30" fill="#3478ba"/>
+<text x="226.73" y="124">1.030</text>
+<text x="20" y="172">AVX-512 (1t)</text>
+<rect x="205" y="151" width="22.05" height="30" fill="#3478ba"/>
+<text x="237.05" y="172">1.937</text>
+<text x="20" y="220">VNNI (1t)</text>
+<rect x="205" y="199" width="13.62" height="30" fill="#3478ba"/>
+<text x="228.62" y="220">1.197</text>
+<text x="20" y="268">threads (4t)</text>
+<rect x="205" y="247" width="64.75" height="30" fill="#3478ba"/>
+<text x="279.75" y="268">5.688</text>
+<text x="20" y="316">final (4t)</text>
+<rect x="205" y="295" width="48.89" height="30" fill="#3478ba"/>
+<text x="263.89" y="316">4.294</text>
+<text x="20" y="364">llama.cpp (4t)</text>
+<rect x="205" y="343" width="443.48" height="30" fill="#3478ba"/>
+<text x="658.48" y="364">38.954</text>
+</g></svg>
