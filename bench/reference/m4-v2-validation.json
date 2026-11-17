@@ -583,6 +583,15 @@
       ],
       "returncode": 0,
       "log": "type=8 blocks=6000 maximum_error/bound=0.999477885\ntype=2 blocks=6000 maximum_error/bound=1\n[ ok ] round_trip_bounds_include_half_scale_rounding_and_q4_clipping\n[ ok ] quantization_rejects_bad_shapes_and_nonfinite_input\n[ ok ] gguf_block_layout_rows_and_truncation\n[ ok ] quantized_matmul_matches_independent_dequantization_batched\n[ ok ] mapped_quantized_transformer_and_tied_embeddings_match_dense\ntype=12 blocks=6000 maximum_error/bound=0.99157374\ntype=14 blocks=6000 maximum_error/bound=0.989739144\n[ ok ] k_round_trip_bounds_include_both_scale_levels\n[ ok ] k_gguf_independent_layout_and_every_payload_truncation\n7/7 passed\n"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "bad=$(git ls-files | grep -Ei '\\.(gguf|ggml|safetensors|bin|pt|pth|onnx|npy|npz)$' || true)\nif [ -n \"$bad\" ]; then echo \"weight files committed:\"; echo \"$bad\"; exit 1; fi\nbig=$(git ls-files -z | xargs -0 -r du -k | awk '$1 > 1024 {print $2}')\nif [ -n \"$big\" ]; then echo \"files over 1 MiB:\"; echo \"$big\"; exit 1; fi"
+      ],
+      "returncode": 0,
+      "log": "Weights guard passed: no weight files or files over 1 MiB.\n"
     }
   ]
 }
