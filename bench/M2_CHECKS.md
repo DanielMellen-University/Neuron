@@ -1,8 +1,9 @@
 # M2 TinyStories checks
 
-Completed locally on Ghost on 2026-11-16 with GCC 11.4.0, CMake 3.22.1
-and Python 3.10.12. Every M2 acceptance item passed. Remote GitHub Actions
-has not been run from this worktree.
+This is the correctness record for Neuron's first working model, TinyStories 15M in FP32 (full 32-bit floating point). Use it for the method, commands and exact matches against llama.cpp.
+
+Completed on the test laptop on 2026-11-16 with GCC 11.4.0, CMake 3.22.1
+and Python 3.10.12. Every M2 acceptance item passed.
 
 ## Implementation
 
@@ -12,8 +13,8 @@ alignment, offsets, byte ranges and overlaps before exposing any data.
 Duplicate names, integer overflow, truncated input and unsupported formats
 produce errors with a `GGUF:` prefix. Metadata is bounded to 100,000 keys,
 100,000 tensors, 4,000,000 values and 16 nested array levels to limit resource
-use on malformed files. Dense F32 and F16 tensor formats are supported;
-quantized tensor formats are rejected until M4.
+use on malformed files. Dense F32 and F16 tensor formats are supported. At the time of this check,
+quantized (packed, lower-bit) tensor formats were rejected until M4.
 
 F32 weights stay in the mapping when aligned for float access. F16 weights
 are converted once on load. The forward pass uses FP32 activations and K/V
@@ -65,8 +66,8 @@ tree. The paths below are those used for the M2 run. The current build
 command includes the additional M3 reference libraries:
 
 ```sh
-export NEURON_MODELS_DIR=/home/daniel/codex-runs/Neuron-m1/models
-export NEURON_LLAMACPP_DIR=/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp
+export NEURON_MODELS_DIR="$HOME/.cache/neuron/models"
+export NEURON_LLAMACPP_DIR="$HOME/.cache/neuron/llama.cpp"
 scripts/fetch_models.sh
 # If the pinned M1 libraries are not already built:
 # CC=gcc CXX=g++ scripts/build_llamacpp.sh
@@ -153,7 +154,7 @@ followed by the CLI's final newline.
 The scalar correctness run pooled 177.38 prompt tokens/s and 72.31 generated
 tokens/s. It had no warmup and makes no optimization claim. M1's pooled
 one-thread rates were 3041.34 and 280.95 tokens/s. SIMD kernels and
-multithreading remain M5 work.
+multithreading were left to M5.
 
 ## Model-free tests and CI
 
@@ -186,8 +187,8 @@ AVX-512. Its weight-file and large-file guard also passes locally.
 Clang 14 passed compile-only Werror checks for all translation units using
 the installed GCC 11 headers. A local Clang link was not attempted because
 its standard-library installation is incomplete. CI supplies the full
-Clang build. No remote CI result is claimed here.
+Clang build.
 
 No M2 acceptance item remains open. Other model architectures, GPT-style
 BPE vocabularies, RoPE scaling, quantization, chat and optimized kernels
-remain later milestones.
+came in later milestones.

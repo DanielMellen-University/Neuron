@@ -310,7 +310,7 @@ def run_neuron(args):
         "model": {"id": "tinystories-15m", "file": model.name, "sha256": model_hash},
         "engine": {"name": "neuron", "binary_sha256": sha256(binary),
                    "version": subprocess.check_output([str(binary), "--version"], text=True).strip()},
-        "machine": {"name": "Ghost", "notes": args.notes, "before": machine_state()},
+        "machine": {"name": "i5-1135G7", "notes": args.notes, "before": machine_state()},
         "settings": {"n_predict": N_PREDICT, "greedy": True, "context": 2048,
                      "threads": args.threads, "isa": args.isa, "repetitions": args.repetitions,
                      "prompts_sha256": sha256(ROOT / "bench/prompts.json")},
@@ -345,7 +345,7 @@ def main(argv=None):
     collect.add_argument("--llamacpp-dir", type=Path,
                          default=Path(os.environ.get("NEURON_LLAMACPP_DIR", ROOT / "third_party/llama.cpp")))
     collect.add_argument("--repetitions", type=int, default=3)
-    collect.add_argument("--machine", default="Ghost")
+    collect.add_argument("--machine", default="i5-1135G7")
     collect.add_argument("--notes", required=True, help="other activity and benchmark conditions")
     collect.add_argument("--output", type=Path, required=True)
     neuron = commands.add_parser("run-neuron", help="collect TinyStories runs")

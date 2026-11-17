@@ -87,53 +87,67 @@
   },
   "artifacts": {
     "README.md": {
-      "sha256": "73a2f9d12f6c0dee87b49ed00200e08d30f93f31215edc0e4da9bd99da9e493c",
-      "size_bytes": 11229
+      "sha256": "ecada033ea489e54850ee51a6eb9cad11fb8d8bfa1336fe154847b3c19ece8e9",
+      "size_bytes": 13595
     },
     "ROADMAP.md": {
-      "sha256": "bfb200baa79e98d4cc379cd7608446fe817715b91816c522146943d2db608f98",
-      "size_bytes": 13839
+      "sha256": "6b72e79f6f0b0abf6b49de1a904af4ac0f4e84266889c9938f05224f7bc1b167",
+      "size_bytes": 14483
     },
     "bench/SPEED.md": {
-      "sha256": "5d3e0f72d9e024db9ccbb286aeb2d0f54d2d314227056c5fcdc165cd67b1449c",
-      "size_bytes": 15600
+      "sha256": "18345efae4a8e88c76f5fb5491e7bd386a1ab16cb52ddcb6c55fb3ad1de041e2",
+      "size_bytes": 16080
     },
     "bench/R1_PROFILE.md": {
-      "sha256": "028825eb7030cda447035e8e63063f9fa091cc11a55aef5ed78752d0054ca8d9",
-      "size_bytes": 9999
+      "sha256": "7a0e6d6336d5967438e1d287d7e6301f1155d42af1dc132441e62727ac1d722d",
+      "size_bytes": 11268
     },
     "bench/M7_CHECKS.md": {
-      "sha256": "c1e596bde01df85efb9c17944fe7b75e119a857b055f21fb55b56f6be4a4ee95",
-      "size_bytes": 14130
+      "sha256": "7ed19632e74b3dabbe48061ea5805ef5580007ae9abe7f2c7e2c1571ce8f8fe7",
+      "size_bytes": 14258
     },
     "bench/QUANT.md": {
-      "sha256": "da3d68e91eb2346285e0c9c1cf530f2d3b9bead29c0c4b7aa6d8d699a2cd9ebf",
-      "size_bytes": 28231
+      "sha256": "85ed176229d1e7c9ad09764363184a1aa0b028a9b466cb9490d962fc42a3f1b3",
+      "size_bytes": 28761
     },
     "docs/README.md": {
-      "sha256": "5b44ab4236f1c4c484a4f15725b2024ce3c4c6b3ff44d97cae995070ed1c7d9e",
-      "size_bytes": 1501
+      "sha256": "1840348cbb12eae2b37b6ab8f3b5ea42b225708af54678a7f4b16fc19a2ca519",
+      "size_bytes": 1624
     },
     "docs/blog/design-and-optimization.md": {
-      "sha256": "a253d6bb46bf1aa591c07e75841c8f8eda41ddd4b5cbf9b491a589d316c13dca",
-      "size_bytes": 10911
+      "sha256": "34320e8891e15cff9157383665c999ed8ca590f904191770f0e11d6a5151f6cc",
+      "size_bytes": 11249
     },
     "bench/speed.svg": {
-      "sha256": "ec4852785b2e84077670aa957b93bd89397881a01e7542c76cdb67dde2d5a2c3",
-      "size_bytes": 2177
+      "sha256": "57e5441ad05de5ce6936b6596eb4085a858a9b15615a498186bde1d5f2d6441b",
+      "size_bytes": 2202
     },
     "docs/assets/m5-speed.svg": {
-      "sha256": "ec4852785b2e84077670aa957b93bd89397881a01e7542c76cdb67dde2d5a2c3",
-      "size_bytes": 2177
+      "sha256": "57e5441ad05de5ce6936b6596eb4085a858a9b15615a498186bde1d5f2d6441b",
+      "size_bytes": 2202
     },
     "bench/reference/m7-benchmarks.json": {
-      "sha256": "0f2803ec52aa1411927fa522cf41d159826f159bb5b901b4525286badcfefa95",
-      "size_bytes": 8244
+      "sha256": "8b1eafd8b46143b41a7171f9ec7c6039fbabc41fafb58bef0f114e3d06b4b188",
+      "size_bytes": 8248
     },
     "bench/reference/r1-perplexity.json": {
       "sha256": "720ffc9b214f6cf1653190943b45a865137f1f980ad0e785934518f52e3d5042",
       "size_bytes": 1910
     }
   },
-  "notes": "Remote CI was not run because the branch was not pushed. The optional OpenAI client test skipped because its Python package is unavailable. M4 agreement scores were not rerun."
+  "notes": "Remote CI was not run because the branch was not pushed. The optional OpenAI client test skipped because its Python package is unavailable. M4 agreement scores were not rerun.",
+  "docs_merge_checks": {
+    "main_commit": "3b8698c88ca02ea1eafee43666e1bfb537ea1dac",
+    "default_gcc_build": "build-merge-check",
+    "ctest_passed": 21,
+    "ctest_skipped": 1,
+    "ctest_skip_reason": "Optional OpenAI-client test: model unavailable in the default test environment.",
+    "binary_sha256": "527f7da034e9b847c1f13ca29d5d553e268f59728dec3e553ff1e1f546b43dae",
+    "local_markdown_links_checked": 204,
+    "artifact_hashes_verified": true,
+    "table_and_chart_regeneration_passed": true,
+    "main_roadmap_prefix_unchanged": true,
+    "measurement_numbers_unchanged": true,
+    "weights_and_size_guard_passed": true
+  }
 }

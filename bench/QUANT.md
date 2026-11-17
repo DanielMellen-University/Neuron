@@ -1,13 +1,18 @@
 # M4 quantization checks
 
-R1 leaves this quality study and its agreement scores unchanged. It speeds
-up the K-block implementation and repeats only the original perplexity
-slice. [R1 profile and checks](R1_PROFILE.md) and [current speed](SPEED.md#r1-result)
-record the follow-up. The scalar speed numbers below are historical M4 data.
+This is the quantization quality record for Qwen2.5 1.5B. Use it for file sizes, perplexity, token agreement, and the accepted misses. Quantization packs model weights into fewer bits. Q8_0 is 8-bit, Q4_0 is a simple 4-bit format, and Q4_K_M is a mixed 4-bit and 6-bit format. Perplexity measures how well the model predicts the next token on a fixed text (lower is better). tok/s is tokens per second.
 
-Hardware for both rounds: Ghost, Intel i5-1135G7, four cores,
-eight hardware threads, 16 GB RAM, Ubuntu 22.04 base, GCC 11.4 and
-CMake 3.22.1. Neuron uses the default Release build and one thread.
+Hardware for both rounds: an Intel Core i5-1135G7 laptop (4 cores/8 threads,
+AVX-512 VNNI), 16 GB RAM, Ubuntu 22.04 base, GCC 11.4 and CMake 3.22.1.
+Neuron uses the default Release build and one thread.
+
+R1 leaves this quality study and its agreement scores unchanged. It speeds
+up the K-quant implementation (weights packed in groups of 256 values) and
+repeats the original perplexity slice for all four formats.
+[R1 profile and checks](R1_PROFILE.md) and [current speed](SPEED.md#r1-result)
+record the follow-up. No perplexity increased relative to M4 across the four
+formats; Q4_K_M changed from 12.145460061051 to 12.145459915405 on the same
+slice. The scalar speed numbers below are historical M4 data.
 
 ## Second round: 4,096 targets and twelve prompts
 
@@ -101,12 +106,12 @@ excluding model load. Generation times 63 steps after the first selected
 ID per prompt, for 756 steps. PPL rates divide 4,096 scored targets by the
 whole evaluation time, including warmup positions; they are not decode
 rates. This was one serial sweep with no warmup runs or repetitions.
-No build or other model process ran concurrently. Codex, ordinary services
+No build or other model process ran concurrently. Other development tools, ordinary services
 and light documentation work were present. Frequency and temperature
 were not held constant; power, governor, load and thermal observations are
 saved for each process. Q4_K_M is slower than F16 in this scalar kernel:
 0.379621 versus 0.670816 generation tokens/s. Smaller weights alone do not
-make this implementation faster. SIMD kernels and threading remain M5.
+make this implementation faster. SIMD kernels and threading were left to M5.
 
 Q4_K_M uses 168 Q4_K matrices and 29 Q6_K matrices, including the tied
 embedding/output head. The other 141 tensors remain F32. The quantizer
@@ -117,8 +122,8 @@ records the pinned quantizer, command and hashes. Models remain outside git.
 Reproduce this round with the same external reference build described below:
 
 ```sh
-export NEURON_MODELS_DIR=/home/daniel/codex-runs/Neuron-m1/models
-export NEURON_LLAMACPP_DIR=/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp
+export NEURON_MODELS_DIR="$HOME/.cache/neuron/models"
+export NEURON_LLAMACPP_DIR="$HOME/.cache/neuron/llama.cpp"
 "$NEURON_LLAMACPP_DIR/build/bin/llama-quantize" \
   "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-f16.gguf" \
   "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf" Q4_K_M 2
@@ -144,8 +149,6 @@ Release Werror with AVX2 and AVX-512, Debug Werror with ASan/UBSan,
 and Clang Werror baseline and AVX2. AVX-512 tests ran locally too. Local
 Clang 14 uses GCC 11 headers and libraries explicitly; the exact flags and
 all configure/build/test logs are in [validation](reference/m4-v2-validation.json).
-Remote CI runs on the M4 pull request.
-
 The [M2 check](reference/m4-v2-m2.json) matches all 51 tokenizer cases and
 all vocabulary logits within 9.54e-6. [TinyStories regression](reference/tinystories-m4-v2.json)
 matches all 1,152 M1 IDs exactly. The [M3 fixture check](reference/m4-v2-m3.json)
@@ -209,7 +212,7 @@ load. Generation times 63 steps per prompt after the first sampled token,
 189 steps in total. These are single-pass scalar measurements with no
 warmup and no repetitions. The machine had AC power, a full battery,
 `powersave` with `intel_pstate`, and turbo enabled in the saved observations.
-No build or other model run ran concurrently. Codex, normal background
+No build or other model run ran concurrently. Other development tools, normal background
 services and light documentation work were present. Frequency and thermal
 state were not held constant.
 
@@ -292,14 +295,14 @@ silently pass the 64-token requirement.
 
 ## Historical first-round reproduction
 
-Run from the repository root, using G++ on Ghost. The pinned llama.cpp
+Run from the repository root, using G++ on the test laptop. The pinned llama.cpp
 checkout is `9e9619d030bbe6b584d826a0a6cf06e38251f52b`. Only small adapter
 source and JSON results are committed; models and reference binaries stay
 outside the repository.
 
 ```sh
-export NEURON_MODELS_DIR=/home/daniel/codex-runs/Neuron-m1/models
-export NEURON_LLAMACPP_DIR=/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp
+export NEURON_MODELS_DIR="$HOME/.cache/neuron/models"
+export NEURON_LLAMACPP_DIR="$HOME/.cache/neuron/llama.cpp"
 scripts/fetch_models.sh
 cmake -S . -B build-m4 -DCMAKE_CXX_COMPILER=g++ -DNEURON_WERROR=ON
 cmake --build build-m4 -j 2
@@ -363,8 +366,7 @@ build-m4/neuron run -m "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_0.gguf" \
 All 13 CTest entries pass in GCC default Release, Release with Werror,
 Debug with Werror and ASan/UBSan, Release with Werror and AVX2, and Release
 with Werror and AVX-512. The AVX-512 tests also ran locally. Clang 14 passes
-compile-only Werror checks with GCC 11's headers. The local Clang runtime
-cannot link; remote CI has not been run from this worktree.
+compile-only Werror checks with GCC 11's headers. The local Clang runtime cannot link; CI supplies a full Clang build.
 
 ```sh
 cmake -S . -B build-m4-default -DCMAKE_CXX_COMPILER=g++

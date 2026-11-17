@@ -1,5 +1,7 @@
 # Fixed M4 perplexity text
 
+This file identifies the short WikiText-2 excerpt used for the first M4 perplexity check, including its license and how to regenerate it. Perplexity measures how well a model predicts the next token on a fixed text.
+
 [wikitext2-slice.txt](wikitext2-slice.txt) is a 1,599-byte prefix of the
 WikiText-2 raw test split. Its SHA-256 is
 `5c4d7185e322a055c34ef0ba1c0511973f916adc637b4159ee86a1be8300da4a`.

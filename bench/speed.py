@@ -73,7 +73,7 @@ def chart(args):
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="820" height="{height}" viewBox="0 0 820 {height}">',
            '<rect width="100%" height="100%" fill="#fff"/>',
            '<g font-family="sans-serif" font-size="16" fill="#182637">',
-           '<text x="20" y="28">Qwen2.5 1.5B Q4_K_M generation on Ghost, tokens/s</text>']
+           '<text x="20" y="28">Qwen2.5 1.5B Q4_K_M generation on an Intel Core i5-1135G7 laptop, tokens/s</text>']
     for i, row in enumerate(rows):
         y = 55 + i * 48
         width = 510 * row['tg_tokens_per_second'] / maximum

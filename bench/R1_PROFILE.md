@@ -1,5 +1,22 @@
 # R1 decode profile and checks
 
+This file records the R1 CPU decode profile, kernel and buffer changes,
+speed measurements, and correctness checks on an Intel Core i5-1135G7 laptop.
+
+A token is a piece of the model vocabulary. Prompt processing (`pp`) evaluates
+input tokens; generation (`tg`) produces new tokens after the first sampled
+one. tok/s means tokens per second. GGUF is the model weight file format.
+Quantization stores weights in fewer bits; K-quant formats group 256 weights
+per block, with Q4_K and Q6_K using 4 and 6 bits. Q4_K_M mixes those formats.
+F16, F32 (FP32) and FP64 mean 16-bit, 32-bit and 64-bit floating point.
+SIMD (single instruction, multiple data) processes values in parallel;
+AVX2 and AVX-512 are x86 vector instruction sets, and VNNI (Vector Neural
+Network Instructions) adds integer dot products. ISA means instruction set
+architecture. Perplexity measures next-token prediction on fixed text
+(lower is better). A KV cache stores attention keys and values from earlier
+tokens. RoPE means rotary position embeddings; RMSNorm normalizes by the
+root mean square, and SiLU is the sigmoid linear unit activation function.
+
 R1 measures 21.215665 generation tokens/s against llama.cpp's 38.558125,
 or 55.02%, using the unchanged M5 short protocol and four threads. The
 fresh main baseline is 5.747949 tokens/s. [SPEED.md](SPEED.md#r1-result)
@@ -8,8 +25,9 @@ they do not establish sustained throughput.
 
 ## Profile and changes
 
-`perf stat -e cycles true` fails because `perf_event_paranoid` is 4. GCC
-Release builds with `-pg` provide the fallback profile. The
+The Linux hardware profiler command `perf stat -e cycles true` fails because
+`perf_event_paranoid` is 4. GNU Compiler Collection (GCC) Release builds
+with `-pg` provide a fallback profile through the gprof function profiler. The
 [before flat profile](reference/r1-gprof-before.txt) attributes 74.55% of
 samples to `quant_avx512` and 23.66% to `f16_to_f32`, together 98.21%.
 `Model::step` accounts for 0.45%. The profile includes model setup, four
@@ -52,7 +70,7 @@ original GGUF layout.
 
 Each 256-value activation block uses a power-of-two scale
 `2^(frexp(max_abs)-31)`. A signed 32-bit integer retains 31 magnitude bits
-and splits into two signed word planes. Reconstruction is
+and splits into two signed 16-bit integer planes for its high and low parts. Reconstruction is
 `high*65536 + low + 32768`. Absolute activation rounding error is bounded
 by `2^(frexp(max_abs)-32)`. Zero and subnormal blocks are covered. Inputs
 with nonfinite values use the direct SIMD fallback.
@@ -76,8 +94,8 @@ loops. Model scratch and logits are reused through `step_view` and
 reserves an initial page of at most 256 tokens and can grow later. Pool
 jobs use non-owning task erasure instead of allocating `std::function`
 copies. Caller and workers briefly spin before sleeping. RoPE angles are
-computed once per position and reused across heads and layers. SiLU times
-up already used one loop. RMSNorm and attention retain their scalar
+computed once per position and reused across heads and layers. The SiLU
+activation and feed-forward up projection already share one loop. RMSNorm and attention retain their scalar
 arithmetic; no acceptance or agreement scoring code was changed.
 
 ## Thread and ISA sweep
@@ -102,10 +120,12 @@ samples are also retained, including results below the target.
 ## Correctness and builds
 
 [Validation](reference/r1-validation.json) retains configure, build and
-verbose CTest logs for GCC default Release, Werror Release, AVX2, AVX-512,
-ASan/UBSan, Clang Release and Clang AVX2. All seven configurations pass.
+verbose logs from the CMake test runner (CTest) for GCC default Release,
+Release with warnings treated as errors (Werror), AVX2, AVX-512,
+AddressSanitizer/UndefinedBehaviorSanitizer (ASan/UBSan), Clang Release
+and Clang AVX2. All seven configurations pass.
 Each has 21 passed tests and one optional OpenAI-client skip. All four
-SIMD tests execute on this host. Unsupported runner ISAs skip with code 77.
+SIMD tests execute on the test laptop. Unsupported runner ISAs skip with code 77.
 CI now also runs CTest in the AVX-512 job, using runtime skips on runners
 without the instructions. Acceptance settings are unchanged.
 
@@ -148,8 +168,8 @@ recorded result, including its original miss of the 10% F16 limit.
 ## Reproduce
 
 ```sh
-export NEURON_MODELS_DIR=/home/daniel/codex-runs/Neuron-m1/models
-export NEURON_LLAMACPP_DIR=/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp
+export NEURON_MODELS_DIR="$HOME/.cache/neuron/models"
+export NEURON_LLAMACPP_DIR="$HOME/.cache/neuron/llama.cpp"
 cmake -S . -B build-r1 -DCMAKE_CXX_COMPILER=g++ -DNEURON_WERROR=ON
 cmake --build build-r1 -j 2
 python3 bench/validate_m5.py --build-prefix build-r1-check \
@@ -169,7 +189,7 @@ worktree as Release. Build its profiling binary and the current profiling
 binary with `-DCMAKE_CXX_FLAGS=-pg -DCMAKE_EXE_LINKER_FLAGS=-pg`, both in
 fresh directories. `GMON_OUT_PREFIX` must point outside tracked files.
 The current driver uses the old model header for the old library, avoiding
-an ABI mismatch:
+an application binary interface (ABI) mismatch:
 
 ```sh
 python3 bench/profile_r1.py --before-build /path/to/baseline-release \
@@ -178,8 +198,6 @@ python3 bench/profile_r1.py --before-build /path/to/baseline-release \
   --output bench/runs/r1-profile.json
 ```
 
-Remote CI was not run because this branch was not pushed. Model files,
-reference binaries and raw profiler data remain outside tracked files.
-[Final audit](reference/r1-final-checks.json) records source and binary
+[The artifact report](reference/r1-final-checks.json) records source and binary
 hash checks, derived speed ratios, build results, original perplexity
 limits, table/chart consistency and the weights/size guard.

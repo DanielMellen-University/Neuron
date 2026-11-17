@@ -1,4 +1,6 @@
-# Speed and correctness on Ghost
+# M5 speed and correctness
+
+This is the speed and kernel-correctness record for the M5 optimizations. Use it for the step-by-step chart, the comparison with llama.cpp, and the SIMD tests (AVX2, AVX-512 and VNNI are CPU vector instruction sets). tok/s is tokens per second.
 
 ## R1 result
 
@@ -9,7 +11,8 @@ with four threads in both engines, meeting the 50% target in this short
 sample. [Neuron](reference/r1-speed-final.json) and
 [llama.cpp](reference/r1-speed-llama-final.json) save every timing and ID.
 
-The fresh unmodified-main baseline was
+Here, `pp` means prompt processing and `tg` means generation after the first
+sampled token. The fresh unmodified-main baseline was
 [6.950889 pp / 5.747949 tg](reference/r1-speed-before.json). R1 generation
 is 3.69 times that baseline and 4.94 times the original M5 final sample.
 No frequency or temperature was fixed. Intermediate runs ranged below
@@ -21,9 +24,11 @@ The prompt, context, generated token count, greedy settings, thread count,
 GGUF hash and reference commit are unchanged from the M5 method below.
 All R1 Neuron speed runs match the baseline's 32 generated IDs exactly.
 [R1_PROFILE.md](R1_PROFILE.md) records profiles, allocation counts,
-thread/ISA sweeps, source commits and validation commands. The K kernels
-use two signed word activation planes, FP64 reconstruction and checked
-VNNI dispatch. Plain AVX-512, AVX2 and the scalar fallback remain covered.
+thread and instruction set architecture (ISA) sweeps, source commits and
+validation commands. The K-quant kernels (weights packed in groups of 256 values)
+use two signed 16-bit activation planes, double-precision (FP64) reconstruction
+and checked Vector Neural Network Instructions (VNNI) dispatch. Plain AVX-512,
+AVX2 and the scalar fallback remain covered.
 
 ## Original M5 result
 
@@ -73,11 +78,11 @@ original threads sample. The original M5 ratio uses that final sample.
 
 ## Measurement method
 
-Measured on 2026-11-17 UTC on Ghost: Intel i5-1135G7, four cores, eight
-hardware threads, 16 GB RAM, AVX2 and AVX-512 with VNNI, Ubuntu 22.04 base,
-GCC 11.4.0, CMake 3.22.1, Release. Model processes, tests and builds ran
-sequentially during speed collection. Codex and normal services were
-present. AC was connected, the battery was full, the governor was
+Measured on 2026-11-17 UTC on an Intel Core i5-1135G7 laptop (4 cores/8
+threads, AVX-512 VNNI): 16 GB RAM, AVX2 and AVX-512 with VNNI, Ubuntu 22.04
+base, GCC 11.4.0, CMake 3.22.1, Release. Model processes, tests and builds ran
+sequentially during speed collection. Other development tools and normal
+services were present. AC was connected, the battery was full, the governor was
 `powersave`, the driver was `intel_pstate`, and turbo was enabled. Each
 record saves observed power and load before and after its run.
 
@@ -152,9 +157,9 @@ in each configuration:
 
 Local Clang uses the explicit GCC 11 header and library flags recorded in
 the validation JSON. The AVX2 configurations force `NEURON_ISA=avx2` for
-CTest. All AVX-512 and VNNI tests ran on Ghost without skips.
+CTest. All AVX-512 and VNNI tests ran on the test laptop without skips.
 
-| Path, GCC Release on Ghost | Scalar comparisons | Max absolute output difference |
+| Path, GCC Release on the test laptop | Scalar comparisons | Max absolute output difference |
 | --- | ---: | ---: |
 | scalar | 2,833 | 0 |
 | AVX2 | 2,833 | 0 |
@@ -222,8 +227,8 @@ This is a quick regression check; it does not rerun M4's full quality study.
 Keep models and llama.cpp outside this tree:
 
 ```sh
-export NEURON_MODELS_DIR=/home/daniel/codex-runs/Neuron-m1/models
-export NEURON_LLAMACPP_DIR=/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp
+export NEURON_MODELS_DIR="$HOME/.cache/neuron/models"
+export NEURON_LLAMACPP_DIR="$HOME/.cache/neuron/llama.cpp"
 python3 bench/validate_m5.py --output bench/runs/m5-validation.json
 python3 bench/speed.py measure --binary build-m5-final-default/neuron \
   --step final --isa avx512 --threads 4 --output bench/runs/m5-final.json \

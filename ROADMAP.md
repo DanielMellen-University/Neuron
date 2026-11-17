@@ -1,8 +1,12 @@
 # Roadmap
 
-Neuron is built in seven milestones. Each one ends with a merged pull request, green CI at the merge commit, and a short write-up of how that part works. A milestone is done only when every acceptance item below is true and checkable from the repo.
+This is the milestone plan for Neuron. Use it to see what was built, what had to pass, and which measured targets were missed.
 
-Hardware for every number in this file: Ghost, an Intel i5-1135G7 (4 cores, 8 threads, 16 GB RAM, AVX2, AVX-512 with VNNI), Ubuntu 22.04, GCC 11.4. Benchmarks record the thread count, model file hash, prompt, and power state.
+Neuron was built in seven milestones. Each one ends with a merged pull request, green CI at the merge commit, and a short write-up of how that part works. A milestone is done only when every acceptance item below is true and checkable from the repo.
+
+Hardware for every number in this file: an Intel Core i5-1135G7 laptop (4 cores/8 threads, 16 GB RAM, AVX2, AVX-512 with VNNI), Ubuntu 22.04, GCC 11.4. Benchmarks record the thread count, model file hash, prompt, and power state.
+
+Terms used below. A token is a model vocabulary piece, often a word or subword. tok/s is tokens per second. GGUF is the file format for the weights. Quantization packs those weights into fewer bits; Q8_0 is 8-bit, Q4_0 is a simple 4-bit format, and Q4_K_M is a mixed 4-bit and 6-bit format. Perplexity measures how well the model predicts the next token on a fixed text (lower is better). A KV cache stores attention keys and values from earlier tokens so they are not recomputed in the same reply. SIMD (here AVX2, AVX-512 and VNNI) is the CPU's vector instruction set used in the matrix kernels.
 
 Model weights are never committed. Scripts download them into the git-ignored `models/` directory and verify a pinned SHA-256.
 
@@ -21,7 +25,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 
 Goal: a fixed reference to measure Neuron against, and the tooling to compare against it.
 
-Completed on Ghost: pinned download and build scripts, three fixed prompts,
+Completed on the test laptop: pinned download and build scripts, three fixed prompts,
 greedy reference tokens and measured speeds at 1, 4 and 8 threads, and a
 model-free compare test suite in CTest. [bench/BASELINE.md](bench/BASELINE.md)
 records the inputs, power state, results, reproduction commands and local
@@ -34,20 +38,19 @@ Acceptance criteria:
 - A harness (`bench/` or `tools/harness/`) runs a fixed prompt set with greedy decoding and a fixed seed and records, per model: prompt token ids, generated token ids, generated text, and prompt-processing and generation tokens/s at 1, 4, and 8 threads.
 - Reference outputs are committed as small text or JSON files under `bench/reference/` (token ids and text, not weights or logits dumps over 1 MiB).
 - The harness has a compare mode that takes two result files and reports first divergent token index, token agreement rate, and a speed ratio. It exits non-zero on any token mismatch when asked for exact match.
-- `bench/BASELINE.md` has a table of llama.cpp tokens/s on Ghost for each model and thread count, plus the exact commands to reproduce it.
+- `bench/BASELINE.md` has a table of llama.cpp tokens/s on the test laptop for each model and thread count, plus the exact commands to reproduce it.
 - The compare mode has unit tests that run in CI without any model files.
 
 ## M2: TinyStories FP32 forward pass and tokenizer
 
 Goal: Neuron generates the same text as llama.cpp on a tiny model.
 
-Completed locally on Ghost: checked GGUF loading, llama vocabulary tokenization,
+Completed on the test laptop: checked GGUF loading, llama vocabulary tokenization,
 scalar FP32 inference and greedy CLI generation. All 51 tokenizer cases match
 llama.cpp. Final-position logits differ by at most 9.54e-6 across three prompts.
 All 128 generated IDs match M1 for each prompt in three repetitions.
 [bench/M2_CHECKS.md](bench/M2_CHECKS.md) records the method, exact commands,
-committed results and model-free test coverage. Remote CI remains to run
-on the pull request.
+committed results and model-free test coverage.
 
 Acceptance criteria:
 
@@ -62,7 +65,7 @@ Acceptance criteria:
 
 Goal: the real target model runs and holds a conversation.
 
-Completed locally on Ghost: Qwen2 F16 loading with GQA and QKV bias,
+Completed on the test laptop: Qwen2 F16 loading with GQA and QKV bias,
 split-half RoPE, byte BPE, ChatML and a multi-turn message CLI. All 63
 tokenizer cases and four chat fixtures match llama.cpp. All three M1
 prompts match the first 32 generated IDs exactly. Cached generation matches
@@ -72,7 +75,6 @@ A full 2048-position context peaks at 9,101,076 KiB (8.68 GiB) RSS.
 All 12 CTest entries pass in default Release, Werror, sanitizer, AVX2 and
 AVX-512 builds. [M3 checks](bench/M3_CHECKS.md) record the method, exact
 commands and committed results. No M3 acceptance item remains open.
-Remote CI remains to run on the pull request.
 
 Acceptance criteria:
 
@@ -103,7 +105,7 @@ accepted by Daniel on Nov 16 2026 because perplexity matches llama.cpp for each 
 Known limitation: in the current scalar path Q4_K_M is slower than F16
 (0.379621 versus 0.670816 generation tokens/s). Smaller weights do not
 make this implementation faster on their own. SIMD kernels and threading
-are M5 work.
+were left to M5.
 
 Goal: the model fits comfortably and runs faster, with a measured, bounded quality loss.
 
@@ -121,15 +123,15 @@ Acceptance criteria:
 
 ## M5: AVX-512 kernels and multithreading
 
-Goal: make it fast on Ghost, one measured step at a time.
+Goal: make it fast on the test laptop, one measured step at a time.
 
-Implemented locally on Ghost. All seven build/test configurations and the
+Implemented on the test laptop. All seven build/test configurations and the
 SIMD, threading, TinyStories and quick Qwen correctness guards pass.
 [Speed checks](bench/SPEED.md) record every optimization commit and result.
 MISSED (speed): final Q4_K_M generation is 4.294374 tokens/s versus
 38.953875 for llama.cpp with four threads, or 11.02%, below the 50% target.
 Accepted by Daniel on Nov 17 2026 as a non-bug miss; refinement is deferred
-until after M7. AVX-512 tests were run on Ghost; CI runs AVX2 tests and
+until after M7. AVX-512 tests were run on the test laptop; CI runs AVX2 tests and
 compile-checks AVX-512.
 
 Acceptance criteria:
@@ -139,20 +141,20 @@ Acceptance criteria:
 - A thread pool splits matmuls by output rows; results are bit-identical or within 1e-5 of single-threaded output.
 - `bench/SPEED.md` has a chart (committed PNG or SVG, generated by a script in the repo) of generation tokens/s for Qwen2.5 1.5B Q4 after each optimization step: scalar, AVX2, AVX-512, VNNI, threads, and any later step. Each step is its own commit so the chart is reproducible.
 - Final generation speed is reported next to llama.cpp at the same thread count and quant type. The target is at least 50% of llama.cpp's tokens/s; the actual ratio is recorded whether or not it hits the target.
-- CI runs the SIMD tests on AVX2 and compile-checks AVX-512; AVX-512 tests are run on Ghost and recorded in the PR.
+- CI runs the SIMD tests on AVX2 and compile-checks AVX-512; AVX-512 tests are run on the test laptop and recorded in the PR.
 
 ## M6: Terminal chat, web chat UI, OpenAI-compatible server
 
 Goal: three ways to use it.
 
-Implemented and checked locally on Ghost. Terminal chat streams replies,
+Implemented and checked on the test laptop. Terminal chat streams replies,
 keeps history, resets and survives Ctrl-C. The dependency-free POSIX server
 binds to loopback by default, serves an embedded web page and implements
 both chat completion modes and model listing. The official OpenAI Python
 client passes against SmolLM2 and Qwen2.5 1.5B Q4_K_M. Model-free HTTP and
 terminal tests run in CTest, including the required error cases.
 [M6 checks](bench/M6_CHECKS.md) record commands, results and limitations.
-No M6 acceptance item remains open. Remote CI remains to run.
+No M6 acceptance item remains open.
 
 Acceptance criteria:
 
@@ -164,23 +166,22 @@ Acceptance criteria:
 
 ## M7: Polish
 
-Completed locally on Ghost. The rewritten README includes the measured
+Completed on the test laptop. The rewritten README includes the measured
 model/quant comparison and the accepted M4 agreement and M5 speed misses.
 The docs hub links the design post, generated M5 chart and real Qwen2.5
 Q4_K_M terminal GIF. All seven local build/test configurations pass, and
 the official client passes with SmolLM2 first and Qwen last.
 [M7 checks](bench/M7_CHECKS.md) map claims to committed records and retain
 the reproduction commands. No M7 acceptance item remains open. No tag or
-release was created; those require explicit approval. Remote CI remains
-to run after this branch is pushed.
+release was created; those require explicit approval.
 
 Goal: someone landing on the repo understands what it is, how fast it is, and how it works in two minutes.
 
 Acceptance criteria:
 
 - README rewritten for the finished state: features that actually exist, quick start that works from a clean clone, and an honest limitations list.
-- Benchmark table in the README: Neuron vs llama.cpp on Ghost for each model and quant type, tokens/s for prompt processing and generation, with reproduce commands.
-- A demo GIF (recorded terminal or web chat with Qwen2.5 1.5B Q4 on Ghost) committed under `docs/` and under 5 MiB. Until then the README has no image placeholder.
+- Benchmark table in the README: Neuron vs llama.cpp on the test laptop for each model and quant type, tokens/s for prompt processing and generation, with reproduce commands.
+- A demo GIF (recorded terminal or web chat with Qwen2.5 1.5B Q4 on the test laptop) committed under `docs/` and under 5 MiB. Until then the README has no image placeholder.
 - A blog post in `docs/blog/` that walks through the design and the optimization steps, with the M5 speed chart.
 - Every number in the README and blog post traces to a file under `bench/`.
 - A tagged release only when explicitly approved.

@@ -11,7 +11,7 @@
     "version": "neuron 0.1.0 (scalar avx2 avx512 vnni (runtime dispatch); selected avx512; threads 1)"
   },
   "machine": {
-    "name": "Ghost",
+    "name": "i5-1135G7",
     "notes": "M6 functional regression. Concurrent compiler and test activity; power state recorded by harness. Timings are not a speed benchmark.",
     "before": {
       "utc": "2026-11-17T08:54:40.307006+00:00",

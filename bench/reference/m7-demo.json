@@ -111,7 +111,7 @@
   "duration_seconds": 19.193222,
   "exit_code": 0,
   "transcript": "Chat: /reset clears history, /exit quits, Ctrl-C stops a reply.\r\nyou> My name is Ada. Reply with OK.\r\nassistant> OK\r\nyou> What is my name? Reply with only the name.\r\nassistant> Ada\r\nyou> /reset\r\nHistory cleared.\r\nyou> /exit\r\n",
-  "notes": "Real Qwen terminal capture on Ghost after the SmolLM2 smoke check. No simultaneous model runs, builds or tests. Timed output is unedited.",
+  "notes": "Real Qwen terminal capture on an i5-1135G7 laptop after the SmolLM2 smoke check. No simultaneous model runs, builds or tests. Timed output is unedited.",
   "rendering": {
     "speed": 1,
     "frame_ms": 100,

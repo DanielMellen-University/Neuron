@@ -1,5 +1,7 @@
 # M4 quality method, second round
 
+This file freezes the second-round M4 quality method and its inputs, so later measurements can be compared against the same rules. Perplexity measures next-token prediction on a fixed text. Free-running agreement compares generated token IDs when each format feeds back its own output. Teacher forcing replays the F16 continuation and is a diagnostic only.
+
 This method and its inputs are committed before any new quality measurement.
 The original three prompts and 128 scored targets remain in `QUANT.md` and
 `reference/m4-quantization.json` as historical results. No prompt is selected

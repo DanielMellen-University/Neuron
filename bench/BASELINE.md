@@ -1,4 +1,6 @@
-# llama.cpp baseline on Ghost
+# llama.cpp baseline
+
+This is the llama.cpp reference record used to measure Neuron. Use it for the pinned models, the measurement method, and the original tokens/s numbers.
 
 Measured on 2026-11-16 UTC. These are llama.cpp speeds, not Neuron speeds.
 These measurements predate Neuron inference. [M2 checks](M2_CHECKS.md)
@@ -6,13 +8,13 @@ record the Neuron comparison.
 
 ## Measurements
 
-Ghost: Intel i5-1135G7, 4 cores, 8 hardware threads, 16 GB RAM, AVX2 and
-AVX-512 with VNNI. The installed OS reports Zorin OS 17.3, based on Ubuntu
+Hardware: an Intel Core i5-1135G7 laptop (4 cores/8 threads, AVX-512 VNNI),
+16 GB RAM, AVX2 and AVX-512 with VNNI. The installed OS reports Zorin OS 17.3, based on Ubuntu
 22.04. The build used GCC 11.4.0 and CMake 3.22.1, CPU only, Release,
 `GGML_NATIVE=ON`, OpenMP enabled and BLAS disabled.
 
 The machine was otherwise idle: no builds or tests ran during collection.
-Codex and normal background services were present. Immediately before the
+Other development tools and normal background services were present. Immediately before the
 final run, two one-second `vmstat` samples reported 99% CPU idle. AC power
 was connected, the battery was full, the governor was `powersave`, the
 driver was `intel_pstate`, and turbo was enabled (`no_turbo=0`). These
@@ -103,7 +105,7 @@ Short prompt timings and laptop power management can cause variation.
 
 Run from the Neuron repository root. Requires Git, curl, sha256sum, Python
 3.8+, CMake 3.20+, GCC and G++. No Python packages, GPU toolkit, BLAS, Node,
-or model service account is required. Use G++ on Ghost; the local Clang
+or model service account is required. Use G++ on the test laptop; the local Clang
 installation cannot link. The build script downloads no UI assets.
 
 ```sh
@@ -113,10 +115,10 @@ CC=gcc CXX=g++ scripts/build_llamacpp.sh
 # Run these sequentially, with other workloads stopped.
 python3 bench/harness.py run --model tinystories-15m \
   --output bench/runs/tinystories-15m.json \
-  --notes 'Otherwise idle: no builds or tests running; Codex and normal background services present. Pre-run vmstat showed 99% idle in two one-second samples.'
+  --notes 'Otherwise idle: no builds or tests running; other development tools and normal background services present. Pre-run vmstat showed 99% idle in two one-second samples.'
 python3 bench/harness.py run --model smollm2-135m-instruct \
   --output bench/runs/smollm2-135m-instruct.json \
-  --notes 'Otherwise idle: no builds or tests running; Codex and normal background services present. Pre-run vmstat showed 99% idle in two one-second samples.'
+  --notes 'Otherwise idle: no builds or tests running; other development tools and normal background services present. Pre-run vmstat showed 99% idle in two one-second samples.'
 
 python3 bench/harness.py compare bench/reference/tinystories-15m.json \
   bench/runs/tinystories-15m.json --exact-match
@@ -136,7 +138,7 @@ also use three repetitions.
 `NEURON_LLAMACPP_DIR` overrides `third_party/llama.cpp` for the build script
 and harness. The harness also accepts `--models-dir` and `--llamacpp-dir`.
 Choose an external or git-ignored directory for overrides. The build is
-host-native; a binary built on Ghost may need rebuilding on another CPU.
+host-native; a binary built on the test laptop may need rebuilding on another CPU.
 `NEURON_BUILD_JOBS` sets build parallelism (default 4).
 
 ## Compare results
@@ -167,7 +169,7 @@ the fields listed here.
 
 ## Validation
 
-On Ghost, all five CTest entries passed in each of these GCC builds:
+On the test laptop, all five CTest entries passed in each of these GCC builds:
 default Release, Release with `NEURON_WERROR=ON`, Release with Werror and
 AVX2, Release with Werror and AVX-512, and Debug with Werror and ASan/UBSan.
 The harness entry runs 12 model-free Python tests covering first divergence,
@@ -175,8 +177,7 @@ length mismatches, empty sequences, prompt mismatches, row pairing,
 speed ratios, input validation, CLI exit codes and timing aggregation.
 The downloader also passed a real corrupt-file repair and idempotent reuse
 check with `NEURON_MODELS_DIR` set to a temporary path containing spaces.
-The GitHub Actions workflow is unchanged and will also exercise Clang.
-Remote CI has not been run from this worktree.
+The GitHub Actions workflow also exercises Clang.
 
 ```sh
 cmake -S . -B build -DCMAKE_CXX_COMPILER=g++

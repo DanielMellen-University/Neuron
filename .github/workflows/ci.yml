@@ -44,6 +44,7 @@ jobs:
   avx512-build:
     # Runtime checks skip unavailable ISAs. Run all supported kernel tests
     # even when this runner cannot execute AVX-512 or VNNI.
+    # AVX-512 tests also run locally on the test laptop.
     name: gcc avx512
     runs-on: ubuntu-latest
     steps:

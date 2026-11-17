@@ -11,7 +11,7 @@
     "version": "neuron 0.1.0 (baseline)"
   },
   "machine": {
-    "name": "Ghost",
+    "name": "i5-1135G7",
     "notes": "Scalar FP32, one thread, local correctness check. No builds or tests running during collection.",
     "before": {
       "utc": "2026-11-16T07:41:40.908511+00:00",
