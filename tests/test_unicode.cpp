@@ -20,3 +20,11 @@ NEURON_TEST(qwen2_whitespace_contractions_and_numeric_boundaries) {
   for (const std::string& text : std::vector<std::string>{"\xc0\x80", "\xe0\x80\x80", "\xed\xa0\x80", "\xf4\x90\x80\x80", "\xf0\x9f"})
     CHECK_THROWS_AS(neuron::unicode::qwen2_words(text), std::runtime_error);
 }
+
+NEURON_TEST(smollm_pre_tokenizer_case_prefix_and_newline_rules) {
+  const auto words = neuron::unicode::qwen2_words("'S 's\nword !word 123", true);
+  const std::vector<std::string_view> expected{"'", "S", " '", "s", "\n", "word", " !", "word", " ", "1", "2", "3"};
+  CHECK(words == expected);
+  CHECK((neuron::unicode::qwen2_words("a  2026", true) ==
+      std::vector<std::string_view>{"a", "  ", "2", "0", "2", "6"}));
+}

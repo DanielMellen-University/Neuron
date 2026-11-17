@@ -16,7 +16,8 @@ namespace {
 Vocabulary load_vocabulary(const Gguf& file) {
   const auto model = file.at("tokenizer.ggml.model").string();
   if (model != "llama" && model != "gpt2") fail("only llama and Qwen2 byte BPE vocabularies are supported");
-  if (model == "gpt2" && file.at("tokenizer.ggml.pre").string() != "qwen2") fail("unsupported BPE pre-tokenizer");
+  if (model == "gpt2" && file.at("tokenizer.ggml.pre").string() != "qwen2" &&
+      file.at("tokenizer.ggml.pre").string() != "smollm") fail("unsupported BPE pre-tokenizer");
   const auto& tokens = file.at("tokenizer.ggml.tokens").array();
   const auto* scores_value = file.find("tokenizer.ggml.scores");
   if (!scores_value && model == "llama") fail("missing llama token scores");
@@ -24,6 +25,7 @@ Vocabulary load_vocabulary(const Gguf& file) {
   if ((scores_value && tokens.size() != scores_value->array().size()) || tokens.size() != types.size()) fail("vocabulary arrays differ in size");
   Vocabulary v;
   v.byte_bpe = model == "gpt2";
+  v.smollm = v.byte_bpe && file.at("tokenizer.ggml.pre").string() == "smollm";
   if (v.byte_bpe) for (const auto& merge : file.at("tokenizer.ggml.merges").array()) v.merges.push_back(merge.string());
   for (std::size_t i = 0; i < tokens.size(); ++i) {
     if (types[i].type != GgufType::i32) fail("token types must be int32");
@@ -77,8 +79,9 @@ Tokenizer::Tokenizer(Vocabulary vocabulary) : vocabulary_(std::move(vocabulary))
       byte_alphabet_[i] = unicode::utf8(code);
       byte_decoder_.emplace(code, static_cast<char>(i));
       const auto it = ids_.find(byte_alphabet_[i]);
-      if (it == ids_.end()) fail("missing BPE byte token");
-      bytes_[i] = it->second;
+      if (it == ids_.end()) {
+        if (!vocabulary_.smollm) fail("missing BPE byte token");
+      } else bytes_[i] = it->second;
     }
     for (std::size_t i = 0; i < vocabulary_.merges.size(); ++i) {
       const auto& merge = vocabulary_.merges[i];
@@ -98,7 +101,7 @@ Tokenizer::Tokenizer(Vocabulary vocabulary) : vocabulary_(std::move(vocabulary))
 }
 void Tokenizer::encode_fragment(std::string_view raw, bool prefix, std::vector<std::int32_t>& out) const {
   if (vocabulary_.byte_bpe) {
-    for (const auto word : unicode::qwen2_words(raw)) {
+    for (const auto word : unicode::qwen2_words(raw, vocabulary_.smollm)) {
       std::string encoded;
       for (const auto c : word) encoded += byte_alphabet_[static_cast<unsigned char>(c)];
       encode_symbols(encoded, out);

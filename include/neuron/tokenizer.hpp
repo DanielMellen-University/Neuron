@@ -21,6 +21,7 @@ struct Vocabulary {
   bool add_bos = true;
   bool add_eos = false;
   bool add_space_prefix = true;
+  bool smollm = false;
   bool byte_bpe = false;  // GPT-2 byte alphabet, with the Qwen2 pre-tokenizer.
   std::vector<std::string> merges;
 };
