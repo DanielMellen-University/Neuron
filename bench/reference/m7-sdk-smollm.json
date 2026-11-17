@@ -1,0 +1,23 @@
+{
+  "model": "SmolLM2-135M-Instruct-f16.gguf",
+  "openai_version": "3.52.0",
+  "threads": 4,
+  "context": 512,
+  "first_reply": "Hello, I'm Ada, a helpful AI assistant designed to assist with various tasks",
+  "history_reply": "My name is Ada, and I'm a helpful AI assistant.",
+  "usage": {
+    "completion_tokens": 14,
+    "prompt_tokens": 79,
+    "total_tokens": 93,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "stream_matches_nonstream": true,
+  "errors_checked": [
+    "model_not_found",
+    "context_length_exceeded",
+    "invalid_json"
+  ],
+  "elapsed_seconds": 3.539,
+  "passed": true
+}

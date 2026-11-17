@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-17",
+  "source_parent_commit": "a14753338c53e216ab2ead092d8937ad640c97b2",
+  "acceptance_text_unchanged": true,
+  "acceptance_sections_sha256": [
+    "c3c15240e2fb91e630e92d681644b4fea1daf5182638156ddfcd2bd3c7c2758e",
+    "8269c9768bbbd7f86b02495246922e3c1c94a8d54d4076c35c60c375411e204f",
+    "8b8a775f7c7251b7bf5554deb45b4d97c3ac54d5156abd2e876eba21682107f1",
+    "5baf3d20071d2735ab25e5de02f644a1ff39c9825c01854674f15c59c4e2bb63",
+    "66d89e02435da4ca097c982f040ec00f60a162bb8d5addbb17a924ee0f97cbca",
+    "3c1848dbe9518cc9151a4dd6d1d9e5acc3a20dc63c82de6e79a297be287bfd16",
+    "781f6a316a3616e6bc4ef0ffd16ed004808ff6969187bb059eaeb0669a6b9457"
+  ],
+  "readme_table_regeneration": {
+    "passed": true,
+    "command": [
+      "python3",
+      "bench/m7_table.py",
+      "--output",
+      "/tmp/neuron-m7-table-final.json"
+    ],
+    "returncode": 0,
+    "stdout": "| Model | GGUF | Neuron pp | Neuron tg | llama.cpp pp | llama.cpp tg | Records |\n| --- | --- | ---: | ---: | ---: | ---: | --- |\n| TinyStories 15M | F32 | 1048.75 | 445.18 | 7980.83 | 634.81 | [N](bench/reference/tinystories-m5.json) / [L](bench/reference/tinystories-15m.json) |\n| SmolLM2 135M Instruct | F16 | 86.68 | 72.39 | 181.81 | 145.18 | [N](bench/reference/m7-speed-smollm-neuron.json) / [L](bench/reference/m7-speed-smollm-llama.json) |\n| Qwen2.5 1.5B Instruct | F16 | 7.87 | 7.00 | 45.35 | 14.31 | [N](bench/reference/m7-speed-f16-neuron.json) / [L](bench/reference/m7-speed-f16-llama.json) |\n| Qwen2.5 1.5B Instruct | Q8_0 | 8.68 | 7.97 | 42.16 | 25.27 | [N](bench/reference/m7-speed-q8_0-neuron.json) / [L](bench/reference/m7-speed-q8_0-llama.json) |\n| Qwen2.5 1.5B Instruct | Q4_0 | 6.37 | 6.42 | 117.67 | 44.53 | [N](bench/reference/m7-speed-q4_0-neuron.json) / [L](bench/reference/m7-speed-q4_0-llama.json) |\n| Qwen2.5 1.5B Instruct | Q4_K_M | 6.48 | 4.29 | 59.26 | 38.95 | [N](bench/reference/m5-speed-final.json) / [L](bench/reference/m5-speed-llama.json) |\n",
+    "stderr": ""
+  },
+  "chart_regeneration": {
+    "command": [
+      "python3",
+      "bench/speed.py",
+      "chart",
+      "bench/reference/m5-speed-scalar.json",
+      "bench/reference/m5-speed-avx2.json",
+      "bench/reference/m5-speed-avx512.json",
+      "bench/reference/m5-speed-vnni.json",
+      "bench/reference/m5-speed-threads.json",
+      "bench/reference/m5-speed-final.json",
+      "bench/reference/m5-speed-llama.json",
+      "--output",
+      "/tmp/neuron-m7-speed-final.svg"
+    ],
+    "byte_identical": true
+  },
+  "gif_regeneration": {
+    "command": [
+      "python3",
+      "bench/record_chat.py",
+      "render",
+      "--input",
+      "bench/reference/m7-demo.json",
+      "--output",
+      "/tmp/neuron-m7-chat-final.gif"
+    ],
+    "byte_identical": true,
+    "visual_qa": "Midpoint and final frames inspected; chart rendered and inspected. Text and labels fit.",
+    "frames": 28,
+    "duration_ms": 19300,
+    "capture_seconds": 19.193222
+  },
+  "assets": [
+    {
+      "file": "docs/chat.gif",
+      "bytes": 37989,
+      "sha256": "21a35118cb354d2f857e3304f01cdacd0f2695ba19f23ac35926fa61eecd5595"
+    },
+    {
+      "file": "docs/assets/m5-speed.svg",
+      "bytes": 1281,
+      "sha256": "66f3874079fda6815d6fb44c23714a9af25b9e09464847ef0476ecca661ca60c"
+    }
+  ],
+  "quality_claims": {
+    "Q8_0": {
+      "matching_tokens": 551,
+      "total_tokens": 768,
+      "percent": 71.74
+    },
+    "Q4_K_M": {
+      "matching_tokens": 180,
+      "total_tokens": 768,
+      "percent": 23.44
+    }
+  },
+  "m5_claim": {
+    "neuron_tg": 4.294373680469704,
+    "llama_tg": 38.953874842456706,
+    "percent": 11.02,
+    "target_percent": 50
+  },
+  "perplexity_values_match": true,
+  "quickstart_smoke": [
+    {
+      "command": [
+        "build-m7-default/neuron",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "neuron 0.1.0 (scalar avx2 avx512 vnni (runtime dispatch); selected avx512; threads 1)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "build-m7-default/neuron",
+        "run",
+        "-m",
+        "/home/daniel/codex-runs/Neuron-m1/models/stories15M.gguf",
+        "-p",
+        "Once upon a time",
+        "-n",
+        "32",
+        "--greedy",
+        "--threads",
+        "4"
+      ],
+      "returncode": 0,
+      "stdout": ", there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big, red ball in\n",
+      "stderr": ""
+    }
+  ],
+  "sdk_checks": [
+    {
+      "file": "bench/reference/m7-sdk-smollm.json",
+      "sha256": "c078017547c0b0094e1551e2c0f72d27bbb23fe5c2b2cf09b473cea2ecba78d6",
+      "passed": true,
+      "binary_sha256": "b92a070de1be637f56cf4c1d55926771f4ea4163947533ed48c3394b3aa0a1a5"
+    },
+    {
+      "file": "bench/reference/m7-sdk-qwen.json",
+      "sha256": "7dc44eb71a17142b66413d8200611bfe3d1f4103c6963d80cb3c1d5ab12de5ee",
+      "passed": true,
+      "binary_sha256": "b92a070de1be637f56cf4c1d55926771f4ea4163947533ed48c3394b3aa0a1a5"
+    }
+  ],
+  "unmet_m7_criteria": [],
+  "remote_ci": "Not run; no push was made. Local equivalents passed.",
+  "local_markdown_links": {
+    "checked": 100,
+    "failures": []
+  },
+  "writing_style_check": "No em dash or prohibited wording in changed Markdown.",
+  "weights_and_size_guard": {
+    "passed": true,
+    "checked_files": 161,
+    "failures": [],
+    "limit_bytes": 1048576
+  },
+  "document_sha256": {
+    "README.md": "00b27e177e780002ef325b33c97cf9c5653e4d8a16c26cbae475010a40df0a0a",
+    "ROADMAP.md": "888336536e0a2c5047afa876ea7c8cedd255974cc6029f088b1e25a63e60d5db",
+    "bench/M7_CHECKS.md": "e1976ed12fe13c551f621973021688dc745be4ac4094daafe4578bf907acb094",
+    "docs/demo.md": "4a1f91996f96958d4276bb503e9daacfeb935d073bac7a54060d560faf6d96b3",
+    "docs/README.md": "ce237be2922cc07842c86e7f56b82430d93e175c454850059a0d7c863c9fac13",
+    "docs/blog/design-and-optimization.md": "534ebcbff333a8178105b5747a914b23973a5246751b53048e1af3536850db8c"
+  }
+}
