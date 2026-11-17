@@ -51,6 +51,22 @@ class ServerTests(unittest.TestCase):
                     return data
                 data += part
 
+    def test_half_closed_client_still_gets_reply(self):
+        for stream in (False, True):
+            body = json.dumps(dict(model="fake-model", messages=[dict(role="user", content="Hi")], max_tokens=16, stream=stream)).encode()
+            head = b"POST /v1/chat/completions HTTP/1.1\r\nHost: x\r\nContent-Type: application/json\r\nContent-Length: " + str(len(body)).encode() + b"\r\n\r\n"
+            with socket.create_connection(("127.0.0.1", self.port), timeout=10) as conn:
+                conn.sendall(head + body)
+                conn.shutdown(socket.SHUT_WR)
+                data = b""
+                while True:
+                    part = conn.recv(4096)
+                    if not part:
+                        break
+                    data += part
+            self.assertTrue(data.startswith(b"HTTP/1.1 200"))
+            self.assertIn(b"[DONE]" if stream else b"chat.completion", data)
+
     def test_models_and_embedded_page(self):
         sockets = Path("/proc/net/tcp").read_text().splitlines()
         self.assertTrue(any(line.split()[1] == f"0100007F:{self.port:04X}" for line in sockets[1:]))

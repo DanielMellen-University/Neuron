@@ -140,7 +140,8 @@ bool bool_value(const json::Value& value, const std::string& name) {
 bool disconnected(int fd) {
   char c;
   const auto n = recv(fd, &c, 1, MSG_PEEK | MSG_DONTWAIT);
-  return n == 0 || (n < 0 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR);
+  // n == 0 is only a half-close (the peer may still read the reply), so it is not a disconnect.
+  return n < 0 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR;
 }
 }
 HttpServer::HttpServer(ChatBackend& backend, std::string model, const std::string& host, std::uint16_t port)
