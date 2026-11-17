@@ -1,5 +1,6 @@
 #include "neuron/kernels.hpp"
 #include "neuron/quant.hpp"
+#include "../src/simd.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -31,6 +32,22 @@ int main(int argc, char** argv) {
         ++comparisons;
       }
     };
+    // Check the activation error bound independently of a weight dot. Include
+    // FP32 subnormals and values that differ by more than the retained range.
+    for (int exponent : {-140, -40, 0, 40, 120}) {
+      std::vector<float> x(512);
+      for (std::size_t i = 0; i < x.size(); ++i)
+        x[i] = std::ldexp(uniform(random), exponent - static_cast<int>(i % 60));
+      std::vector<neuron::detail::KActivation> packed;
+      if (!neuron::detail::prepare_k_activations(x, packed)) throw std::runtime_error("finite packing rejected");
+      for (std::size_t i = 0; i < x.size(); ++i) {
+        const auto& a = packed[i / 256];
+        const auto j = i % 256;
+        const double reconstructed = (static_cast<double>(a.high[j]) * 65536 + a.low[j] + 32768) * a.scale;
+        if (std::abs(reconstructed - x[i]) > a.scale / 2)
+          throw std::runtime_error("K activation rounding bound exceeded");
+      }
+    }
     for (std::size_t cols : {1u, 3u, 7u, 8u, 15u, 16u, 17u, 31u, 33u, 129u, 1536u}) {
       for (std::size_t rows : {1u, 3u, 19u}) {
         std::vector<float> w(rows * cols), x(3 * cols), a(3 * rows), b(3 * rows);
@@ -110,6 +127,22 @@ int main(int argc, char** argv) {
         std::fill(x.begin(), x.end(), 0.0f);
         neuron::kernels::matmul_quantized(packed, type, x, b, rows, cols, batch);
         for (float value : b) if (value != 0) throw std::runtime_error("K zero input differs");
+        if (type == neuron::q6_k) {
+          // Worst signed-word accumulators: coefficient (-128)*(-32)=4096.
+          for (std::size_t r = 0; r < rows * blocks; ++r) {
+            auto* p = packed.data() + r * bytes;
+            std::fill_n(p, 192, std::byte{0});
+            std::fill_n(p + 192, 16, std::byte{0x80});
+            const std::uint16_t d = 0x3c00;
+            std::memcpy(p + 208, &d, 2);
+          }
+          for (float value : {-1.0f, 1.0f, -0.999969482421875f, 0.999969482421875f}) {
+            std::fill(x.begin(), x.end(), value);
+            neuron::scalar::matmul_quantized(packed, type, x, a, rows, cols, batch);
+            neuron::kernels::matmul_quantized(packed, type, x, b, rows, cols, batch);
+            compare(a, b);
+          }
+        }
       }
     }
     for (std::size_t n : {0u, 1u, 15u, 16u, 17u, 31u, 32u, 63u, 64u, 65u, 4097u}) {

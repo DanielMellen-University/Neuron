@@ -5,7 +5,7 @@
 #define VNNI __attribute__((target("avx512f,avx512bw,avx512dq,avx512vl,avx512vnni")))
 namespace neuron::detail {
 namespace {
-TARGET __m512i coefficients(const std::byte* w, std::uint32_t type, std::size_t j) {
+TARGET __attribute__((always_inline)) inline __m512i coefficients(const std::byte* w, std::uint32_t type, std::size_t j) {
   const auto mask = _mm256_set1_epi8(15);
   if (type == q4_k) {
     auto codes = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(w + 16 + (j / 64) * 32));
@@ -30,7 +30,7 @@ TARGET __m512d widen_sum(__m512i v) {
   return _mm512_add_pd(_mm512_cvtepi32_pd(_mm512_castsi512_si256(v)),
       _mm512_cvtepi32_pd(_mm512_extracti64x4_epi64(v, 1)));
 }
-TARGET double finish(const std::byte* w, std::uint32_t type, const KActivation& x,
+TARGET __attribute__((always_inline)) inline double finish(const std::byte* w, std::uint32_t type, const KActivation& x,
                      __m512i low, __m512i high, __m512i correction) {
   auto result = _mm512_add_pd(widen_sum(low), _mm512_mul_pd(widen_sum(high), _mm512_set1_pd(65536)));
   result = _mm512_add_pd(result, _mm512_mul_pd(widen_sum(correction), _mm512_set1_pd(32768)));
@@ -38,10 +38,13 @@ TARGET double finish(const std::byte* w, std::uint32_t type, const KActivation& 
   return _mm512_reduce_add_pd(result) * scale - (type == q4_k ? k_offset(w, x) : 0);
 }
 }
-TARGET double kquant_avx512(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n) {
+template <std::uint32_t Type>
+TARGET double kquant_avx512_impl(const std::byte* w, const KActivation* x, std::size_t n) {
+  constexpr auto type = Type;
   double result = 0;
   for (std::size_t b = 0; b < n / 256; ++b, w += type == q4_k ? 144 : 210) {
     auto low = _mm512_setzero_si512(), high = low, correction = low;
+    #pragma GCC unroll 8
     for (std::size_t j = 0; j < 256; j += 32) {
       const auto codes = coefficients(w, type, j);
       low = _mm512_add_epi32(low, _mm512_madd_epi16(codes, _mm512_loadu_si512(x[b].low.data() + j)));
@@ -52,10 +55,13 @@ TARGET double kquant_avx512(const std::byte* w, std::uint32_t type, const KActiv
   }
   return result;
 }
-VNNI double kquant_vnni(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n) {
+template <std::uint32_t Type>
+VNNI double kquant_vnni_impl(const std::byte* w, const KActivation* x, std::size_t n) {
+  constexpr auto type = Type;
   double result = 0;
   for (std::size_t b = 0; b < n / 256; ++b, w += type == q4_k ? 144 : 210) {
     auto low = _mm512_setzero_si512(), high = low, correction = low;
+    #pragma GCC unroll 8
     for (std::size_t j = 0; j < 256; j += 32) {
       const auto codes = coefficients(w, type, j);
       low = _mm512_dpwssd_epi32(low, codes, _mm512_loadu_si512(x[b].low.data() + j));
@@ -65,5 +71,11 @@ VNNI double kquant_vnni(const std::byte* w, std::uint32_t type, const KActivatio
     result += finish(w, type, x[b], low, high, correction);
   }
   return result;
+}
+TARGET double kquant_avx512(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n) {
+  return type == q4_k ? kquant_avx512_impl<q4_k>(w, x, n) : kquant_avx512_impl<q6_k>(w, x, n);
+}
+VNNI double kquant_vnni(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n) {
+  return type == q4_k ? kquant_vnni_impl<q4_k>(w, x, n) : kquant_vnni_impl<q6_k>(w, x, n);
 }
 }  // namespace neuron::detail

@@ -4,7 +4,7 @@
 #define TARGET __attribute__((target("avx2")))
 namespace neuron::detail {
 namespace {
-TARGET __m256i coefficients(const std::byte* w, std::uint32_t type, std::size_t j) {
+TARGET __attribute__((always_inline)) inline __m256i coefficients(const std::byte* w, std::uint32_t type, std::size_t j) {
   const auto mask = _mm_set1_epi8(15);
   if (type == q4_k) {
     auto codes = _mm_loadu_si128(reinterpret_cast<const __m128i*>(w + 16 + (j / 64) * 32 + j % 32));
@@ -27,7 +27,9 @@ TARGET __m256d widen_sum(__m256i v) {
       _mm256_cvtepi32_pd(_mm256_extracti128_si256(v, 1)));
 }
 }
-TARGET double kquant_avx2(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n) {
+template <std::uint32_t Type>
+TARGET double kquant_avx2_impl(const std::byte* w, const KActivation* x, std::size_t n) {
+  constexpr auto type = Type;
   double result = 0;
   for (std::size_t b = 0; b < n / 256; ++b, w += type == q4_k ? 144 : 210) {
     auto sum = _mm256_setzero_pd();
@@ -35,6 +37,7 @@ TARGET double kquant_avx2(const std::byte* w, std::uint32_t type, const KActivat
     // (-128 * -32) * -32768 reaches exactly INT32_MIN without overflow.
     for (std::size_t h = 0; h < 2; ++h) {
       auto low = _mm256_setzero_si256(), high = low, correction = low;
+      #pragma GCC unroll 8
       for (std::size_t j = h * 128; j < (h + 1) * 128; j += 16) {
         const auto codes = coefficients(w, type, j);
         low = _mm256_add_epi32(low, _mm256_madd_epi16(codes,
@@ -53,5 +56,8 @@ TARGET double kquant_avx2(const std::byte* w, std::uint32_t type, const KActivat
     result += ((lanes[0] + lanes[1]) + (lanes[2] + lanes[3])) * scale - (type == q4_k ? k_offset(w, x[b]) : 0);
   }
   return result;
+}
+TARGET double kquant_avx2(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n) {
+  return type == q4_k ? kquant_avx2_impl<q4_k>(w, x, n) : kquant_avx2_impl<q6_k>(w, x, n);
 }
 }  // namespace neuron::detail
