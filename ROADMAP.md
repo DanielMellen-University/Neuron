@@ -13,7 +13,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | M2 TinyStories FP32 forward pass and tokenizer | done |
 | M3 Qwen2.5 1.5B load, chat template, KV cache | done |
 | M4 int8 and 4-bit quantization | done |
-| M5 AVX-512 kernels and multithreading | not started |
+| M5 AVX-512 kernels and multithreading | in progress |
 | M6 Terminal chat, web UI, OpenAI-compatible server | not started |
 | M7 Polish: README, benchmarks, demo GIF, blog post | not started |
 
