@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="820" height="426" viewBox="0 0 820 426">
 <rect width="100%" height="100%" fill="#fff"/>
 <g font-family="sans-serif" font-size="16" fill="#182637">
-<text x="20" y="28">Qwen2.5 1.5B Q4_K_M generation on Ghost, tokens/s</text>
+<text x="20" y="28">Qwen2.5 1.5B Q4_K_M generation on an i5-1135G7 laptop, tokens/s</text>
 <text x="20" y="76">scalar (1t)</text>
 <rect x="205" y="55" width="4.32" height="30" fill="#3478ba"/>
 <text x="219.32" y="76">0.380</text>

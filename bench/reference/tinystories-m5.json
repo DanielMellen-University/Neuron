@@ -11,7 +11,7 @@
     "version": "neuron 0.1.0 (scalar avx2 avx512 vnni (runtime dispatch); selected avx512; threads 1)"
   },
   "machine": {
-    "name": "Ghost",
+    "name": "i5-1135G7",
     "notes": "Final M5 correctness regression: automatic AVX-512, four threads, three repetitions of each M1 prompt. No speed claim.",
     "before": {
       "utc": "2026-11-17T07:46:24.603853+00:00",

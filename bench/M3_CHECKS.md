@@ -1,8 +1,11 @@
 # M3: Qwen2.5, ChatML and KV cache checks
 
-Local checks on Ghost, Intel i5-1135G7, 16 GB RAM, Ubuntu 22.04 base,
-GCC 11.4 and CMake 3.22. The engine uses scalar kernels and one thread.
-These are correctness and memory checks. They make no speed claim.
+This is the correctness and memory record for loading Qwen2.5 1.5B, applying its ChatML chat format, and checking the KV cache (the stored attention keys and values from earlier tokens).
+
+Local checks on an Intel Core i5-1135G7 laptop (4 cores/8 threads, AVX-512 VNNI),
+16 GB RAM, Ubuntu 22.04 base, GCC 11.4 and CMake 3.22. The engine uses scalar
+kernels and one thread. These are correctness and memory checks. They make no
+speed claim.
 The full-context run runs in the background alongside the shorter checks;
 the JSON records the observed power state and other activity.
 
@@ -36,8 +39,8 @@ Run from the Neuron worktree root. Weights and external binaries stay
 outside the repo:
 
 ```sh
-export NEURON_MODELS_DIR=/home/daniel/codex-runs/Neuron-m1/models
-export NEURON_LLAMACPP_DIR=/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp
+export NEURON_MODELS_DIR="$HOME/.cache/neuron/models"
+export NEURON_LLAMACPP_DIR="$HOME/.cache/neuron/llama.cpp"
 scripts/fetch_models.sh
 # Repeating the command verifies and reuses all three files.
 
@@ -274,7 +277,7 @@ log hashes. The separate Werror build uses `build-m3`.
 The AVX2 and AVX-512 checks used the same commands with
 `-DNEURON_WERROR=ON -DNEURON_AVX2=ON` or
 `-DNEURON_WERROR=ON -DNEURON_AVX512=ON`, separate build directories and
-`-j 2`. AVX-512 tests ran on Ghost. No optimized kernels were added.
+`-j 2`. AVX-512 tests ran on the test laptop. No optimized kernels were added.
 Clang 14 also passes compile-only Werror checks for all 16 translation
 units using GCC 11's headers:
 
@@ -292,6 +295,6 @@ done
 The weight and 1 MiB file guard passes for tracked and pending files.
 The existing CI workflow runs all model-free tests for GCC and Clang
 Release, baseline and AVX2, plus GCC ASan/UBSan, an AVX-512 compile check,
-and the weight/large-file guard. Remote CI has not run from this worktree.
-Ghost's Clang installation cannot link; GCC supplies all local executable
+and the weight/large-file guard.
+The test laptop's Clang installation cannot link; GCC supplies all local executable
 builds.

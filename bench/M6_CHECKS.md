@@ -1,8 +1,9 @@
 # M6 chat and server checks
 
-M6 is complete. All five acceptance items pass locally on Ghost on
-2026-11-17. The acceptance text in ROADMAP.md is unchanged. Remote GitHub
-Actions has not been run from this worktree.
+This is the check sheet for terminal chat, the local web page, and the OpenAI-compatible HTTP server.
+
+M6 is complete. All five acceptance items passed on the test laptop on
+2026-11-17. The acceptance text in ROADMAP.md is unchanged.
 
 ## How it works
 
@@ -68,7 +69,7 @@ The fake-backend HTTP and terminal tests run in every configuration.
 | GCC Release default | 21 pass, 1 optional skip |
 | GCC Release Werror | 21 pass, 1 optional skip |
 | GCC Release Werror, AVX2 | 21 pass, 1 optional skip |
-| GCC Release Werror, AVX-512 | 21 pass, 1 optional skip; runtime tests also run on Ghost |
+| GCC Release Werror, AVX-512 | 21 pass, 1 optional skip; runtime tests also run on the test laptop |
 | GCC Debug Werror, ASan and UBSan | 21 pass, 1 optional skip |
 | Clang Release Werror | 21 pass, 1 optional skip |
 | Clang Release Werror, AVX2 | 21 pass, 1 optional skip |

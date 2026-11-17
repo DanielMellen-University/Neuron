@@ -11,7 +11,7 @@
     "version": "neuron 0.1.0 (baseline)"
   },
   "machine": {
-    "name": "Ghost",
+    "name": "i5-1135G7",
     "notes": "M4 correctness regression. Build validation running concurrently; no speed claim.",
     "before": {
       "utc": "2026-11-16T10:10:00.404017+00:00",

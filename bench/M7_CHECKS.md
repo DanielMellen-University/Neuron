@@ -1,9 +1,10 @@
-# M7 polish checks on Ghost
+# M7 polish checks
+
+This sheet maps public README and docs claims to committed benchmark records, and lists the commands to reproduce them. tok/s means tokens per second. pp is prompt processing; tg is generation after the first sampled token.
 
 M7 supplies the rewritten README, a model/quant speed comparison, a real
-terminal GIF, a design post and a docs hub. This sheet maps the public
-claims to committed records. The roadmap acceptance wording is unchanged.
-No tag or release is created.
+terminal GIF, a design post and a docs hub. The roadmap acceptance wording is
+unchanged. No tag or release is created.
 
 ## Speed table
 
@@ -44,11 +45,11 @@ processes prompt tokens sequentially; llama.cpp can batch them. The short
 prompt does not characterize long-prompt throughput. Outputs between
 engines need not be identical; the timing table is not a quality check.
 
-Ghost: Intel i5-1135G7, four cores, eight hardware threads, 16 GB RAM,
-AVX2 and AVX-512 with VNNI, Ubuntu 22.04 base, GCC 11.4.0, CMake 3.22.1.
-M7 measurements ran sequentially with no simultaneous builds, tests or
-other model runs. Codex, documentation work and normal services were
-present. AC was connected, the battery full, the `powersave` governor and
+Hardware: an Intel Core i5-1135G7 laptop (4 cores/8 threads, AVX-512 VNNI),
+16 GB RAM, AVX2 and AVX-512 with VNNI, Ubuntu 22.04 base, GCC 11.4.0,
+CMake 3.22.1. M7 measurements ran sequentially with no simultaneous builds,
+tests or other model runs. Other development tools, documentation work and
+normal services were present. AC was connected, the battery full, the `powersave` governor and
 `intel_pstate` driver active, and turbo enabled. Frequency and temperature
 were not fixed. Before/after observations are in each raw JSON; background
 load and thermal variation limit comparisons across collection times.
@@ -56,15 +57,8 @@ load and thermal variation limit comparisons across collection times.
 
 ## Reproduce
 
-From the repo root, use external directories. To reproduce on Ghost:
-
-```sh
-export NEURON_MODELS_DIR=/home/daniel/codex-runs/Neuron-m1/models
-export NEURON_LLAMACPP_DIR=/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp
-```
-
-For a new clone, choose directories outside that clone, then prepare the
-pinned files and reference engine:
+From the repo root, keep models and the reference engine outside the clone,
+then prepare the pinned files:
 
 ```sh
 export NEURON_MODELS_DIR="$HOME/.cache/neuron/models"
@@ -144,7 +138,7 @@ example command budgets in the README and blog.
   Instruct, SmolLM2 135M Instruct and TinyStories 15M are the local targets.
   Names identify model families or formats, not new measurements.
 - Threads default to one, with 1..256 accepted. Auto dispatch tries
-  AVX-512, AVX2, then scalar. Explicit VNNI is supported on Ghost.
+  AVX-512, AVX2, then scalar. Explicit VNNI is supported on the test laptop.
 - The CLI context defaults to 2048, reply budget to 128. TinyStories
   declares training context 128; the original baseline overrides it.
   README raw examples use 32 tokens; the demo uses reply limit 16 and
@@ -183,8 +177,10 @@ keeps the original clock at normal speed. A fixed palette reduces file
 size without changing text or timing. Midpoint and final frames were
 visually inspected for readable text and complete output.
 
-The GIF is 37,989 bytes, below both the M7 limit of 5 MiB and the stricter
-repository limit of 1 MiB. The SVG is below 1 MiB. Asset hashes, exact
+The GIF is 37,815 bytes, below both the M7 limit of 5 MiB and the stricter
+repository limit of 1 MiB. It was re-rendered from the same capture so the
+title names the i5-1135G7 laptop; timing and conversation text are unchanged.
+The original M7 artifact audit still records the earlier 37,989-byte render. The SVG is below 1 MiB. Asset hashes, exact
 sizes, duration, link and table checks are in the final artifact audit.
 [The demo method](../docs/demo.md) gives capture and render commands.
 
@@ -194,7 +190,7 @@ sizes, duration, link and table checks are in the final artifact audit.
 build and verbose CTest command, return code and output. All configurations
 pass locally. Each CTest run has 21 passed tests, zero failures and one
 clean skip for the optional SDK integration test: the system Python lacks
-`openai`. No SIMD path skips on Ghost. The AVX2 configurations explicitly
+`openai`. No SIMD path skips on the test laptop. The AVX2 configurations explicitly
 set `NEURON_ISA=avx2` for CTest. AVX-512 and VNNI runtime tests also pass.
 
 | Configuration | Configure/build | CTest |
@@ -207,7 +203,7 @@ set `NEURON_ISA=avx2` for CTest. AVX-512 and VNNI runtime tests also pass.
 | Clang Release, Werror | pass | 21 pass, 1 optional skip |
 | Clang Release, Werror, AVX2 | pass | 21 pass, 1 optional skip |
 
-Clang 14 on Ghost otherwise selects incomplete GCC 12 headers. The local
+Clang 14 on the test laptop otherwise selects incomplete GCC 12 headers. The local
 Clang commands use the same explicit GCC 11 headers and library path as
 M5/M6; the exact flags are saved in the validation log. These flags are a
 local toolchain fix, not a source change or a relaxed warning policy.
@@ -246,8 +242,7 @@ python3 bench/validate_m5.py --build-prefix build-m7-recheck \
 sizes, unchanged acceptance text, local Markdown link/anchor checks,
 README table regeneration, chart/GIF regeneration, numeric claim checks
 and the tracked-file weights/size guard. The matrix covers all CI build
-and test jobs locally. GitHub Actions itself has not run on this branch;
-no push was made.
+and test jobs locally.
 
 ## Acceptance status
 
