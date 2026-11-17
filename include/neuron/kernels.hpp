@@ -24,7 +24,7 @@ void rope(std::span<float> values, std::size_t head_size, std::size_t rotary_dim
 }  // namespace neuron::scalar
 
 namespace neuron::kernels {
-// Runtime dispatch. NEURON_ISA=auto|scalar|avx2 (more paths added in M5).
+// Runtime dispatch. NEURON_ISA=auto|scalar|avx2|avx512.
 // Set configuration before inference, not while another caller is running.
 bool supported(std::string_view isa);
 void set_isa(std::string_view isa);
