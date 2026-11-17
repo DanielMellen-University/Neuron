@@ -30,13 +30,10 @@ if(NEURON_WERROR)
   target_compile_options(neuron_options INTERFACE -Werror)
 endif()
 
-if(NEURON_NATIVE)
-  target_compile_options(neuron_options INTERFACE -march=native)
-elseif(NEURON_AVX512)
-  target_compile_options(neuron_options INTERFACE
-    -mavx2 -mfma -mf16c -mavx512f -mavx512bw -mavx512dq -mavx512vl -mavx512vnni)
-elseif(NEURON_AVX2)
-  target_compile_options(neuron_options INTERFACE -mavx2 -mfma -mf16c)
+# SIMD functions carry their own target attributes. These compatibility options
+# never enable host-specific instructions in the rest of the executable.
+if(NEURON_NATIVE OR NEURON_AVX2 OR NEURON_AVX512)
+  message(STATUS "SIMD kernels use runtime CPUID dispatch; baseline code stays portable")
 endif()
 
 if(NEURON_SANITIZE)
@@ -52,6 +49,8 @@ add_library(neuron
   src/chat.cpp
   src/gguf.cpp
   src/kernels.cpp
+  src/dispatch.cpp
+  src/kernels_avx2.cpp
   src/model.cpp
   src/quant.cpp
   src/perplexity.cpp
