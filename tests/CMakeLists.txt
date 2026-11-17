@@ -40,3 +40,15 @@ foreach(isa IN ITEMS scalar avx2 avx512 vnni)
 endforeach()
 
 neuron_add_test(test_threads)
+
+add_executable(chat_test_backend chat_test_backend.cpp)
+target_link_libraries(chat_test_backend PRIVATE neuron neuron_options)
+add_test(NAME test_http
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_server.py $<TARGET_FILE:chat_test_backend>)
+add_test(NAME test_terminal
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_terminal.py $<TARGET_FILE:chat_test_backend>)
+set_tests_properties(test_http test_terminal PROPERTIES TIMEOUT 45)
+
+add_test(NAME test_openai_client
+  COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/test_openai_client.py --binary $<TARGET_FILE:neuron_cli>)
+set_tests_properties(test_openai_client PROPERTIES SKIP_RETURN_CODE 77 TIMEOUT 600)

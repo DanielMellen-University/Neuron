@@ -10,7 +10,7 @@
 
 Neuron loads a small transformer language model and generates text on a laptop CPU, with no GPU and no inference libraries underneath. The target machine is an Intel i5-1135G7 (4 cores, 8 threads, 16 GB RAM, AVX2 and AVX-512 with VNNI). The end goal is Qwen2.5 1.5B Instruct, quantized to 4 bits, chatting at a usable speed.
 
-> **Status: M5 implemented, speed target missed.** Runtime AVX2, AVX-512 and VNNI kernels and a thread pool that splits output rows are implemented. Final Q4_K_M generation is 4.294 tokens/s versus llama.cpp's 38.954 with four threads (11.02%). M5 remains in progress because the target is 50%. [Speed checks](bench/SPEED.md) record each optimization step and correctness guard. M4 remains accepted with its recorded greedy agreement misses; [quantization checks](bench/QUANT.md) preserve those results.
+> **Status: M6 implemented.** Terminal chat, an embedded web chat page and a local OpenAI-compatible server work with Qwen2.5 and SmolLM2 Instruct. [M6 checks](bench/M6_CHECKS.md) record the results. M5's speed target was missed and accepted: Q4_K_M generation is 4.294 tokens/s versus llama.cpp's 38.954 with four threads (11.02%). [Speed checks](bench/SPEED.md) and [quantization checks](bench/QUANT.md) preserve the M4 and M5 results.
 
 ## Current features
 
@@ -21,12 +21,10 @@ Neuron loads a small transformer language model and generates text on a laptop C
 - **Persistent matmul thread pool** with configurable splitting by output rows.
 - **Per-layer KV cache** with checked context bounds.
 - **Qwen2.5 ChatML** with a default or explicit system prompt and multi-turn message history.
+- **Terminal chat** with streaming output, `/reset`, `/exit` and Ctrl-C to stop a reply.
+- **Local HTTP server** with streaming and non-streaming chat completions, model listing and an embedded web chat page.
 - **Greedy CLI generation** with streaming text, JSON token IDs, top-two logit gaps and reference checks.
 - **Perplexity evaluation** with fixed context chunks and a pinned short quality check.
-
-## Planned features
-
-- Terminal chat, a small web chat UI and an OpenAI-compatible local HTTP server.
 
 ## Quick start
 
@@ -85,10 +83,51 @@ message in chat mode. Omit `--system` to use the model's default system text.
 `neuron template` prints the rendered ChatML prompt with the same message
 flags, and `neuron tokenize` prints its IDs. `--prompt-file FILE` reads prompt
 bytes instead of `-p`. These commands support text-only Qwen2.5 chat.
-Interactive terminal chat remains M6 work. Qwen's F16 weights are upcast to
+Qwen's F16 weights are upcast to
 FP32. Q8_0, Q4_0, Q4_K and Q6_K matrices stay mapped and decode during products.
 [Quantization checks](bench/QUANT.md) document how to produce these GGUFs
 with the pinned external llama.cpp quantizer and compare their quality.
+
+Chat in a terminal or start the web UI and API:
+
+```sh
+export NEURON_MODELS_DIR=/path/to/models
+./build/neuron chat -m "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf" --threads 4
+./build/neuron serve -m "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf" --threads 4 --port 8080
+# Open http://127.0.0.1:8080 for web chat.
+```
+
+Chat supports `-n` (default 128), `--ctx-size` (default 2048) and `--system`.
+Ctrl-C interrupts prompt processing or generation and keeps the session open.
+`/reset` clears history. The server defaults to `127.0.0.1`; `--host` selects
+an explicit IPv4 bind address. Ctrl-C stops the server.
+
+Use the official Python client with its normal methods:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(base_url="http://127.0.0.1:8080/v1", api_key="local")
+model = client.models.list().data[0].id
+for chunk in client.chat.completions.create(
+    model=model, messages=[{"role": "user", "content": "Say hello briefly."}],
+    max_tokens=32, stream=True,
+):
+    print(chunk.choices[0].delta.content or "", end="", flush=True)
+```
+
+Omit `stream=True` for a complete response with token usage. The model ID is
+the loaded GGUF filename. Send the full message history with each request.
+The API supports text messages with system, user and assistant roles, greedy
+decoding, `max_tokens` or `max_completion_tokens`, and optional streaming
+usage. Sampling, tools, custom stop strings and multimodal messages are not
+supported. Context overflow and bad JSON return HTTP 400; unknown models
+return 404, with OpenAI-shaped error objects. Requests run one at a time.
+
+`python3 scripts/test_openai_client.py --binary build/neuron` starts a server
+and checks the official client with the Q4_K_M model from `NEURON_MODELS_DIR`.
+It exits 77 with a skip reason when the model or `openai` package is missing.
+`--model FILE` selects SmolLM2 or another supported chat model.
 
 Evaluate the fixed WikiText-2 slice with a quantized model:
 
@@ -163,11 +202,11 @@ flowchart LR
 These are true today and some will stay true by design.
 
 - **Dense Llama and Qwen2 F32/F16/Q8_0/Q4_0/Q4_K/Q6_K models only.** TinyStories and Qwen2.5 1.5B Instruct are the local check targets. Other tokenizer families, other quantization formats, RoPE scaling and tool-call chat templates are not supported.
-- **Generation speed below the M5 target.** The measured ratio and remaining gap are in [bench/SPEED.md](bench/SPEED.md). Interactive terminal chat, web UI and server remain planned.
+- **Generation speed below the M5 target.** The measured ratio and remaining gap are in [bench/SPEED.md](bench/SPEED.md).
 - **x86-64 Linux only.** No ARM, macOS, or Windows builds are planned.
 - **CPU only.** No CUDA, Metal, or Vulkan.
 - **Small models.** The engine targets models up to about 1.5B parameters that fit in 16 GB of RAM.
-- **Single user.** The planned server handles one conversation at a time; there is no batching across requests.
+- **Single user.** The server handles one request at a time, with no batching, authentication or TLS.
 
 ## Testing
 
@@ -178,6 +217,9 @@ ctest --test-dir build --output-on-failure
 ```
 
 GGUF, tokenizer, kernel and synthetic transformer tests run without models or llama.cpp. C++ tests use a small header-only framework in [tests/neuron_test.hpp](tests/neuron_test.hpp) (registration, `CHECK`/`REQUIRE` macros, and a runner) driven by CTest. Harness comparison tests use Python 3.8+ and its standard library. There are no third-party test dependencies. CI builds and tests with GCC and Clang, with and without AVX2, runs an ASan and UBSan job, checks that the AVX-512 build compiles, and rejects any committed weight file.
+
+HTTP and terminal tests use a tiny fake backend and real loopback sockets or
+subprocesses. They run in CI without weights or the optional Python client.
 
 ## Project layout
 
@@ -199,4 +241,5 @@ ROADMAP.md          milestones and acceptance criteria
 - [bench/M3_CHECKS.md](bench/M3_CHECKS.md): Qwen2.5, ChatML, cache, context and memory checks
 - [bench/QUANT.md](bench/QUANT.md): Q8_0/Q4_0/Q4_K/Q6_K formats, perplexity and greedy agreement
 - [bench/SPEED.md](bench/SPEED.md): SIMD, threading, per-step speed chart and correctness guards
+- [bench/M6_CHECKS.md](bench/M6_CHECKS.md): terminal chat, HTTP, web UI and official client checks
 - [LICENSE](LICENSE): MIT

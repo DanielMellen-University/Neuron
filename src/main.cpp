@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <charconv>
 #include <chrono>
+#include <csignal>
 #include <cstdio>
 #include <cstring>
 #include <fstream>
+#include <filesystem>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -12,10 +14,14 @@
 #include "neuron/kernels.hpp"
 #include "neuron/perplexity.hpp"
 #include "neuron/chat.hpp"
+#include "neuron/completion.hpp"
+#include "neuron/server.hpp"
 #include "neuron/tokenizer.hpp"
 #include "neuron/version.hpp"
 
 namespace {
+volatile std::sig_atomic_t server_stopped = 0;
+extern "C" void stop_server(int) { server_stopped = 1; }
 void print_usage() {
   std::printf(
       "usage: neuron [--version] [--help]\n"
@@ -27,6 +33,8 @@ void print_usage() {
       "       neuron tokenize|template -m MODEL --chat [--message ROLE TEXT]... [-p TEXT]\n"
       "\n"
       "       neuron perplexity -m MODEL --prompt-file FILE --ctx-size N [--chunks N]\n"
+      "       neuron chat -m MODEL [-n 128] [--system TEXT] [--ctx-size N]\n"
+      "       neuron serve -m MODEL [--host 127.0.0.1] [--port 8080] [--ctx-size N]\n"
       "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0/Q4_K/Q6_K weights.\n"
       "--prompt-file FILE reads prompt bytes instead of -p.\n"
       "--chat applies Qwen2.5 ChatML; repeated --message flags supply history.\n"
@@ -61,13 +69,15 @@ int execute(int argc, char** argv) {
     print_usage(); return 0;
   }
   const std::string command = argv[1];
-  if (command != "run" && command != "tokenize" && command != "logits" && command != "template" && command != "perplexity") throw std::invalid_argument("unknown command: " + command);
+  if (command != "run" && command != "tokenize" && command != "logits" && command != "template" && command != "perplexity" && command != "chat" && command != "serve") throw std::invalid_argument("unknown command: " + command);
   std::string path, prompt, output, teacher_file;
   bool has_prompt = false, greedy = false, json = false, add_special = true, parse_special = true;
   bool chat = false, recompute = false, has_system = false;
   std::string system;
   std::vector<neuron::ChatMessage> messages;
   std::size_t predict = 128, context = 2048, chunks = 0;
+  std::string host = "127.0.0.1";
+  std::size_t port = 8080;
   for (int i = 2; i < argc; ++i) {
     const std::string_view option = argv[i];
     auto value = [&]() -> std::string {
@@ -77,6 +87,8 @@ int execute(int argc, char** argv) {
     if (option == "--threads") neuron::kernels::set_threads(count(value()));
     else if (option == "--isa") neuron::kernels::set_isa(value());
     else if (option == "-m") path = value();
+    else if (option == "--host" && command == "serve") host = value();
+    else if (option == "--port" && command == "serve") { port = count(value()); if (port > 65535) throw std::invalid_argument("port must be in 1..65535"); }
     else if (option == "-p") { prompt = value(); has_prompt = true; }
     else if (option == "--prompt-file") {
       const auto prompt_path = value();
@@ -84,7 +96,7 @@ int execute(int argc, char** argv) {
       if (!stream) throw std::invalid_argument("cannot read prompt file: " + prompt_path);
       prompt.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()); has_prompt = true;
     }
-    else if (option == "-n" && command == "run") predict = count(value());
+    else if (option == "-n" && (command == "run" || command == "chat")) predict = count(value());
     else if (option == "--chunks" && command == "perplexity") chunks = count(value());
     else if (option == "--chat" && command != "perplexity") chat = true;
     else if (option == "--system" && command != "perplexity") { system = value(); has_system = true; chat = true; }
@@ -98,6 +110,24 @@ int execute(int argc, char** argv) {
     else if (option == "--no-add-special" && command == "tokenize") add_special = false;
     else if (option == "--no-parse-special" && command == "tokenize") parse_special = false;
     else throw std::invalid_argument("unknown option: " + std::string(option));
+  }
+  if (command == "chat" || command == "serve") {
+    if (path.empty()) throw std::invalid_argument("-m MODEL is required");
+    neuron::ModelChat backend(path, context);
+    if (command == "chat") neuron::terminal_chat(backend, predict, has_system ? &system : nullptr);
+    else {
+      neuron::HttpServer server(backend, std::filesystem::path(path).filename().string(), host, static_cast<std::uint16_t>(port));
+      struct sigaction action{};
+      action.sa_handler = stop_server;
+      sigemptyset(&action.sa_mask);
+      if (sigaction(SIGINT, &action, nullptr) != 0 || sigaction(SIGTERM, &action, nullptr) != 0)
+        throw std::runtime_error("cannot install server signal handlers");
+      std::printf("Neuron listening on http://%s:%u (model: %s)\n", host.c_str(),
+          static_cast<unsigned int>(server.port()), std::filesystem::path(path).filename().c_str());
+      std::fflush(stdout);
+      server.run([] { return server_stopped != 0; });
+    }
+    return 0;
   }
   if (path.empty() || (!has_prompt && messages.empty()))
     throw std::invalid_argument("-m MODEL and a prompt (-p or --message) are required");

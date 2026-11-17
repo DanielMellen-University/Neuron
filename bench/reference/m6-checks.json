@@ -1,0 +1,259 @@
+{
+  "date": "2026-11-17",
+  "implementation_commit": "184ce45a0d414e3c5182916ecec6f465de8833c2",
+  "models": [
+    {
+      "file": "SmolLM2-135M-Instruct-f16.gguf",
+      "sha256": "f535f83ec568d040f88ddc04a199fa6da90923bbb41d4dcaed02caa924d6ef57"
+    },
+    {
+      "file": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+      "sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281"
+    }
+  ],
+  "sdk_runs": [
+    {
+      "model": "SmolLM2-135M-Instruct-f16.gguf",
+      "openai_version": "3.52.0",
+      "threads": 4,
+      "context": 512,
+      "first_reply": "Hello, I'm Ada, a helpful AI assistant designed to assist with various tasks",
+      "history_reply": "My name is Ada, and I'm a helpful AI assistant.",
+      "usage": {
+        "completion_tokens": 14,
+        "prompt_tokens": 79,
+        "total_tokens": 93,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "stream_matches_nonstream": true,
+      "errors_checked": [
+        "model_not_found",
+        "context_length_exceeded",
+        "invalid_json"
+      ],
+      "elapsed_seconds": 3.967,
+      "passed": true
+    },
+    {
+      "model": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+      "openai_version": "3.52.0",
+      "threads": 4,
+      "context": 512,
+      "first_reply": "OK",
+      "history_reply": "Ada",
+      "usage": {
+        "completion_tokens": 2,
+        "prompt_tokens": 60,
+        "total_tokens": 62,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "stream_matches_nonstream": true,
+      "errors_checked": [
+        "model_not_found",
+        "context_length_exceeded",
+        "invalid_json"
+      ],
+      "elapsed_seconds": 49.424,
+      "passed": true
+    }
+  ],
+  "terminal": {
+    "model": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "threads": 4,
+    "context": 512,
+    "transcript": [
+      "Chat: /reset clears history, /exit quits, Ctrl-C stops a reply.\nyou> ",
+      "assistant> OK\nyou> ",
+      "assistant> Ada\nyou> ",
+      "assistant> ",
+      "\n[reply stopped]\nyou> ",
+      "History cleared.\nyou> ",
+      "assistant> Hello! How can I help you today?\nyou> "
+    ],
+    "history_recall": true,
+    "interrupt_recovery": true,
+    "reset": true,
+    "passed": true
+  },
+  "web_javascript": {
+    "runtime": "QuickJS with a minimal DOM and actual loopback HTTP",
+    "browser_available": false,
+    "fragmented_sse_size": 7,
+    "history": [
+      {
+        "role": "user",
+        "content": "My name is Ada. Reply with OK."
+      },
+      {
+        "role": "assistant",
+        "content": "OK"
+      },
+      {
+        "role": "user",
+        "content": "What is my name? Reply with only the name."
+      },
+      {
+        "role": "assistant",
+        "content": "Ada"
+      }
+    ],
+    "context_error_rollback": true,
+    "reset": true,
+    "passed": true
+  },
+  "unmet_m6_criteria": [],
+  "builds": [
+    {
+      "configuration": "GCC Release default",
+      "directory": "build-m6-default",
+      "configure_and_build_passed": true,
+      "settings": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+        "CMAKE_CXX_FLAGS": "",
+        "CMAKE_EXE_LINKER_FLAGS": "",
+        "NEURON_AVX2": "OFF",
+        "NEURON_AVX512": "OFF",
+        "NEURON_SANITIZE": "OFF",
+        "NEURON_WERROR": "OFF"
+      },
+      "passed": 21,
+      "skipped": 1,
+      "failed": 0,
+      "ctest_log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m6/build-m6-default\nTest project /home/daniel/codex-runs/Neuron-m6/build-m6-default\n      Start  1: test_gguf\n 1/22 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/22 Test  #2: test_quant .......................   Passed    0.33 sec\n      Start  3: test_kernels\n 3/22 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/22 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/22 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/22 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/22 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/22 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/22 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/22 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/22 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/22 Test #12: test_harness_compare .............   Passed    0.47 sec\n      Start 13: test_qwen_fixtures\n13/22 Test #13: test_qwen_fixtures ...............   Passed    3.79 sec\n      Start 14: test_m4_method\n14/22 Test #14: test_m4_method ...................   Passed    0.07 sec\n      Start 15: simd_scalar\n15/22 Test #15: simd_scalar ......................   Passed    0.01 sec\n      Start 16: simd_avx2\n16/22 Test #16: simd_avx2 ........................   Passed    0.01 sec\n      Start 17: simd_avx512\n17/22 Test #17: simd_avx512 ......................   Passed    0.01 sec\n      Start 18: simd_vnni\n18/22 Test #18: simd_vnni ........................   Passed    0.01 sec\n      Start 19: test_threads\n19/22 Test #19: test_threads .....................   Passed    0.07 sec\n      Start 20: test_http\n20/22 Test #20: test_http ........................   Passed    3.32 sec\n      Start 21: test_terminal\n21/22 Test #21: test_terminal ....................   Passed    0.36 sec\n      Start 22: test_openai_client\n22/22 Test #22: test_openai_client ...............***Skipped   0.05 sec\n\n100% tests passed, 0 tests failed out of 22\n\nTotal Test time (real) =   8.52 sec\n\nThe following tests did not run:\n\t 22 - test_openai_client (Skipped)\n",
+      "binary_sha256": "035cf5f7048b92deda96d9afdba95f54838779aa33d9b1412b4ee873bac64200"
+    },
+    {
+      "configuration": "GCC Release Werror",
+      "directory": "build-m6-gcc-werror",
+      "configure_and_build_passed": true,
+      "settings": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+        "CMAKE_CXX_FLAGS": "",
+        "CMAKE_EXE_LINKER_FLAGS": "",
+        "NEURON_AVX2": "OFF",
+        "NEURON_AVX512": "OFF",
+        "NEURON_SANITIZE": "OFF",
+        "NEURON_WERROR": "ON"
+      },
+      "passed": 21,
+      "skipped": 1,
+      "failed": 0,
+      "ctest_log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m6/build-m6-gcc-werror\nTest project /home/daniel/codex-runs/Neuron-m6/build-m6-gcc-werror\n      Start  1: test_gguf\n 1/22 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/22 Test  #2: test_quant .......................   Passed    0.39 sec\n      Start  3: test_kernels\n 3/22 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/22 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/22 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/22 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/22 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/22 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/22 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/22 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/22 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/22 Test #12: test_harness_compare .............   Passed    0.72 sec\n      Start 13: test_qwen_fixtures\n13/22 Test #13: test_qwen_fixtures ...............   Passed    6.70 sec\n      Start 14: test_m4_method\n14/22 Test #14: test_m4_method ...................   Passed    0.12 sec\n      Start 15: simd_scalar\n15/22 Test #15: simd_scalar ......................   Passed    0.01 sec\n      Start 16: simd_avx2\n16/22 Test #16: simd_avx2 ........................   Passed    0.01 sec\n      Start 17: simd_avx512\n17/22 Test #17: simd_avx512 ......................   Passed    0.01 sec\n      Start 18: simd_vnni\n18/22 Test #18: simd_vnni ........................   Passed    0.01 sec\n      Start 19: test_threads\n19/22 Test #19: test_threads .....................   Passed    0.10 sec\n      Start 20: test_http\n20/22 Test #20: test_http ........................   Passed    3.34 sec\n      Start 21: test_terminal\n21/22 Test #21: test_terminal ....................   Passed    0.36 sec\n      Start 22: test_openai_client\n22/22 Test #22: test_openai_client ...............***Skipped   0.05 sec\n\n100% tests passed, 0 tests failed out of 22\n\nTotal Test time (real) =  11.87 sec\n\nThe following tests did not run:\n\t 22 - test_openai_client (Skipped)\n",
+      "binary_sha256": "035cf5f7048b92deda96d9afdba95f54838779aa33d9b1412b4ee873bac64200"
+    },
+    {
+      "configuration": "GCC Release Werror AVX2",
+      "directory": "build-m6-gcc-avx2",
+      "configure_and_build_passed": true,
+      "settings": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+        "CMAKE_CXX_FLAGS": "",
+        "CMAKE_EXE_LINKER_FLAGS": "",
+        "NEURON_AVX2": "ON",
+        "NEURON_AVX512": "OFF",
+        "NEURON_SANITIZE": "OFF",
+        "NEURON_WERROR": "ON"
+      },
+      "passed": 21,
+      "skipped": 1,
+      "failed": 0,
+      "ctest_log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m6/build-m6-gcc-avx2\nTest project /home/daniel/codex-runs/Neuron-m6/build-m6-gcc-avx2\n      Start  1: test_gguf\n 1/22 Test  #1: test_gguf ........................   Passed    0.02 sec\n      Start  2: test_quant\n 2/22 Test  #2: test_quant .......................   Passed    0.33 sec\n      Start  3: test_kernels\n 3/22 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/22 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/22 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/22 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/22 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/22 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/22 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/22 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/22 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/22 Test #12: test_harness_compare .............   Passed    0.47 sec\n      Start 13: test_qwen_fixtures\n13/22 Test #13: test_qwen_fixtures ...............   Passed    3.47 sec\n      Start 14: test_m4_method\n14/22 Test #14: test_m4_method ...................   Passed    0.07 sec\n      Start 15: simd_scalar\n15/22 Test #15: simd_scalar ......................   Passed    0.01 sec\n      Start 16: simd_avx2\n16/22 Test #16: simd_avx2 ........................   Passed    0.01 sec\n      Start 17: simd_avx512\n17/22 Test #17: simd_avx512 ......................   Passed    0.01 sec\n      Start 18: simd_vnni\n18/22 Test #18: simd_vnni ........................   Passed    0.01 sec\n      Start 19: test_threads\n19/22 Test #19: test_threads .....................   Passed    0.06 sec\n      Start 20: test_http\n20/22 Test #20: test_http ........................   Passed    3.40 sec\n      Start 21: test_terminal\n21/22 Test #21: test_terminal ....................   Passed    0.38 sec\n      Start 22: test_openai_client\n22/22 Test #22: test_openai_client ...............***Skipped   0.05 sec\n\n100% tests passed, 0 tests failed out of 22\n\nTotal Test time (real) =   8.31 sec\n\nThe following tests did not run:\n\t 22 - test_openai_client (Skipped)\n",
+      "binary_sha256": "035cf5f7048b92deda96d9afdba95f54838779aa33d9b1412b4ee873bac64200"
+    },
+    {
+      "configuration": "GCC Release Werror AVX-512",
+      "directory": "build-m6-avx512",
+      "configure_and_build_passed": true,
+      "settings": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+        "CMAKE_CXX_FLAGS": "",
+        "CMAKE_EXE_LINKER_FLAGS": "",
+        "NEURON_AVX2": "OFF",
+        "NEURON_AVX512": "ON",
+        "NEURON_SANITIZE": "OFF",
+        "NEURON_WERROR": "ON"
+      },
+      "passed": 21,
+      "skipped": 1,
+      "failed": 0,
+      "ctest_log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m6/build-m6-avx512\nTest project /home/daniel/codex-runs/Neuron-m6/build-m6-avx512\n      Start  1: test_gguf\n 1/22 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/22 Test  #2: test_quant .......................   Passed    0.36 sec\n      Start  3: test_kernels\n 3/22 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/22 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/22 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/22 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/22 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/22 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/22 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/22 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/22 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/22 Test #12: test_harness_compare .............   Passed    0.55 sec\n      Start 13: test_qwen_fixtures\n13/22 Test #13: test_qwen_fixtures ...............   Passed    4.29 sec\n      Start 14: test_m4_method\n14/22 Test #14: test_m4_method ...................   Passed    0.07 sec\n      Start 15: simd_scalar\n15/22 Test #15: simd_scalar ......................   Passed    0.01 sec\n      Start 16: simd_avx2\n16/22 Test #16: simd_avx2 ........................   Passed    0.01 sec\n      Start 17: simd_avx512\n17/22 Test #17: simd_avx512 ......................   Passed    0.01 sec\n      Start 18: simd_vnni\n18/22 Test #18: simd_vnni ........................   Passed    0.01 sec\n      Start 19: test_threads\n19/22 Test #19: test_threads .....................   Passed    0.06 sec\n      Start 20: test_http\n20/22 Test #20: test_http ........................   Passed    3.40 sec\n      Start 21: test_terminal\n21/22 Test #21: test_terminal ....................   Passed    0.37 sec\n      Start 22: test_openai_client\n22/22 Test #22: test_openai_client ...............***Skipped   0.05 sec\n\n100% tests passed, 0 tests failed out of 22\n\nTotal Test time (real) =   9.24 sec\n\nThe following tests did not run:\n\t 22 - test_openai_client (Skipped)\n",
+      "binary_sha256": "035cf5f7048b92deda96d9afdba95f54838779aa33d9b1412b4ee873bac64200"
+    },
+    {
+      "configuration": "GCC Debug Werror ASan UBSan",
+      "directory": "build-m6-sanitize",
+      "configure_and_build_passed": true,
+      "settings": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+        "CMAKE_CXX_FLAGS": "",
+        "CMAKE_EXE_LINKER_FLAGS": "",
+        "NEURON_AVX2": "OFF",
+        "NEURON_AVX512": "OFF",
+        "NEURON_SANITIZE": "ON",
+        "NEURON_WERROR": "ON"
+      },
+      "passed": 21,
+      "skipped": 1,
+      "failed": 0,
+      "ctest_log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m6/build-m6-sanitize\nTest project /home/daniel/codex-runs/Neuron-m6/build-m6-sanitize\n      Start  1: test_gguf\n 1/22 Test  #1: test_gguf ........................   Passed    0.03 sec\n      Start  2: test_quant\n 2/22 Test  #2: test_quant .......................   Passed    3.25 sec\n      Start  3: test_kernels\n 3/22 Test  #3: test_kernels .....................   Passed    0.01 sec\n      Start  4: test_tokenizer\n 4/22 Test  #4: test_tokenizer ...................   Passed    0.02 sec\n      Start  5: test_unicode\n 5/22 Test  #5: test_unicode .....................   Passed    0.01 sec\n      Start  6: test_model\n 6/22 Test  #6: test_model .......................   Passed    0.05 sec\n      Start  7: test_chat\n 7/22 Test  #7: test_chat ........................   Passed    0.01 sec\n      Start  8: test_shape\n 8/22 Test  #8: test_shape .......................   Passed    0.01 sec\n      Start  9: test_version\n 9/22 Test  #9: test_version .....................   Passed    0.01 sec\n      Start 10: cli_version\n10/22 Test #10: cli_version ......................   Passed    0.01 sec\n      Start 11: cli_rejects_unknown_args\n11/22 Test #11: cli_rejects_unknown_args .........   Passed    0.01 sec\n      Start 12: test_harness_compare\n12/22 Test #12: test_harness_compare .............   Passed    0.49 sec\n      Start 13: test_qwen_fixtures\n13/22 Test #13: test_qwen_fixtures ...............   Passed   39.51 sec\n      Start 14: test_m4_method\n14/22 Test #14: test_m4_method ...................   Passed    0.26 sec\n      Start 15: simd_scalar\n15/22 Test #15: simd_scalar ......................   Passed    0.08 sec\n      Start 16: simd_avx2\n16/22 Test #16: simd_avx2 ........................   Passed    0.06 sec\n      Start 17: simd_avx512\n17/22 Test #17: simd_avx512 ......................   Passed    0.06 sec\n      Start 18: simd_vnni\n18/22 Test #18: simd_vnni ........................   Passed    0.07 sec\n      Start 19: test_threads\n19/22 Test #19: test_threads .....................   Passed    0.53 sec\n      Start 20: test_http\n20/22 Test #20: test_http ........................   Passed    3.43 sec\n      Start 21: test_terminal\n21/22 Test #21: test_terminal ....................   Passed    0.43 sec\n      Start 22: test_openai_client\n22/22 Test #22: test_openai_client ...............***Skipped   0.06 sec\n\n100% tests passed, 0 tests failed out of 22\n\nTotal Test time (real) =  48.39 sec\n\nThe following tests did not run:\n\t 22 - test_openai_client (Skipped)\n",
+      "binary_sha256": "fc1776dc280f1e021258a1de5c580ad9b54e24d747a657ffe28a185f71490d83"
+    },
+    {
+      "configuration": "Clang Release Werror",
+      "directory": "build-m6-clang-fixed",
+      "configure_and_build_passed": true,
+      "settings": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
+        "CMAKE_CXX_FLAGS": "--gcc-toolchain=/usr -isystem /usr/include/c++/11 -isystem /usr/include/x86_64-linux-gnu/c++/11",
+        "CMAKE_EXE_LINKER_FLAGS": "-L/usr/lib/gcc/x86_64-linux-gnu/11",
+        "NEURON_AVX2": "OFF",
+        "NEURON_AVX512": "OFF",
+        "NEURON_SANITIZE": "OFF",
+        "NEURON_WERROR": "ON"
+      },
+      "passed": 21,
+      "skipped": 1,
+      "failed": 0,
+      "ctest_log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m6/build-m6-clang-fixed\nTest project /home/daniel/codex-runs/Neuron-m6/build-m6-clang-fixed\n      Start  1: test_gguf\n 1/22 Test  #1: test_gguf ........................   Passed    0.02 sec\n      Start  2: test_quant\n 2/22 Test  #2: test_quant .......................   Passed    0.58 sec\n      Start  3: test_kernels\n 3/22 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/22 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/22 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/22 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/22 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/22 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/22 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/22 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/22 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/22 Test #12: test_harness_compare .............   Passed    0.64 sec\n      Start 13: test_qwen_fixtures\n13/22 Test #13: test_qwen_fixtures ...............   Passed    6.94 sec\n      Start 14: test_m4_method\n14/22 Test #14: test_m4_method ...................   Passed    0.08 sec\n      Start 15: simd_scalar\n15/22 Test #15: simd_scalar ......................   Passed    0.02 sec\n      Start 16: simd_avx2\n16/22 Test #16: simd_avx2 ........................   Passed    0.02 sec\n      Start 17: simd_avx512\n17/22 Test #17: simd_avx512 ......................   Passed    0.03 sec\n      Start 18: simd_vnni\n18/22 Test #18: simd_vnni ........................   Passed    0.02 sec\n      Start 19: test_threads\n19/22 Test #19: test_threads .....................   Passed    0.20 sec\n      Start 20: test_http\n20/22 Test #20: test_http ........................   Passed    3.33 sec\n      Start 21: test_terminal\n21/22 Test #21: test_terminal ....................   Passed    0.36 sec\n      Start 22: test_openai_client\n22/22 Test #22: test_openai_client ...............***Skipped   0.05 sec\n\n100% tests passed, 0 tests failed out of 22\n\nTotal Test time (real) =  12.32 sec\n\nThe following tests did not run:\n\t 22 - test_openai_client (Skipped)\n",
+      "binary_sha256": "4aebbf1f68777e7039f341030cb79918c1e18580a1d64ebd6dfb80aa4ab112ec"
+    },
+    {
+      "configuration": "Clang Release Werror AVX2",
+      "directory": "build-m6-clang-avx2",
+      "configure_and_build_passed": true,
+      "settings": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
+        "CMAKE_CXX_FLAGS": "--gcc-toolchain=/usr -isystem /usr/include/c++/11 -isystem /usr/include/x86_64-linux-gnu/c++/11",
+        "CMAKE_EXE_LINKER_FLAGS": "-L/usr/lib/gcc/x86_64-linux-gnu/11",
+        "NEURON_AVX2": "ON",
+        "NEURON_AVX512": "OFF",
+        "NEURON_SANITIZE": "OFF",
+        "NEURON_WERROR": "ON"
+      },
+      "passed": 21,
+      "skipped": 1,
+      "failed": 0,
+      "ctest_log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m6/build-m6-clang-avx2\nTest project /home/daniel/codex-runs/Neuron-m6/build-m6-clang-avx2\n      Start  1: test_gguf\n 1/22 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/22 Test  #2: test_quant .......................   Passed    0.67 sec\n      Start  3: test_kernels\n 3/22 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/22 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/22 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/22 Test  #6: test_model .......................   Passed    0.01 sec\n      Start  7: test_chat\n 7/22 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/22 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/22 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/22 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/22 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/22 Test #12: test_harness_compare .............   Passed    0.58 sec\n      Start 13: test_qwen_fixtures\n13/22 Test #13: test_qwen_fixtures ...............   Passed    4.44 sec\n      Start 14: test_m4_method\n14/22 Test #14: test_m4_method ...................   Passed    0.08 sec\n      Start 15: simd_scalar\n15/22 Test #15: simd_scalar ......................   Passed    0.02 sec\n      Start 16: simd_avx2\n16/22 Test #16: simd_avx2 ........................   Passed    0.02 sec\n      Start 17: simd_avx512\n17/22 Test #17: simd_avx512 ......................   Passed    0.02 sec\n      Start 18: simd_vnni\n18/22 Test #18: simd_vnni ........................   Passed    0.02 sec\n      Start 19: test_threads\n19/22 Test #19: test_threads .....................   Passed    0.21 sec\n      Start 20: test_http\n20/22 Test #20: test_http ........................   Passed    3.37 sec\n      Start 21: test_terminal\n21/22 Test #21: test_terminal ....................   Passed    0.37 sec\n      Start 22: test_openai_client\n22/22 Test #22: test_openai_client ...............***Skipped   0.05 sec\n\n100% tests passed, 0 tests failed out of 22\n\nTotal Test time (real) =   9.90 sec\n\nThe following tests did not run:\n\t 22 - test_openai_client (Skipped)\n",
+      "binary_sha256": "4aebbf1f68777e7039f341030cb79918c1e18580a1d64ebd6dfb80aa4ab112ec"
+    }
+  ],
+  "skip_paths_checked": {
+    "missing_package": 77,
+    "missing_model": 77
+  },
+  "m2_regression": {
+    "exact_match": true,
+    "matching_generated_tokens": 1152,
+    "total_generated_tokens": 1152
+  },
+  "remote_ci": "not run; no push requested"
+}

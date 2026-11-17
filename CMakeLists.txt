@@ -47,6 +47,10 @@ configure_file(include/neuron/config.hpp.in
 
 add_library(neuron
   src/chat.cpp
+  src/completion.cpp
+  src/terminal.cpp
+  src/json.cpp
+  src/server.cpp
   src/gguf.cpp
   src/kernels.cpp
   src/dispatch.cpp
