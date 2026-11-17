@@ -10,7 +10,8 @@ OpenAI-compatible API. llama.cpp is an external reference used for checks
 and quantization.
 
 The engine works with TinyStories, SmolLM2 Instruct and Qwen2.5 Instruct.
-It remains substantially slower than llama.cpp on the target Qwen model.
+R1 reaches 55.02% of llama.cpp's generation rate on the target Qwen model
+in the short M5 benchmark.
 The [benchmark records](bench/M7_CHECKS.md) and [design post](docs/blog/design-and-optimization.md)
 explain the results and the missed targets.
 
@@ -75,7 +76,8 @@ reply limit; the quick start uses the normal defaults.
 
 All rates below are tokens/s with four threads in both engines. Ghost has
 an Intel i5-1135G7, four cores, eight hardware threads and 16 GB RAM.
-Neuron uses AVX-512; llama.cpp uses its native CPU build at pinned commit
+Neuron uses AVX-512, with checked VNNI word dots for K blocks in R1;
+llama.cpp uses its native CPU build at pinned commit
 `9e9619d`. See [hardware, power state and methodology](bench/M7_CHECKS.md#speed-table).
 `pp` means prompt processing; `tg` means generation after the first sampled
 token. Model loading is excluded.
@@ -88,13 +90,14 @@ token. Model loading is excluded.
 | Qwen2.5 1.5B Instruct | F16 | 7.87 | 7.00 | 45.35 | 14.31 | [N](bench/reference/m7-speed-f16-neuron.json) / [L](bench/reference/m7-speed-f16-llama.json) |
 | Qwen2.5 1.5B Instruct | Q8_0 | 8.68 | 7.97 | 42.16 | 25.27 | [N](bench/reference/m7-speed-q8_0-neuron.json) / [L](bench/reference/m7-speed-q8_0-llama.json) |
 | Qwen2.5 1.5B Instruct | Q4_0 | 6.37 | 6.42 | 117.67 | 44.53 | [N](bench/reference/m7-speed-q4_0-neuron.json) / [L](bench/reference/m7-speed-q4_0-llama.json) |
-| Qwen2.5 1.5B Instruct | Q4_K_M | 6.48 | 4.29 | 59.26 | 38.95 | [N](bench/reference/m5-speed-final.json) / [L](bench/reference/m5-speed-llama.json) |
+| Qwen2.5 1.5B Instruct | Q4_K_M | 23.91 | 21.22 | 52.50 | 38.56 | [N](bench/reference/r1-speed-final.json) / [L](bench/reference/r1-speed-llama-final.json) |
 <!-- /speed-table -->
 
 TinyStories pools the original prompt set across three repetitions and
 128 generated tokens per sample. The other rows use one raw prompt,
 `Once upon a time`, with 32 generated tokens and no warmup. These are short
 samples collected at different times, without fixed frequency or temperature.
+Q4_K_M was rerun in R1; the other rows retain their M1/M5/M7 records.
 They do not measure chat latency or sustained throughput. Prompt processing
 in Neuron evaluates tokens sequentially; llama.cpp can batch them.
 [The derived table](bench/reference/m7-benchmarks.json) points to every input
@@ -132,8 +135,9 @@ keeps the optimization chart and historical source commits.
   output, logit export, reference checks and chunked perplexity evaluation.
 
 One default build contains all kernel variants. `--isa auto` selects
-AVX-512, then AVX2, then scalar. VNNI is explicitly selectable and was slower
-in this implementation. `--threads` and `--isa` override `NEURON_THREADS`
+AVX-512, then AVX2, then scalar. K blocks use VNNI word dots when supported
+within the AVX-512 path. The older Q8_0/Q4_0 VNNI path remains explicitly
+selectable. `--threads` and `--isa` override `NEURON_THREADS`
 and `NEURON_ISA`. [Runtime settings](bench/SPEED.md#kernels-and-threads) also
 apply to library callers.
 
@@ -176,9 +180,10 @@ include the local SDK test command.
   (23.44%, target 70%). Per-format perplexity still tracked llama.cpp
   within 0.9%. These accepted misses remain documented in
   [the quality record](bench/QUANT.md#second-round-4096-targets-and-twelve-prompts).
-- **M5 missed the speed target.** Q4_K_M generation was 4.294374 tokens/s
-  versus llama.cpp's 38.953875, or 11.02%, against a 50% target at the same
-  thread count. [The final samples](bench/SPEED.md) remain the comparison.
+- **Speed remains below llama.cpp.** R1 Q4_K_M generation is 21.215665 tokens/s
+  versus 38.558125, or 55.02%, with four threads. This short sample meets
+  the 50% target; M5 originally reached 11.02%. Frequency and temperature
+  were not fixed. [Raw results and method](bench/SPEED.md) retain both rounds.
 - **Restricted models and formats.** Dense Llama and Qwen2 only; the
   locally checked models are the table above. No MoE, RoPE scaling, other
   quantization formats, arbitrary Jinja templates or multimodal inputs.
@@ -207,7 +212,7 @@ ctest --test-dir build-check --output-on-failure
 Unit tests and model-free HTTP/terminal tests need no weights or reference
 engine. The optional official-client integration test skips when its model
 or Python package is absent. [CI](.github/workflows/ci.yml) checks GCC and
-Clang Release builds, AVX2, an AVX-512 build, ASan/UBSan, and a weights/size
+Clang Release builds, AVX2, runtime-guarded AVX-512 tests, ASan/UBSan, and a weights/size
 guard. [M7 checks](bench/M7_CHECKS.md) record local results.
 
 Start at the [docs hub](docs/README.md) for the design post, demo method,

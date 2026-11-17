@@ -12,7 +12,7 @@ PAIRS = [
     ('Qwen2.5 1.5B Instruct', 'F16', 'm7-speed-f16-neuron.json', 'm7-speed-f16-llama.json'),
     ('Qwen2.5 1.5B Instruct', 'Q8_0', 'm7-speed-q8_0-neuron.json', 'm7-speed-q8_0-llama.json'),
     ('Qwen2.5 1.5B Instruct', 'Q4_0', 'm7-speed-q4_0-neuron.json', 'm7-speed-q4_0-llama.json'),
-    ('Qwen2.5 1.5B Instruct', 'Q4_K_M', 'm5-speed-final.json', 'm5-speed-llama.json'),
+    ('Qwen2.5 1.5B Instruct', 'Q4_K_M', 'r1-speed-final.json', 'r1-speed-llama-final.json'),
 ]
 
 
@@ -50,7 +50,7 @@ def main():
                           threads=4, neuron=left, llama_cpp=right))
     write_json(args.output, dict(machine='Ghost', rows=table,
         method='Rates pool token counts and milliseconds. Generation excludes the first sampled token. '
-               'TinyStories reuses M1/M5; Q4_K_M reuses M5; other rows fill missing matched speed pairs in M7.'))
+               'TinyStories reuses M1/M5; Q4_K_M uses the R1 pair; other rows retain the M7 pairs.'))
     print('| Model | GGUF | Neuron pp | Neuron tg | llama.cpp pp | llama.cpp tg | Records |')
     print('| --- | --- | ---: | ---: | ---: | ---: | --- |')
     for row in table:

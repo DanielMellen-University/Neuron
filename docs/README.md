@@ -15,7 +15,9 @@ The benchmark directory keeps the detailed methods and raw JSON records:
 - [TinyStories checks](../bench/M2_CHECKS.md): tokenizer, logits and generation.
 - [Qwen checks](../bench/M3_CHECKS.md): ChatML, KV cache and memory.
 - [Quantization](../bench/QUANT.md): formats, perplexity and agreement misses.
-- [Speed](../bench/SPEED.md): optimization commits, chart and accepted speed miss.
+- [Speed](../bench/SPEED.md): optimization commits, chart, original M5 miss and R1 result.
+- [R1 profile and checks](../bench/R1_PROFILE.md): K kernels, allocation counts,
+  thread sweep, builds and perplexity regression checks.
 - [Chat and server](../bench/M6_CHECKS.md): terminal, HTTP, web page and SDK checks.
 
 Models and the reference engine live outside the source tree. Build artifacts

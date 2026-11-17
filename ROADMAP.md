@@ -184,3 +184,13 @@ Acceptance criteria:
 - A blog post in `docs/blog/` that walks through the design and the optimization steps, with the M5 speed chart.
 - Every number in the README and blog post traces to a file under `bench/`.
 - A tagged release only when explicitly approved.
+
+## R1: decode speed refinement
+
+R1 adds specialized Q4_K/Q6_K SIMD word products, checked VNNI dispatch,
+shared activation packing, reusable decode storage and shorter pool waits.
+The short M5 protocol now measures 21.215665 generation tokens/s versus
+38.558125 for llama.cpp with four threads, or 55.02%. The original M5
+miss remains historical. [Speed records](bench/SPEED.md) and
+[profile and checks](bench/R1_PROFILE.md) describe this refinement.
+M4 free-running agreement and all acceptance criteria above are unchanged.

@@ -1,5 +1,10 @@
 # M4 quantization checks
 
+R1 leaves this quality study and its agreement scores unchanged. It speeds
+up the K-block implementation and repeats only the original perplexity
+slice. [R1 profile and checks](R1_PROFILE.md) and [current speed](SPEED.md#r1-result)
+record the follow-up. The scalar speed numbers below are historical M4 data.
+
 Hardware for both rounds: Ghost, Intel i5-1135G7, four cores,
 eight hardware threads, 16 GB RAM, Ubuntu 22.04 base, GCC 11.4 and
 CMake 3.22.1. Neuron uses the default Release build and one thread.

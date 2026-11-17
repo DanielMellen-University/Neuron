@@ -177,34 +177,34 @@
       "model_sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281",
       "threads": 4,
       "neuron": {
-        "source": "bench/reference/m5-speed-final.json",
-        "source_sha256": "e0eab67f3f061ba28c939277e0e3543c19dc75cf4b11d1ca2b276d2a02add738",
+        "source": "bench/reference/r1-speed-final.json",
+        "source_sha256": "71a4f150fe1b0d14360ba0308702e69fb0a97032c12ae6addfce1b7bd93f7103",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
         "prompt_n": 4,
-        "prompt_ms": 617.558686,
+        "prompt_ms": 167.276862,
         "predicted_n": 32,
-        "predicted_ms": 7218.74767,
+        "predicted_ms": 1461.18449,
         "generation_steps": 31,
-        "pp_tokens_per_second": 6.4771172208887045,
-        "tg_tokens_per_second": 4.294373680469704
+        "pp_tokens_per_second": 23.912452398826087,
+        "tg_tokens_per_second": 21.215664559921517
       },
       "llama_cpp": {
-        "source": "bench/reference/m5-speed-llama.json",
-        "source_sha256": "fbd6e1074f3d99f2c86e87c9ce4aabad6984ac62922a82deeeac8b6b53b66bef",
+        "source": "bench/reference/r1-speed-llama-final.json",
+        "source_sha256": "9dd0f8696a28d28a1371c9b4a34a3ca70ff5ff0f0921076b71a6e1eea196614a",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
         "prompt_n": 4,
-        "prompt_ms": 67.504,
+        "prompt_ms": 76.194,
         "predicted_n": 32,
-        "predicted_ms": 795.813,
+        "predicted_ms": 803.981,
         "generation_steps": 31,
-        "pp_tokens_per_second": 59.255747807537325,
-        "tg_tokens_per_second": 38.953874842456706
+        "pp_tokens_per_second": 52.497571987295586,
+        "tg_tokens_per_second": 38.55812512982272
       }
     }
   ],
-  "method": "Rates pool token counts and milliseconds. Generation excludes the first sampled token. TinyStories reuses M1/M5; Q4_K_M reuses M5; other rows fill missing matched speed pairs in M7."
+  "method": "Rates pool token counts and milliseconds. Generation excludes the first sampled token. TinyStories reuses M1/M5; Q4_K_M uses the R1 pair; other rows retain the M7 pairs."
 }
