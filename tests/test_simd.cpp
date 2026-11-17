@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 #include <cstdio>
 #include <random>
 #include <stdexcept>
@@ -57,6 +58,18 @@ int main(int argc, char** argv) {
         auto weights = std::span(packed).subspan(1);
         for (std::size_t i = 0; i < rows * blocks; ++i)
           neuron::quantize_block(std::span(w).subspan(i * block, block), type, weights.subspan(i * bytes, bytes));
+        neuron::scalar::matmul_quantized(weights, type, x, a, rows, cols, batch);
+        neuron::kernels::matmul_quantized(weights, type, x, b, rows, cols, batch);
+        compare(a, b);
+        // Arbitrary code and scale bytes cover patterns the reference encoder
+        // does not normally emit, including signed -128 Q8/Q6 values.
+        for (auto& v : weights) v = static_cast<std::byte>(random() & 255u);
+        for (std::size_t i = 0; i < rows * blocks; ++i) {
+          const std::uint16_t d = 0x2001, m = 0x1e31;
+          auto* p = weights.data() + i * bytes;
+          std::memcpy(p + (type == neuron::q6_k ? 208 : 0), &d, 2);
+          if (type == neuron::q4_k) std::memcpy(p + 2, &m, 2);
+        }
         neuron::scalar::matmul_quantized(weights, type, x, a, rows, cols, batch);
         neuron::kernels::matmul_quantized(weights, type, x, b, rows, cols, batch);
         compare(a, b);

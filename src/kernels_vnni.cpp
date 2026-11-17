@@ -23,9 +23,12 @@ std::vector<Activation> prepare_activations(std::span<const float> x) {
     }
     int exponent = 0;
     std::frexp(maximum, &exponent);
+    // A power-of-two scale retains FP32 mantissas within six exponents of
+    // the group maximum. Smaller values round with absolute error <= scale/2.
     a.scale = std::ldexp(1.0, exponent - 30);
     for (std::size_t j = 0; j < 16; ++j) {
       const auto n = static_cast<std::int32_t>(std::llround(static_cast<double>(x[g * 16 + j]) / a.scale));
+      // Bias signed n by 2^31 to use unsigned-byte times signed-byte VNNI.
       const auto u = std::bit_cast<std::uint32_t>(n) ^ 0x80000000u;
       for (unsigned k = 0; k < 4; ++k) a.planes[k][j] = static_cast<std::uint8_t>((u >> (k * 8)) & 255u);
     }
@@ -57,6 +60,7 @@ TARGET double activation_dot(__m128i weights, const Activation& x) {
     sum += static_cast<std::int64_t>(partial) * (std::int64_t{1} << (8 * k));
   }
   const int weight_sum = sum4(_mm_dpbusd_epi32(_mm_setzero_si128(), _mm_set1_epi8(1), weights));
+  // Remove the activation bias exactly in int64 before scaling.
   sum -= static_cast<std::int64_t>(weight_sum) * (std::int64_t{1} << 31);
   return static_cast<double>(sum) * x.scale;
 }

@@ -30,8 +30,10 @@ std::string choose(std::string_view name) {
   if (name == "scalar" || (name == "avx2" && cpu_avx2())) return std::string(name);
   throw std::invalid_argument("kernel: unknown or unavailable ISA: " + std::string(name));
 }
-std::string& selection() {
-  static std::string name = choose(std::getenv("NEURON_ISA") ? std::getenv("NEURON_ISA") : "auto");
+std::string& selection(std::string_view forced = {}) {
+  static std::string name = choose(forced.empty() ?
+      (std::getenv("NEURON_ISA") ? std::getenv("NEURON_ISA") : "auto") : forced);
+  if (!forced.empty()) name = choose(forced);
   return name;
 }
 bool product_is(std::size_t a, std::size_t b, std::size_t size) {
@@ -44,7 +46,7 @@ void shape(bool ok) {
 bool supported(std::string_view isa) {
   return (isa == "vnni" && cpu_vnni()) || (isa == "avx512" && cpu_avx512()) || isa == "auto" || isa == "scalar" || (isa == "avx2" && cpu_avx2());
 }
-void set_isa(std::string_view isa) { selection() = choose(isa); }
+void set_isa(std::string_view isa) { (void)selection(choose(isa)); }
 std::string_view selected_isa() { return selection(); }
 double dot(std::span<const float> a, std::span<const float> b) {
   shape(a.size() == b.size());

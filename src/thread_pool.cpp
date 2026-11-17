@@ -101,15 +101,15 @@ std::size_t environment_threads() {
   check_count(result);
   return result;
 }
-std::unique_ptr<Pool>& pool() {
-  static auto value = std::make_unique<Pool>(environment_threads());
+std::unique_ptr<Pool>& pool(std::size_t initial = 0) {
+  static auto value = std::make_unique<Pool>(initial == 0 ? environment_threads() : initial);
   return value;
 }
 }
 namespace kernels {
 void set_threads(std::size_t count) {
   check_count(count);
-  if (pool()->count() != count) pool() = std::make_unique<Pool>(count);
+  if (pool(count)->count() != count) pool() = std::make_unique<Pool>(count);
 }
 std::size_t threads() { return pool()->count(); }
 }
