@@ -24,9 +24,12 @@ struct alignas(64) KActivation {
   std::array<std::int16_t, 256> low{}, high{};
   std::array<double, 8> sums{};
   double scale = 0;
+  std::uint32_t max_scale = 0;
+  const float* original = nullptr;
 };
 // Signed 31-bit fixed point, split into two signed word planes. For a
 // finite block, absolute rounding error is <= 2^(frexp(max_abs)-32).
+// Retain the input (which must outlive the packed data) for guarded direct dots.
 bool prepare_k_activations(std::span<const float> x, std::vector<KActivation>& out);
 using KQuantDot = double (*)(const std::byte*, std::uint32_t, const KActivation*, std::size_t);
 double kquant_avx2(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n);

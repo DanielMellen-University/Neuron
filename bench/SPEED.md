@@ -126,7 +126,10 @@ round by at most half that group's scale.
 R1 K products instead pack each 256-value activation block into two signed
 word planes. SIMD integer dots include the weight's group scale, reconstruct
 in FP64 and apply the block scale and Q4_K offset. Activation error is bounded
-by `2^(frexp(max_abs)-32)`. Nonfinite inputs use the direct SIMD fallback.
+by `2^(frexp(max_abs)-32)`. A block uses the direct SIMD fallback when its
+activation rounding could contribute more than `1e-5` to the dot product,
+or when Q4_K scale exponents cannot guarantee exact FP32 weight rounding
+after factoring the minimum. Nonfinite inputs also use the direct path.
 No weights are expanded or reordered. The activation packing buffer is
 reused and shared across workers. See [the R1 profile](R1_PROFILE.md).
 

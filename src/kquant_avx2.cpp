@@ -32,6 +32,10 @@ TARGET double kquant_avx2_impl(const std::byte* w, const KActivation* x, std::si
   constexpr auto type = Type;
   double result = 0;
   for (std::size_t b = 0; b < n / 256; ++b, w += type == q4_k ? 144 : 210) {
+    if (k_needs_direct(w, type, x[b])) [[unlikely]] {
+      result += quant_avx2(w, type, x[b].original, 256);
+      continue;
+    }
     auto sum = _mm256_setzero_pd();
     // At most 16 products enter each int32 lane. Even the Q6 endpoint
     // (-128 * -32) * -32768 reaches exactly INT32_MIN without overflow.

@@ -32,6 +32,55 @@ int main(int argc, char** argv) {
         ++comparisons;
       }
     };
+    // Review regressions: packing must retain small contributions, and Q4_K
+    // minima must respect the scalar dequantizer's FP32 weight rounding.
+    for (auto type : {neuron::q6_k, neuron::q4_k}) {
+      const auto bytes = neuron::quant_block_bytes(type);
+      for (std::size_t blocks : {1u, 3u}) {
+        std::vector<std::byte> w(blocks * bytes);
+        std::vector<float> x(blocks * 256), a(1), b(1);
+        const auto middle = blocks / 2;
+        auto* p = w.data() + middle * bytes;
+        auto* input = x.data() + middle * 256;
+        if (type == neuron::q6_k) {
+          // Zero codes decode to -32; set every code to 32 except index 1.
+          std::fill_n(p + 128, 64, std::byte{0xaa});
+          p[129] = std::byte{0xa8};
+          p[192] = std::byte{0x80};
+          const std::uint16_t d = 0x3c00;  // 1
+          std::memcpy(p + 208, &d, 2);
+          input[0] = 32768;
+          input[1] = std::ldexp(1.0f, -16);
+        } else {
+          const std::uint16_t d = 0x7bff, m = 0x1800;  // 65504, 2^-9
+          std::memcpy(p, &d, 2);
+          std::memcpy(p + 2, &m, 2);
+          p[4] = p[8] = std::byte{1};
+          p[16] = std::byte{1};
+          p[17] = std::byte{2};
+          input[0] = 2;
+          input[1] = -1;
+        }
+        neuron::scalar::matmul_quantized(w, type, x, a, 1, blocks * 256);
+        if (a[0] != (type == neuron::q6_k ? 0.0625f : 0.0f))
+          throw std::runtime_error("review regression fixture differs");
+        neuron::kernels::matmul_quantized(w, type, x, b, 1, blocks * 256);
+        compare(a, b);
+        // Also call each packed implementation directly: AVX-512 dispatch
+        // can otherwise select VNNI and leave the plain kernel untested.
+        std::vector<neuron::detail::KActivation> activations;
+        if (!neuron::detail::prepare_k_activations(x, activations))
+          throw std::runtime_error("finite regression packing rejected");
+        for (const auto& path : {std::string("avx2"), std::string("avx512"), std::string("vnni")}) {
+          if (isa != path && !(isa == "avx512" && path == "vnni")) continue;
+          if (!neuron::kernels::supported(path)) continue;
+          const auto kernel = path == "avx2" ? neuron::detail::kquant_avx2 :
+              path == "avx512" ? neuron::detail::kquant_avx512 : neuron::detail::kquant_vnni;
+          b[0] = static_cast<float>(kernel(w.data(), type, activations.data(), blocks * 256));
+          compare(a, b);
+        }
+      }
+    }
     // Check the activation error bound independently of a weight dot. Include
     // FP32 subnormals and values that differ by more than the retained range.
     for (int exponent : {-140, -40, 0, 40, 120}) {

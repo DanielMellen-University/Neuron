@@ -43,6 +43,10 @@ TARGET double kquant_avx512_impl(const std::byte* w, const KActivation* x, std::
   constexpr auto type = Type;
   double result = 0;
   for (std::size_t b = 0; b < n / 256; ++b, w += type == q4_k ? 144 : 210) {
+    if (k_needs_direct(w, type, x[b])) [[unlikely]] {
+      result += quant_avx512(w, type, x[b].original, 256);
+      continue;
+    }
     auto low = _mm512_setzero_si512(), high = low, correction = low;
     #pragma GCC unroll 8
     for (std::size_t j = 0; j < 256; j += 32) {
@@ -60,6 +64,10 @@ VNNI double kquant_vnni_impl(const std::byte* w, const KActivation* x, std::size
   constexpr auto type = Type;
   double result = 0;
   for (std::size_t b = 0; b < n / 256; ++b, w += type == q4_k ? 144 : 210) {
+    if (k_needs_direct(w, type, x[b])) [[unlikely]] {
+      result += quant_avx512(w, type, x[b].original, 256);
+      continue;
+    }
     auto low = _mm512_setzero_si512(), high = low, correction = low;
     #pragma GCC unroll 8
     for (std::size_t j = 0; j < 256; j += 32) {

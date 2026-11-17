@@ -72,16 +72,25 @@ Each 256-value activation block uses a power-of-two scale
 `2^(frexp(max_abs)-31)`. A signed 32-bit integer retains 31 magnitude bits
 and splits into two signed 16-bit integer planes for its high and low parts. Reconstruction is
 `high*65536 + low + 32768`. Absolute activation rounding error is bounded
-by `2^(frexp(max_abs)-32)`. Zero and subnormal blocks are covered. Inputs
-with nonfinite values use the direct SIMD fallback.
+by `2^(frexp(max_abs)-32)`. Zero and subnormal blocks are covered. Each
+block retains its original input and a safe half-scale limit derived from
+a bound on the sum of absolute packing errors and the maximum integer
+coefficient, 4096. Small nonzero values that could round enter the bound,
+each contributing at most half the packing scale. If a weight scale
+exceeds the resulting limit, that block uses the direct SIMD fallback to
+keep this activation error bound within `1e-5`. Inputs with nonfinite
+values also use the direct path.
 
 Weight group scales enter signed 16-bit coefficients. Q6_K coefficients
 range from -4064 to 4096. At most 16 products enter an int32 lane before
 widening, including the exact `INT32_MIN` endpoint. AVX2 and plain AVX-512
 use word multiply-add; VNNI uses `vpdpwssd`. The dots reconstruct in FP64,
 apply the F16 block scale and subtract Q4_K minimum offsets using FP64 sums
-of the original activations. This factoring and activation rounding can
-change final FP32 results slightly. The scalar code remains unchanged.
+of the original activations. Q4_K blocks use the direct path unless the
+half-scale exponents guarantee that factoring preserves each decoded FP32
+weight exactly. This keeps ordinary model blocks on the packed path and
+preserves weight rounding in cancellation cases with large scales. The
+scalar code remains unchanged.
 
 The AVX-512 path checks for VNNI before selecting K word dots. Q8_0/Q4_0
 retain their float SIMD paths under auto selection. Their older four-byte
@@ -134,9 +143,12 @@ unaligned data, batches, odd row counts, one/two/six/35 K blocks, finite F16
 endpoints, signed scales -128/127, zero inputs, cancellation and unequal
 magnitudes. The tolerance is `1e-5 * (1 + abs(reference))`. Activation
 packing also has an independent half-scale rounding bound check. Extreme
-Q6_K tests cover signed accumulator bounds. There are 3,073 scalar/AVX2
-comparisons and 3,153 AVX-512/VNNI comparisons. Max absolute error is 8 in
-the large finite-F16-endpoint cases, within the stated relative tolerance.
+Q6_K tests cover signed accumulator bounds. Review regressions cover a
+small Q6_K contribution beside a large activation and Q4_K cancellation
+after FP32 weight rounding, in single and mixed blocks on each SIMD path.
+The original validation record has 3,073 scalar/AVX2 comparisons and 3,153
+AVX-512/VNNI comparisons; its largest absolute error is 8 in the large
+finite-F16-endpoint cases, within the stated relative tolerance.
 The thread test passes 93,600 bit-identical comparisons at 1/2/4/8 threads.
 Model tests cover reused logit views, owning copies, resets and cached
 generation. Every R1 Neuron speed record matches all 32 baseline IDs.
