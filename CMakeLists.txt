@@ -57,6 +57,9 @@ add_library(neuron
   src/kernels_avx2.cpp
   src/kernels_avx512.cpp
   src/kernels_vnni.cpp
+  src/kquant.cpp
+  src/kquant_avx2.cpp
+  src/kquant_avx512.cpp
   src/model.cpp
   src/quant.cpp
   src/perplexity.cpp

@@ -20,6 +20,18 @@ inline float load_half(const std::byte* p) {
 }
 using Dot = double (*)(const float*, const float*, std::size_t);
 using QuantDot = double (*)(const std::byte*, std::uint32_t, const float*, std::size_t);
+struct alignas(64) KActivation {
+  std::array<std::int16_t, 256> low{}, high{};
+  std::array<double, 8> sums{};
+  double scale = 0;
+};
+// Signed 31-bit fixed point, split into two signed word planes. For a
+// finite block, absolute rounding error is <= 2^(frexp(max_abs)-32).
+bool prepare_k_activations(std::span<const float> x, std::vector<KActivation>& out);
+using KQuantDot = double (*)(const std::byte*, std::uint32_t, const KActivation*, std::size_t);
+double kquant_avx2(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n);
+double kquant_avx512(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n);
+double kquant_vnni(const std::byte* w, std::uint32_t type, const KActivation* x, std::size_t n);
 double dot_avx2(const float* a, const float* b, std::size_t n);
 double quant_avx2(const std::byte* w, std::uint32_t type, const float* x, std::size_t n);
 double dot_avx512(const float* a, const float* b, std::size_t n);

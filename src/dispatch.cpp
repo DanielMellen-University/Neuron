@@ -91,6 +91,11 @@ void matmul_quantized(std::span<const std::byte> w, std::uint32_t type,
   const bool reference = selection() == "scalar";
   const auto kernel = (selection() == "avx512" || selection() == "vnni") ? detail::quant_avx512 : detail::quant_avx2;
   const auto stride = cols / elements * bytes;
+  thread_local std::vector<detail::KActivation> packed_k;
+  const bool use_k = !reference && elements == 256 && detail::prepare_k_activations(x, packed_k);
+  const auto* k_data = packed_k.data();
+  const auto k_kernel = selection() == "vnni" ? detail::kquant_vnni :
+      selection() == "avx512" ? detail::kquant_avx512 : detail::kquant_avx2;
   // Pack once for the whole matmul, then share read-only across row workers.
   // Four-plane VNNI packing costs more than direct K decoding. Use the
   // AVX-512 K kernels for this selection too, without rounding activations.
@@ -103,7 +108,8 @@ void matmul_quantized(std::span<const std::byte> w, std::uint32_t type,
             x.subspan(b * cols, cols), y.subspan(b * rows + begin, end - begin), end - begin, cols);
       } else {
         for (std::size_t r = begin; r < end; ++r) {
-          y[b * rows + r] = static_cast<float>(activations.empty() ?
+          y[b * rows + r] = static_cast<float>(use_k ?
+              k_kernel(w.data() + r * stride, type, k_data + b * cols / 256, cols) : activations.empty() ?
               kernel(w.data() + r * stride, type, x.data() + b * cols, cols) :
               detail::quant_vnni(w.data() + r * stride, type, activations.data() + b * cols / 16, cols));
         }
