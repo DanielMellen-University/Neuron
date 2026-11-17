@@ -42,9 +42,10 @@ jobs:
         run: ctest --test-dir build --output-on-failure
 
   avx512-build:
-    # GitHub runners do not all have AVX-512, so this job only checks that the
-    # AVX-512 build compiles cleanly. Ghost runs the AVX-512 tests locally.
-    name: gcc avx512 (build only)
+    # Runtime checks skip unavailable ISAs. Run all supported kernel tests
+    # even when this runner cannot execute AVX-512 or VNNI.
+    # AVX-512 tests also run locally on the test laptop.
+    name: gcc avx512
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,6 +53,9 @@ jobs:
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNEURON_AVX512=ON -DNEURON_WERROR=ON
       - name: Build
         run: cmake --build build -j "$(nproc)"
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
 
   sanitize:
     name: gcc asan+ubsan

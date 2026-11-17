@@ -2,6 +2,7 @@
 #include "neuron/kernels.hpp"
 
 #include <algorithm>
+#include <atomic>
 #include <charconv>
 #include <condition_variable>
 #include <cstdlib>
@@ -12,6 +13,7 @@
 #include <string_view>
 #include <thread>
 #include <vector>
+#include <immintrin.h>
 
 namespace neuron {
 namespace {
@@ -27,7 +29,7 @@ class Pool {
   }
   ~Pool() { stop(); }
   std::size_t count() const { return count_; }
-  void run(std::size_t rows, const std::function<void(std::size_t, std::size_t)>& work) {
+  void run(std::size_t rows, detail::RowTask work) {
     if (count_ == 1 || rows < 2) { work(0, rows); return; }
     // Independent callers may submit jobs, but one pool executes one at a time.
     const std::lock_guard submit(submit_mutex_);
@@ -41,6 +43,9 @@ class Pool {
     }
     ready_.notify_all();
     execute(0);
+    // Consecutive decode jobs are short. Give workers a bounded chance to
+    // finish before paying for a scheduler sleep and wakeup.
+    for (unsigned spin = 0; spin < 2048 && remaining_.load(std::memory_order_acquire) != 0; ++spin) _mm_pause();
     std::unique_lock lock(mutex_);
     done_.wait(lock, [this] { return remaining_ == 0; });
     work_ = {};
@@ -69,22 +74,28 @@ class Pool {
   void worker(std::size_t index) {
     std::size_t previous = 0;
     for (;;) {
+      for (unsigned spin = 0; spin < 2048 && generation_.load(std::memory_order_acquire) == previous; ++spin) _mm_pause();
       std::unique_lock lock(mutex_);
       ready_.wait(lock, [this, previous] { return stopping_ || generation_ != previous; });
       if (stopping_) return;
       previous = generation_;
       lock.unlock();
       execute(index);
-      lock.lock();
-      if (--remaining_ == 0) done_.notify_one();
+      if (remaining_.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+        // Pair notification with the waiter's mutex to avoid a lost wakeup
+        // when it leaves the spin loop just before sleeping.
+        const std::lock_guard finished(mutex_);
+        done_.notify_one();
+      }
     }
   }
-  std::size_t count_, generation_ = 0, remaining_ = 0, rows_ = 0;
+  std::size_t count_, rows_ = 0;
+  std::atomic<std::size_t> generation_{0}, remaining_{0};
   bool stopping_ = false;
   std::mutex mutex_, submit_mutex_;
   std::condition_variable ready_, done_;
   std::vector<std::thread> workers_;
-  std::function<void(std::size_t, std::size_t)> work_;
+  detail::RowTask work_{};
   std::exception_ptr error_;
 };
 void check_count(std::size_t count) {
@@ -114,7 +125,7 @@ void set_threads(std::size_t count) {
 std::size_t threads() { return pool()->count(); }
 }
 namespace detail {
-void parallel_rows(std::size_t rows, const std::function<void(std::size_t, std::size_t)>& work) {
+void parallel_rows_impl(std::size_t rows, RowTask work) {
   pool()->run(rows, work);
 }
 }

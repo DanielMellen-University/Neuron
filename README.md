@@ -9,7 +9,7 @@
 
 Neuron reads GGUF files (the usual format for local Llama-style models), runs the transformer itself, and generates text. You can chat in the terminal, open a local web page, or talk to it with the official OpenAI Python client. llama.cpp is an external reference used for checks and quantization, not a library the engine links against.
 
-The interesting part is that the whole path is in this repo: the file loader, the tokenizer, attention, the packed weight formats, and the CPU kernels. It also remains substantially slower than llama.cpp on the target Qwen model. The numbers below are the measured ones, including the targets that were missed.
+The interesting part is that the whole path is in this repo: the file loader, the tokenizer, attention, the packed weight formats, and the CPU kernels. It also remains substantially slower than llama.cpp on the target Qwen model. R1 reaches 55.02% of llama.cpp's generation rate in the short Q4_K_M benchmark. The numbers below are the measured ones, including the targets that were missed.
 
 ![Real terminal chat with Qwen2.5 Instruct Q4_K_M](docs/chat.gif)
 
@@ -85,7 +85,7 @@ The terminal, the web page and the HTTP API all call this same engine. [The desi
 
 ## Speed vs llama.cpp
 
-All rates below are tokens per second (tok/s) with four threads in both engines, measured on the i5-1135G7 laptop described above. Neuron uses AVX-512; llama.cpp uses its native CPU build at pinned commit `9e9619d`. See [hardware, power state and methodology](bench/M7_CHECKS.md#speed-table). `pp` means prompt processing; `tg` means generation after the first sampled token. Model loading is excluded.
+All rates below are tokens per second (tok/s) with four threads in both engines, measured on the i5-1135G7 laptop described above. Neuron uses AVX-512, with checked VNNI (Vector Neural Network Instructions) word dot products for K-quant blocks (weights packed in groups of 256 values) in R1; llama.cpp uses its native CPU build at pinned commit `9e9619d`. See [hardware, power state and methodology](bench/M7_CHECKS.md#speed-table). `pp` means prompt processing; `tg` means generation after the first sampled token. Model loading is excluded.
 
 <!-- speed-table -->
 | Model | GGUF | Neuron pp | Neuron tg | llama.cpp pp | llama.cpp tg | Records |
@@ -95,10 +95,10 @@ All rates below are tokens per second (tok/s) with four threads in both engines,
 | Qwen2.5 1.5B Instruct | F16 | 7.87 | 7.00 | 45.35 | 14.31 | [N](bench/reference/m7-speed-f16-neuron.json) / [L](bench/reference/m7-speed-f16-llama.json) |
 | Qwen2.5 1.5B Instruct | Q8_0 | 8.68 | 7.97 | 42.16 | 25.27 | [N](bench/reference/m7-speed-q8_0-neuron.json) / [L](bench/reference/m7-speed-q8_0-llama.json) |
 | Qwen2.5 1.5B Instruct | Q4_0 | 6.37 | 6.42 | 117.67 | 44.53 | [N](bench/reference/m7-speed-q4_0-neuron.json) / [L](bench/reference/m7-speed-q4_0-llama.json) |
-| Qwen2.5 1.5B Instruct | Q4_K_M | 6.48 | 4.29 | 59.26 | 38.95 | [N](bench/reference/m5-speed-final.json) / [L](bench/reference/m5-speed-llama.json) |
+| Qwen2.5 1.5B Instruct | Q4_K_M | 23.91 | 21.22 | 52.50 | 38.56 | [N](bench/reference/r1-speed-final.json) / [L](bench/reference/r1-speed-llama-final.json) |
 <!-- /speed-table -->
 
-TinyStories pools the original prompt set across three repetitions and 128 generated tokens per sample. The other rows use one raw prompt, `Once upon a time`, with 32 generated tokens and no warmup. These are short samples collected at different times, without fixed frequency or temperature. They do not measure chat latency or sustained throughput. Prompt processing in Neuron evaluates tokens sequentially; llama.cpp can batch them. [The derived table](bench/reference/m7-benchmarks.json) points to every input record. N and L link directly to Neuron and llama.cpp timings.
+TinyStories pools the original prompt set across three repetitions and 128 generated tokens per sample. The other rows use one raw prompt, `Once upon a time`, with 32 generated tokens and no warmup. These are short samples collected at different times, without fixed frequency or temperature. Q4_K_M was rerun in R1; the other rows retain their M1/M5/M7 records. They do not measure chat latency or sustained throughput. Prompt processing in Neuron evaluates tokens sequentially; llama.cpp can batch them. [The derived table](bench/reference/m7-benchmarks.json) points to every input record. N and L link directly to Neuron and llama.cpp timings.
 
 To repeat a short pair after the build and model setup above:
 
@@ -114,7 +114,7 @@ python3 bench/speed.py measure --llama --step llama.cpp --threads 4 \
 python3 bench/m7_table.py --output bench/runs/m7-benchmarks.json
 ```
 
-[Exact commands for every row](bench/M7_CHECKS.md#reproduce) include TinyStories and model preparation. [The M5 speed record](bench/SPEED.md) keeps the optimization chart and historical source commits.
+[Exact commands for every row](bench/M7_CHECKS.md#reproduce) include TinyStories and model preparation. [The M5 speed record](bench/SPEED.md) keeps the optimization chart and historical source commits. [The R1 result](bench/SPEED.md#r1-result) and [profile](bench/R1_PROFILE.md) explain the later kernel and buffer changes.
 
 ## Web chat and API
 
@@ -145,7 +145,7 @@ Install `openai` in a separate Python environment to use this example. Omit `str
 ## Limitations
 
 - **M4 missed both free-running agreement targets.** Against F16, Q8_0 matched 551/768 tokens (71.74%, target 90%); Q4_K_M matched 180/768 (23.44%, target 70%). Per-format perplexity (how well the model predicts the next token on a fixed text) still tracked llama.cpp within 0.9%. These accepted misses remain documented in [the quality record](bench/QUANT.md#second-round-4096-targets-and-twelve-prompts).
-- **M5 missed the speed target.** Q4_K_M generation was 4.294374 tokens/s versus llama.cpp's 38.953875, or 11.02%, against a 50% target at the same thread count. [The final samples](bench/SPEED.md) remain the comparison.
+- **Speed remains below llama.cpp.** R1 Q4_K_M generation is 21.215665 tokens/s versus 38.558125, or 55.02%, with four threads. This short sample meets the 50% target; M5 originally reached 11.02%. Frequency and temperature were not fixed. [Raw results and method](bench/SPEED.md#r1-result) retain both rounds.
 - **Restricted models and formats.** Dense Llama and Qwen2 only; the locally checked models are the table above. No MoE, RoPE scaling, other quantization formats, arbitrary Jinja templates or multimodal inputs.
 - **Greedy decoding only.** No temperature sampling, top-p sampling, tools or custom stop strings. The API implements a subset of OpenAI's interface and serves one request at a time, without authentication or TLS.
 - **Context and memory costs.** F16 expands to FP32 in memory. Chat re-evaluates the full history each turn. The CLI defaults to context 2048 and rejects overflow; it does not truncate or slide history. TinyStories declares a training context of 128; use `--ctx-size 128` with a smaller prompt/output budget to stay inside it. An override makes no quality claim beyond a model's training context.
@@ -161,7 +161,7 @@ cmake --build build-check -j 2
 ctest --test-dir build-check --output-on-failure
 ```
 
-Unit tests and model-free HTTP/terminal tests need no weights or reference engine. The optional official-client integration test skips when its model or Python package is absent. [CI](.github/workflows/ci.yml) checks GCC and Clang Release builds, AVX2, an AVX-512 build, ASan/UBSan, and a weights/size guard. [M7 checks](bench/M7_CHECKS.md) record local results.
+Unit tests and model-free HTTP/terminal tests need no weights or reference engine. The optional official-client integration test skips when its model or Python package is absent. [CI](.github/workflows/ci.yml) checks GCC and Clang Release builds, AVX2, runtime-guarded AVX-512 tests, ASan/UBSan, and a weights/size guard. [M7 checks](bench/M7_CHECKS.md) record local results.
 
 ## Docs
 

@@ -1,5 +1,6 @@
 #include "neuron/kernels.hpp"
 #include "neuron/quant.hpp"
+#include "../src/simd.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -31,6 +32,71 @@ int main(int argc, char** argv) {
         ++comparisons;
       }
     };
+    // Review regressions: packing must retain small contributions, and Q4_K
+    // minima must respect the scalar dequantizer's FP32 weight rounding.
+    for (auto type : {neuron::q6_k, neuron::q4_k}) {
+      const auto bytes = neuron::quant_block_bytes(type);
+      for (std::size_t blocks : {1u, 3u}) {
+        std::vector<std::byte> w(blocks * bytes);
+        std::vector<float> x(blocks * 256), a(1), b(1);
+        const auto middle = blocks / 2;
+        auto* p = w.data() + middle * bytes;
+        auto* input = x.data() + middle * 256;
+        if (type == neuron::q6_k) {
+          // Zero codes decode to -32; set every code to 32 except index 1.
+          std::fill_n(p + 128, 64, std::byte{0xaa});
+          p[129] = std::byte{0xa8};
+          p[192] = std::byte{0x80};
+          const std::uint16_t d = 0x3c00;  // 1
+          std::memcpy(p + 208, &d, 2);
+          input[0] = 32768;
+          input[1] = std::ldexp(1.0f, -16);
+        } else {
+          const std::uint16_t d = 0x7bff, m = 0x1800;  // 65504, 2^-9
+          std::memcpy(p, &d, 2);
+          std::memcpy(p + 2, &m, 2);
+          p[4] = p[8] = std::byte{1};
+          p[16] = std::byte{1};
+          p[17] = std::byte{2};
+          input[0] = 2;
+          input[1] = -1;
+        }
+        neuron::scalar::matmul_quantized(w, type, x, a, 1, blocks * 256);
+        if (a[0] != (type == neuron::q6_k ? 0.0625f : 0.0f))
+          throw std::runtime_error("review regression fixture differs");
+        neuron::kernels::matmul_quantized(w, type, x, b, 1, blocks * 256);
+        compare(a, b);
+        // Also call each packed implementation directly: AVX-512 dispatch
+        // can otherwise select VNNI and leave the plain kernel untested.
+        std::vector<neuron::detail::KActivation> activations;
+        if (!neuron::detail::prepare_k_activations(x, activations))
+          throw std::runtime_error("finite regression packing rejected");
+        for (const auto& path : {std::string("avx2"), std::string("avx512"), std::string("vnni")}) {
+          if (isa != path && !(isa == "avx512" && path == "vnni")) continue;
+          if (!neuron::kernels::supported(path)) continue;
+          const auto kernel = path == "avx2" ? neuron::detail::kquant_avx2 :
+              path == "avx512" ? neuron::detail::kquant_avx512 : neuron::detail::kquant_vnni;
+          b[0] = static_cast<float>(kernel(w.data(), type, activations.data(), blocks * 256));
+          compare(a, b);
+        }
+      }
+    }
+    // Check the activation error bound independently of a weight dot. Include
+    // FP32 subnormals and values that differ by more than the retained range.
+    for (int exponent : {-140, -40, 0, 40, 120}) {
+      std::vector<float> x(512);
+      for (std::size_t i = 0; i < x.size(); ++i)
+        x[i] = std::ldexp(uniform(random), exponent - static_cast<int>(i % 60));
+      std::vector<neuron::detail::KActivation> packed;
+      if (!neuron::detail::prepare_k_activations(x, packed)) throw std::runtime_error("finite packing rejected");
+      for (std::size_t i = 0; i < x.size(); ++i) {
+        const auto& a = packed[i / 256];
+        const auto j = i % 256;
+        const double reconstructed = (static_cast<double>(a.high[j]) * 65536 + a.low[j] + 32768) * a.scale;
+        if (std::abs(reconstructed - x[i]) > a.scale / 2)
+          throw std::runtime_error("K activation rounding bound exceeded");
+      }
+    }
     for (std::size_t cols : {1u, 3u, 7u, 8u, 15u, 16u, 17u, 31u, 33u, 129u, 1536u}) {
       for (std::size_t rows : {1u, 3u, 19u}) {
         std::vector<float> w(rows * cols), x(3 * cols), a(3 * rows), b(3 * rows);
@@ -78,6 +144,65 @@ int main(int argc, char** argv) {
         neuron::scalar::matmul_quantized(weights, type, x, a, rows, cols, batch);
         neuron::kernels::matmul_quantized(weights, type, x, b, rows, cols, batch);
         compare(a, b);
+      }
+    }
+    // K blocks with raw payload bytes, real model widths and finite F16
+    // endpoints. Tolerance: 1e-5 * (1 + abs(scalar)), as above. The scalar
+    // path decodes each FP32 weight before its FP64 product independently.
+    for (auto type : {neuron::q4_k, neuron::q6_k}) {
+      const auto bytes = neuron::quant_block_bytes(type);
+      for (std::size_t blocks : {1u, 2u, 6u, 35u}) {
+        const std::size_t rows = 5, cols = blocks * 256, batch = 2;
+        std::vector<std::byte> storage(rows * blocks * bytes + 1);
+        auto packed = std::span(storage).subspan(1);
+        for (auto& value : packed) value = static_cast<std::byte>(random() & 255u);
+        const std::uint16_t halves[] = {0, 1, 0x3ff, 0x400, 0x3555, 0x7bff, 0x8001, 0xbc00};
+        for (std::size_t b = 0; b < rows * blocks; ++b) {
+          auto* p = packed.data() + b * bytes;
+          const auto d = halves[b % 8], m = halves[(b + 3) % 8];
+          std::memcpy(p + (type == neuron::q6_k ? 208 : 0), &d, 2);
+          if (type == neuron::q4_k) std::memcpy(p + 2, &m, 2);
+          // Alternate all-zero and all-one codes and extreme signed scales.
+          if (b % 3 == 0) std::fill_n(p + (type == neuron::q4_k ? 16 : 0),
+              type == neuron::q4_k ? 128 : 192, std::byte{0xff});
+          if (type == neuron::q6_k) for (std::size_t g = 0; g < 16; ++g)
+            p[192 + g] = g % 2 == 0 ? std::byte{0x80} : std::byte{0x7f};
+        }
+        std::vector<float> x(batch * cols), a(batch * rows), b(batch * rows);
+        for (auto& value : x) value = uniform(random);
+        neuron::scalar::matmul_quantized(packed, type, x, a, rows, cols, batch);
+        neuron::kernels::matmul_quantized(packed, type, x, b, rows, cols, batch);
+        compare(a, b);
+        if (isa == "avx512" || isa == "vnni") {
+          // Exercise plain AVX-512 even when dispatch uses the VNNI
+          // subfeature on this host. Non-VNNI runners execute this too.
+          std::vector<neuron::detail::KActivation> activations;
+          if (!neuron::detail::prepare_k_activations(x, activations)) throw std::runtime_error("packing rejected");
+          for (std::size_t batch_index = 0; batch_index < batch; ++batch_index)
+            for (std::size_t r = 0; r < rows; ++r)
+              b[batch_index * rows + r] = static_cast<float>(neuron::detail::kquant_avx512(
+                  packed.data() + r * blocks * bytes, type, activations.data() + batch_index * blocks, cols));
+          compare(a, b);
+        }
+        std::fill(x.begin(), x.end(), 0.0f);
+        neuron::kernels::matmul_quantized(packed, type, x, b, rows, cols, batch);
+        for (float value : b) if (value != 0) throw std::runtime_error("K zero input differs");
+        if (type == neuron::q6_k) {
+          // Worst signed-word accumulators: coefficient (-128)*(-32)=4096.
+          for (std::size_t r = 0; r < rows * blocks; ++r) {
+            auto* p = packed.data() + r * bytes;
+            std::fill_n(p, 192, std::byte{0});
+            std::fill_n(p + 192, 16, std::byte{0x80});
+            const std::uint16_t d = 0x3c00;
+            std::memcpy(p + 208, &d, 2);
+          }
+          for (float value : {-1.0f, 1.0f, -0.999969482421875f, 0.999969482421875f}) {
+            std::fill(x.begin(), x.end(), value);
+            neuron::scalar::matmul_quantized(packed, type, x, a, rows, cols, batch);
+            neuron::kernels::matmul_quantized(packed, type, x, b, rows, cols, batch);
+            compare(a, b);
+          }
+        }
       }
     }
     for (std::size_t n : {0u, 1u, 15u, 16u, 17u, 31u, 32u, 63u, 64u, 65u, 4097u}) {

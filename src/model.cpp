@@ -98,20 +98,50 @@ Model::Model(const std::string& path, std::size_t context_override) : file_(path
     l.down = load(prefix + "ffn_down.weight", {c.hidden, c.width});
     layers_.push_back(std::move(l));
   }
+  x_.resize(c.width); normalized_.resize(c.width); q_.resize(c.width);
+  k_.resize(kv_width); v_.resize(kv_width); attention_.resize(c.width); projected_.resize(c.width);
+  gate_.resize(c.hidden); up_.resize(c.hidden); scores_.resize(c.context); logits_.resize(c.vocabulary);
+  rope_cos_.resize(c.rotary_dims / 2); rope_sin_.resize(c.rotary_dims / 2);
+  // Reserve a small context page, retaining bounded startup memory even for
+  // large context overrides. Later cache growth is occasional, not per token.
+  for (auto& l : layers_) {
+    l.keys.reserve(std::min(c.context, std::size_t{256}) * kv_width);
+    l.values.reserve(std::min(c.context, std::size_t{256}) * kv_width);
+  }
 }
 void Model::reset() {
   position_ = 0;
   for (auto& l : layers_) { l.keys.clear(); l.values.clear(); }
 }
 std::vector<float> Model::step(std::int32_t token, bool output) {
+  const auto result = step_view(token, output);
+  return {result.begin(), result.end()};
+}
+std::span<const float> Model::step_view(std::int32_t token, bool output) {
   const auto& c = config_;
   if (token < 0 || static_cast<std::size_t>(token) >= c.vocabulary) fail("token id out of range");
   if (position_ >= c.context) fail("context limit exceeded (" + std::to_string(c.context) + " tokens)");
   const auto kv_width = c.kv_heads * c.head_size;
-  std::vector<float> x(c.width);
+  auto& x = x_; auto& normalized = normalized_; auto& q = q_; auto& k = k_; auto& v = v_;
+  auto& attention = attention_; auto& projected = projected_; auto& gate = gate_; auto& up = up_;
+  auto scores = std::span(scores_).first(position_ + 1);
   embedding_.row(static_cast<std::size_t>(token), x);
-  std::vector<float> normalized(c.width), q(c.width), k(kv_width), v(kv_width), attention(c.width), projected(c.width);
-  std::vector<float> gate(c.hidden), up(c.hidden), scores(position_ + 1);
+  const float theta_step = std::pow(c.rope_base, -2.0f / static_cast<float>(c.rotary_dims));
+  float theta = static_cast<float>(position_);
+  for (std::size_t i = 0; i < c.rotary_dims / 2; ++i) {
+    rope_cos_[i] = std::cos(theta); rope_sin_[i] = std::sin(theta); theta *= theta_step;
+  }
+  auto rotate = [&](std::span<float> values) {
+    for (std::size_t h = 0; h < values.size(); h += c.head_size) {
+      for (std::size_t i = 0; i < c.rotary_dims / 2; ++i) {
+        const auto a = h + (c.rope_neox ? i : i * 2);
+        const auto b = c.rope_neox ? a + c.rotary_dims / 2 : a + 1;
+        const float first = values[a], second = values[b];
+        values[a] = first * rope_cos_[i] - second * rope_sin_[i];
+        values[b] = first * rope_sin_[i] + second * rope_cos_[i];
+      }
+    }
+  };
   const float scale = 1.0f / std::sqrt(static_cast<float>(c.head_size));
   for (auto& l : layers_) {
     scalar::rmsnorm(x, l.attn_norm.data, normalized, c.rms_epsilon);
@@ -122,8 +152,7 @@ std::vector<float> Model::step(std::int32_t token, bool output) {
       for (std::size_t d = 0; d < c.width; ++d) q[d] += l.q_bias.data[d];
       for (std::size_t d = 0; d < kv_width; ++d) { k[d] += l.k_bias.data[d]; v[d] += l.v_bias.data[d]; }
     }
-    scalar::rope(q, c.head_size, c.rotary_dims, position_, c.rope_base, c.rope_neox);
-    scalar::rope(k, c.head_size, c.rotary_dims, position_, c.rope_base, c.rope_neox);
+    rotate(q); rotate(k);
     l.keys.insert(l.keys.end(), k.begin(), k.end()); l.values.insert(l.values.end(), v.begin(), v.end());
     for (std::size_t h = 0; h < c.heads; ++h) {
       const auto group = h / (c.heads / c.kv_heads);
@@ -152,18 +181,21 @@ std::vector<float> Model::step(std::int32_t token, bool output) {
   ++position_;
   if (!output) return {};
   scalar::rmsnorm(x, output_norm_.data, normalized, c.rms_epsilon);
-  std::vector<float> logits(c.vocabulary);
-  output_.multiply(normalized, logits, c.vocabulary, c.width);
-  return logits;
+  output_.multiply(normalized, logits_, c.vocabulary, c.width);
+  return logits_;
 }
 std::vector<float> Model::forward(std::span<const std::int32_t> tokens) {
+  const auto result = forward_view(tokens);
+  return {result.begin(), result.end()};
+}
+std::span<const float> Model::forward_view(std::span<const std::int32_t> tokens) {
   if (tokens.empty()) fail("cannot evaluate an empty token sequence");
   if (tokens.size() > config_.context) fail("prompt exceeds context limit");
   for (auto token : tokens)
     if (token < 0 || static_cast<std::size_t>(token) >= config_.vocabulary) fail("token id out of range");
   reset();
-  std::vector<float> result;
-  for (std::size_t i = 0; i < tokens.size(); ++i) result = step(tokens[i], i + 1 == tokens.size());
+  std::span<const float> result;
+  for (std::size_t i = 0; i < tokens.size(); ++i) result = step_view(tokens[i], i + 1 == tokens.size());
   return result;
 }
 }  // namespace neuron

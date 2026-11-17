@@ -1,0 +1,376 @@
+{
+  "before": {
+    "utc": "2026-11-17T19:02:37.109470+00:00",
+    "load_average": [
+      3.5634765625,
+      3.41357421875,
+      2.50439453125
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "model_sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281",
+  "baseline_commit": "2646c5d",
+  "source_commit": "ef6b708e44b3644d4d1fa61fc67dcc00132ff9d9",
+  "driver_sha256": "f0ee17532d5ec87fa2dccab0ed36e0a042de42cb1ca211ecaca828885bb78825",
+  "allocations": {
+    "before": {
+      "compile_command": [
+        "g++",
+        "-std=c++20",
+        "-O3",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-DNEURON_PROFILE_LEGACY",
+        "-I/home/daniel/codex-runs/Neuron-r1/bench/runs/r1-profile/headers",
+        "-Iinclude",
+        "-Ibuild-r1-base/generated",
+        "bench/profile_decode.cpp",
+        "build-r1-base/libneuron.a",
+        "-pthread",
+        "-o",
+        "/home/daniel/codex-runs/Neuron-r1/bench/runs/r1-profile/before"
+      ],
+      "command": [
+        "/home/daniel/codex-runs/Neuron-r1/bench/runs/r1-profile/before",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+        "4",
+        "avx512"
+      ],
+      "result": {
+        "decode_steps": 31,
+        "cpp_heap_allocations": 12779,
+        "decode_seconds": 17.7598504,
+        "tensor_types": {
+          "0": 141,
+          "12": 168,
+          "14": 29
+        }
+      },
+      "binary_sha256": "edfdcb081a1d2e77eb11f395385bff8278fb4e0625dc23678a9b19ecf0761648",
+      "library_sha256": "c287b3edd459bccfcb6119942adf6a4c0573b7066ec959a853573a3699cab9ea"
+    },
+    "after": {
+      "compile_command": [
+        "g++",
+        "-std=c++20",
+        "-O3",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Iinclude",
+        "-Ibuild-r1-opt/generated",
+        "bench/profile_decode.cpp",
+        "build-r1-opt/libneuron.a",
+        "-pthread",
+        "-o",
+        "/home/daniel/codex-runs/Neuron-r1/bench/runs/r1-profile/after"
+      ],
+      "command": [
+        "/home/daniel/codex-runs/Neuron-r1/bench/runs/r1-profile/after",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+        "4",
+        "avx512"
+      ],
+      "result": {
+        "decode_steps": 31,
+        "cpp_heap_allocations": 0,
+        "decode_seconds": 4.99585796,
+        "tensor_types": {
+          "0": 141,
+          "12": 168,
+          "14": 29
+        }
+      },
+      "binary_sha256": "7da3fb3e20cab997cb6de52f4cc8eff3a472de7203716d49e6a224e50e02f96e",
+      "library_sha256": "44022f014ea90123bb530dc8498c6cc9b36cdff99def1289c46122228abafdb0"
+    }
+  },
+  "gprof_after": {
+    "command": [
+      "/home/daniel/codex-runs/Neuron-r1/build-r1-prof-after/neuron",
+      "run",
+      "-m",
+      "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+      "-p",
+      "Once upon a time",
+      "-n",
+      "32",
+      "--greedy",
+      "--json",
+      "--ctx-size",
+      "256"
+    ],
+    "binary_sha256": "ef70545d04d0bb1d54c09d8ee38e496616edd25ef4649a9183948ffbeb4e8da2",
+    "result": {
+      "isa": "avx512",
+      "threads": 4,
+      "prompt_tokens": [
+        12522,
+        5193,
+        264,
+        882
+      ],
+      "generated_tokens": [
+        11,
+        264,
+        3908,
+        3743,
+        6941,
+        47290,
+        572,
+        5619,
+        304,
+        279,
+        6118,
+        13,
+        2932,
+        572,
+        5619,
+        448,
+        1059,
+        6930,
+        21357,
+        11,
+        264,
+        2613,
+        21357,
+        1803,
+        13,
+        2932,
+        572,
+        3432,
+        264,
+        2244,
+        882,
+        11
+      ],
+      "top2": [
+        {
+          "first": 11,
+          "second": 3837,
+          "gap": 1.91843796
+        },
+        {
+          "first": 264,
+          "second": 1052,
+          "gap": 0.0181503296
+        },
+        {
+          "first": 3908,
+          "second": 11477,
+          "gap": 0.445819855
+        },
+        {
+          "first": 3743,
+          "second": 8171,
+          "gap": 0.167596817
+        },
+        {
+          "first": 6941,
+          "second": 572,
+          "gap": 1.90789795
+        },
+        {
+          "first": 47290,
+          "second": 20445,
+          "gap": 1.49230766
+        },
+        {
+          "first": 572,
+          "second": 1030,
+          "gap": 0.0597991943
+        },
+        {
+          "first": 5619,
+          "second": 11435,
+          "gap": 0.209243774
+        },
+        {
+          "first": 304,
+          "second": 448,
+          "gap": 0.11741066
+        },
+        {
+          "first": 279,
+          "second": 1059,
+          "gap": 0.0441932678
+        },
+        {
+          "first": 6118,
+          "second": 13551,
+          "gap": 0.223602295
+        },
+        {
+          "first": 13,
+          "second": 979,
+          "gap": 1.59697533
+        },
+        {
+          "first": 2932,
+          "second": 576,
+          "gap": 3.01528931
+        },
+        {
+          "first": 572,
+          "second": 5485,
+          "gap": 1.27818489
+        },
+        {
+          "first": 5619,
+          "second": 3432,
+          "gap": 0.0720176697
+        },
+        {
+          "first": 448,
+          "second": 10265,
+          "gap": 0.972730637
+        },
+        {
+          "first": 1059,
+          "second": 264,
+          "gap": 0.674671173
+        },
+        {
+          "first": 6930,
+          "second": 4780,
+          "gap": 0.175643921
+        },
+        {
+          "first": 21357,
+          "second": 23069,
+          "gap": 3.26213837
+        },
+        {
+          "first": 11,
+          "second": 1803,
+          "gap": 1.12159348
+        },
+        {
+          "first": 264,
+          "second": 892,
+          "gap": 3.17482376
+        },
+        {
+          "first": 2613,
+          "second": 21357,
+          "gap": 0.655532837
+        },
+        {
+          "first": 21357,
+          "second": 22360,
+          "gap": 0.20759964
+        },
+        {
+          "first": 1803,
+          "second": 15328,
+          "gap": 1.36865997
+        },
+        {
+          "first": 13,
+          "second": 11,
+          "gap": 1.96789932
+        },
+        {
+          "first": 2932,
+          "second": 47290,
+          "gap": 0.661888123
+        },
+        {
+          "first": 572,
+          "second": 10245,
+          "gap": 1.13250732
+        },
+        {
+          "first": 3432,
+          "second": 9842,
+          "gap": 0.358798981
+        },
+        {
+          "first": 264,
+          "second": 773,
+          "gap": 0.412403107
+        },
+        {
+          "first": 2244,
+          "second": 2696,
+          "gap": 1.59447479
+        },
+        {
+          "first": 882,
+          "second": 1899,
+          "gap": 5.5646553
+        },
+        {
+          "first": 11,
+          "second": 323,
+          "gap": 0.583820343
+        }
+      ],
+      "timings": {
+        "prompt_n": 4,
+        "prompt_ms": 858.689606,
+        "predicted_n": 32,
+        "predicted_ms": 8353.62345,
+        "prompt_per_second": 4.65826065,
+        "predicted_per_second": 3.71096449
+      }
+    },
+    "environment": {
+      "GMON_OUT_PREFIX": "/home/daniel/codex-runs/Neuron-r1/bench/runs/r1-profile/gmon-after-3",
+      "NEURON_ISA": "avx512",
+      "NEURON_THREADS": "4"
+    },
+    "profile": "bench/reference/r1-gprof-after.txt",
+    "flags": "GCC Release, -pg compile and link"
+  },
+  "perf_event_paranoid": "4",
+  "after": {
+    "utc": "2026-11-17T19:03:16.956458+00:00",
+    "load_average": [
+      5.4462890625,
+      3.9130859375,
+      2.71142578125
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "gprof_before": {
+    "binary_sha256": "9e27ecd6768aaa247080eb2511d6e04bf934d5242f66925e7c7a6973b47cc88d",
+    "profile": "bench/reference/r1-gprof-before.txt",
+    "flags": "GCC Release, -pg compile and link",
+    "command": [
+      "build-r1-prof-before/neuron",
+      "run",
+      "-m",
+      "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+      "-p",
+      "Once upon a time",
+      "-n",
+      "32",
+      "--greedy",
+      "--json",
+      "--ctx-size",
+      "256"
+    ],
+    "environment": {
+      "GMON_OUT_PREFIX": "/tmp/r1-gmon-before",
+      "NEURON_ISA": "avx512",
+      "NEURON_THREADS": "4"
+    }
+  },
+  "conditions": "Before gprof overlapped a build. After gprof and allocation counts overlapped an M4 perplexity process. These instrumented timings are not speed comparisons."
+}

@@ -2,15 +2,46 @@
 
 This is the speed and kernel-correctness record for the M5 optimizations. Use it for the step-by-step chart, the comparison with llama.cpp, and the SIMD tests (AVX2, AVX-512 and VNNI are CPU vector instruction sets). tok/s is tokens per second.
 
+## R1 result
+
+R1 Qwen2.5 1.5B Q4_K_M measures **23.912452 prompt tokens/s** and
+**21.215665 generation tokens/s**, versus **52.497572** and **38.558125**
+for the pinned llama.cpp build. Generation reaches **55.02%** of llama.cpp
+with four threads in both engines, meeting the 50% target in this short
+sample. [Neuron](reference/r1-speed-final.json) and
+[llama.cpp](reference/r1-speed-llama-final.json) save every timing and ID.
+
+Here, `pp` means prompt processing and `tg` means generation after the first
+sampled token. The fresh unmodified-main baseline was
+[6.950889 pp / 5.747949 tg](reference/r1-speed-before.json). R1 generation
+is 3.69 times that baseline and 4.94 times the original M5 final sample.
+No frequency or temperature was fixed. Intermediate runs ranged below
+the target too; these are single observations, not a sustained throughput
+claim. The final comparison was collected without builds, tests or other
+model jobs running concurrently.
+
+The prompt, context, generated token count, greedy settings, thread count,
+GGUF hash and reference commit are unchanged from the M5 method below.
+All R1 Neuron speed runs match the baseline's 32 generated IDs exactly.
+[R1_PROFILE.md](R1_PROFILE.md) records profiles, allocation counts,
+thread and instruction set architecture (ISA) sweeps, source commits and
+validation commands. The K-quant kernels (weights packed in groups of 256 values)
+use two signed 16-bit activation planes, double-precision (FP64) reconstruction
+and checked Vector Neural Network Instructions (VNNI) dispatch. Plain AVX-512,
+AVX2 and the scalar fallback remain covered.
+
+## Original M5 result
+
 M5 is implemented. The speed target was missed and accepted. The final Qwen2.5 1.5B
 Q4_K_M run generated **4.294374 tokens/s**, versus **38.953875 tokens/s** for
 llama.cpp with the same file and four threads: **11.02%**. The target is
 50%, or 19.476937 tokens/s in this comparison. That speed target was missed.
-No further speed tuning was attempted after these checks.
+R1 above is the later speed refinement; the original measurements below
+remain historical records.
 
 ## Optimization steps
 
-![Qwen2.5 Q4_K_M generation speed after each M5 step](speed.svg)
+![Qwen2.5 Q4_K_M generation speed through M5 and R1](speed.svg)
 
 | Step | Source commit | ISA | Threads | Generation tokens/s |
 | --- | --- | --- | ---: | ---: |
@@ -21,20 +52,29 @@ No further speed tuning was attempted after these checks.
 | threads | `58fe608` | avx512 | 4 | [5.687839](reference/m5-speed-threads.json) |
 | final | `860228a` | avx512 | 4 | [4.294374](reference/m5-speed-final.json) |
 | llama.cpp | `9e9619d` | native | 4 | [38.953875](reference/m5-speed-llama.json) |
+| R1 specialized K loops | `a72d061` | avx512 | 4 | [9.648850](reference/r1-speed-kernels.json) |
+| R1 word VNNI | `0a1c4a2` | vnni | 4 | [16.089742](reference/r1-speed-packed.json) |
+| R1 scratch reuse | `fa9aa08` | vnni | 4 | [16.527625](reference/r1-speed-scratch.json) |
+| R1 unroll | `a4d6d3b` | vnni | 4 | [20.947368](reference/r1-speed-unroll.json) |
+| R1 final | `ef6b708` | avx512 + VNNI K | 4 | [21.215665](reference/r1-speed-final.json) |
+| R1 llama.cpp | `9e9619d` | native | 4 | [38.558125](reference/r1-speed-llama-final.json) |
 
 Each optimization has its own commit. The `source_sha256` in each Neuron record
 matches the CMake file, headers and sources at the listed commit. Samples
 were collected before committing the corresponding change, so the early
-records' `parent_commit` is the preceding commit. The final source also
-matches measured HEAD `2efcebd`.
+records' `parent_commit` is the preceding commit. The M5 final source also
+matches measured HEAD `2efcebd`. The [R1 source map](reference/r1-source-map.json)
+checks each R1 source hash against its commit.
 
-The VNNI path is slower than AVX-512 on this implementation. Auto therefore
-selects AVX-512, then AVX2, then scalar; VNNI remains explicitly selectable.
-The threads step uses AVX-512. Final repeats that configuration after
-settings and test hardening. No arithmetic kernel changed after the
+The original four-byte-plane VNNI path was slower than AVX-512. Auto
+selects AVX-512, then AVX2, then scalar. R1 uses VNNI word dots for K blocks
+inside the AVX-512 path when that subfeature is available. Four-byte-plane
+Q8_0/Q4_0 VNNI remains explicitly selectable.
+The M5 threads step uses AVX-512. M5 final repeats that configuration after
+settings and test hardening. No M5 arithmetic kernel changed after that
 threads step. Each point is one short run. Frequency, temperature and
-scheduling were not held fixed; the final recheck was slower than the
-original threads sample. The ratio above uses the final sample.
+scheduling were not held fixed; the M5 final recheck was slower than the
+original threads sample. The original M5 ratio uses that final sample.
 
 ## Measurement method
 
@@ -75,7 +115,7 @@ selected path. `NEURON_ISA=auto|scalar|avx2|avx512|vnni` or `--isa` selects a
 path. An unavailable explicit path returns an error. The old CMake ISA
 options remain compatible and do not change the baseline target.
 
-F32 dots and quantized products use double accumulators. AVX2 and AVX-512
+The original M5 F32 dots and quantized products use double accumulators. AVX2 and AVX-512
 decode Q8_0, Q4_0, Q4_K and Q6_K directly from mapped blocks. VNNI packs
 activations into four unsigned byte planes with a power-of-two scale for
 each group of 16. Integer dots use `vpdpbusd` and an exact int64 bias
@@ -83,12 +123,24 @@ correction. This preserves enough activation precision for the scalar
 checks, at the cost of extra instructions and packing. Small values can
 round by at most half that group's scale.
 
+R1 K products instead pack each 256-value activation block into two signed
+word planes. SIMD integer dots include the weight's group scale, reconstruct
+in FP64 and apply the block scale and Q4_K offset. Activation error is bounded
+by `2^(frexp(max_abs)-32)`. A block uses the direct SIMD fallback when its
+activation rounding could contribute more than `1e-5` to the dot product,
+or when Q4_K scale exponents cannot guarantee exact FP32 weight rounding
+after factoring the minimum. Nonfinite inputs also use the direct path.
+No weights are expanded or reordered. The activation packing buffer is
+reused and shared across workers. See [the R1 profile](R1_PROFILE.md).
+
 The persistent pool assigns disjoint output rows to workers. Each row
 keeps the same accumulation order at every thread count. The caller also
 works; `--threads N` or `NEURON_THREADS=N` counts it, defaults to 1 and
 accepts 1..256. CLI flags override environment defaults. Configure library
-settings before starting inference. Norms, softmax, RoPE and the attention
-value reduction retain their existing scalar implementations.
+settings before starting inference. Norms, softmax and the attention value
+reduction retain their scalar arithmetic. R1 computes RoPE angles once per
+position and reuses them across heads and layers. Scratch/logit storage and
+pool jobs are reused.
 
 ## Model-free checks and CI
 
@@ -133,7 +185,7 @@ threads. CLI tests verify explicit settings override invalid environment
 values and reject invalid counts and paths.
 
 [CI](../.github/workflows/ci.yml) forces AVX2 in its GCC/Clang AVX2 jobs,
-compiles the AVX-512 functions, runs GCC ASan/UBSan, and checks weights and
+runs runtime-guarded AVX-512 tests, runs GCC ASan/UBSan, and checks weights and
 file sizes. Local equivalents all pass.
 GitHub Actions remains pending. No weight file or file over 1 MiB was added.
 
@@ -211,7 +263,10 @@ python3 bench/speed.py chart \
   bench/reference/m5-speed-scalar.json bench/reference/m5-speed-avx2.json \
   bench/reference/m5-speed-avx512.json bench/reference/m5-speed-vnni.json \
   bench/reference/m5-speed-threads.json bench/reference/m5-speed-final.json \
-  bench/reference/m5-speed-llama.json --output bench/speed.svg
+  bench/reference/m5-speed-llama.json bench/reference/r1-speed-kernels.json \
+  bench/reference/r1-speed-packed.json bench/reference/r1-speed-scratch.json \
+  bench/reference/r1-speed-unroll.json bench/reference/r1-speed-final.json \
+  bench/reference/r1-speed-llama-final.json --output bench/speed.svg
 ```
 
 For the quality guard, retain the scalar executable built at `8c8a1fd`

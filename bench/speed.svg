@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="820" height="426" viewBox="0 0 820 426">
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="714" viewBox="0 0 820 714">
 <rect width="100%" height="100%" fill="#fff"/>
 <g font-family="sans-serif" font-size="16" fill="#182637">
-<text x="20" y="28">Qwen2.5 1.5B Q4_K_M generation on an i5-1135G7 laptop, tokens/s</text>
+<text x="20" y="28">Qwen2.5 1.5B Q4_K_M generation on an Intel Core i5-1135G7 laptop, tokens/s</text>
 <text x="20" y="76">scalar (1t)</text>
 <rect x="205" y="55" width="4.32" height="30" fill="#3478ba"/>
 <text x="219.32" y="76">0.380</text>
@@ -23,4 +23,22 @@
 <text x="20" y="364">llama.cpp (4t)</text>
 <rect x="205" y="343" width="443.48" height="30" fill="#3478ba"/>
 <text x="658.48" y="364">38.954</text>
+<text x="20" y="412">R1-K-kernels (4t)</text>
+<rect x="205" y="391" width="109.85" height="30" fill="#3478ba"/>
+<text x="324.85" y="412">9.649</text>
+<text x="20" y="460">R1-word-VNNI (4t)</text>
+<rect x="205" y="439" width="183.18" height="30" fill="#3478ba"/>
+<text x="398.18" y="460">16.090</text>
+<text x="20" y="508">R1-scratch (4t)</text>
+<rect x="205" y="487" width="188.16" height="30" fill="#3478ba"/>
+<text x="403.16" y="508">16.528</text>
+<text x="20" y="556">R1-unroll (4t)</text>
+<rect x="205" y="535" width="238.48" height="30" fill="#3478ba"/>
+<text x="453.48" y="556">20.947</text>
+<text x="20" y="604">R1-final (4t)</text>
+<rect x="205" y="583" width="241.53" height="30" fill="#3478ba"/>
+<text x="456.53" y="604">21.216</text>
+<text x="20" y="652">R1-llama.cpp (4t)</text>
+<rect x="205" y="631" width="438.97" height="30" fill="#3478ba"/>
+<text x="653.97" y="652">38.558</text>
 </g></svg>

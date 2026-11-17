@@ -8,11 +8,6 @@
 #define TARGET __attribute__((target("avx512f,avx512bw,avx512dq,avx512vl")))
 namespace neuron::detail {
 namespace {
-float half(const std::byte* p) {
-  std::uint16_t bits;
-  std::memcpy(&bits, p, 2);
-  return f16_to_f32(bits);
-}
 unsigned byte(const std::byte* p, std::size_t i) { return std::to_integer<unsigned>(p[i]); }
 int signed_byte(const std::byte* p, std::size_t i) {
   std::int8_t v;
@@ -34,6 +29,66 @@ TARGET __m512d products(__m512 w, const float* x) {
   return _mm512_add_pd(_mm512_mul_pd(a, _mm512_cvtps_pd(_mm256_loadu_ps(x))),
                        _mm512_mul_pd(b, _mm512_cvtps_pd(_mm256_loadu_ps(x + 8))));
 }
+// Specialized K loops extract scales once per group and reduce once per row.
+// No activation rounding or expanded weight copy is needed.
+TARGET double q4_k_dot(const std::byte* w, const float* x, std::size_t n) {
+  auto sum = _mm512_setzero_pd();
+  const auto mask = _mm512_set1_epi32(15);
+  for (std::size_t c = 0; c < n; c += 256, w += 144) {
+    const float d = load_half(w), m = load_half(w + 2);
+    const auto* scales = w + 4;
+    for (std::size_t g = 0; g < 8; ++g) {
+      const auto sc = g < 4 ? byte(scales, g) & 63u :
+          (byte(scales, g + 4) & 15u) | ((byte(scales, g - 4) >> 6) << 4);
+      const auto mn = g < 4 ? byte(scales, g + 4) & 63u :
+          (byte(scales, g + 4) >> 4) | ((byte(scales, g) >> 6) << 4);
+      const auto scale = _mm512_set1_ps(d * static_cast<float>(sc));
+      const auto offset = _mm512_set1_ps(m * static_cast<float>(mn));
+      for (std::size_t j = 0; j < 32; j += 16) {
+        auto codes = bytes16(w + 16 + (g / 2) * 32 + j);
+        if (g % 2 != 0) codes = _mm512_srli_epi32(codes, 4);
+        const auto values = _mm512_sub_ps(_mm512_mul_ps(scale,
+            _mm512_cvtepi32_ps(_mm512_and_si512(codes, mask))), offset);
+        sum = _mm512_add_pd(sum, products(values, x + c + g * 32 + j));
+      }
+    }
+  }
+  return reduce(sum);
+}
+template <int Quarter>
+TARGET void q6_quarter(const std::byte* w, const float* x, float d, __m512d& sum) {
+  const auto mask = _mm512_set1_epi32(15);
+  for (std::size_t g = 0; g < 2; ++g) {
+    const auto scale = _mm512_set1_ps(d * static_cast<float>(signed_byte(w + 192, Quarter * 2 + g)));
+    for (std::size_t j = 0; j < 16; j += 16) {
+      const auto lane = g * 16 + j;
+      auto low = bytes16(w + (Quarter / 4) * 64 + (Quarter % 2) * 32 + lane);
+      if constexpr (Quarter % 4 >= 2) low = _mm512_srli_epi32(low, 4);
+      const auto high = _mm512_srli_epi32(bytes16(w + 128 + (Quarter / 4) * 32 + lane), 2 * (Quarter % 4));
+      auto codes = _mm512_or_si512(_mm512_and_si512(low, mask),
+          _mm512_slli_epi32(_mm512_and_si512(high, _mm512_set1_epi32(3)), 4));
+      codes = _mm512_sub_epi32(codes, _mm512_set1_epi32(32));
+      const auto values = _mm512_mul_ps(scale, _mm512_cvtepi32_ps(codes));
+      sum = _mm512_add_pd(sum, products(values, x + Quarter * 32 + lane));
+    }
+  }
+}
+TARGET double q6_k_dot(const std::byte* w, const float* x, std::size_t n) {
+  auto sum = _mm512_setzero_pd();
+  for (std::size_t c = 0; c < n; c += 256, w += 210) {
+    const float d = load_half(w + 208);
+    q6_quarter<0>(w, x + c, d, sum);
+    q6_quarter<1>(w, x + c, d, sum);
+    q6_quarter<2>(w, x + c, d, sum);
+    q6_quarter<3>(w, x + c, d, sum);
+    q6_quarter<4>(w, x + c, d, sum);
+    q6_quarter<5>(w, x + c, d, sum);
+    q6_quarter<6>(w, x + c, d, sum);
+    q6_quarter<7>(w, x + c, d, sum);
+  }
+  return reduce(sum);
+}
+
 }
 TARGET double dot_avx512(const float* a, const float* b, std::size_t n) {
   auto sum = _mm512_setzero_pd();
@@ -57,43 +112,26 @@ TARGET std::int64_t dot_i8_avx512(const std::uint8_t* a, const std::int8_t* b, s
   return result;
 }
 TARGET double quant_avx512(const std::byte* w, std::uint32_t type, const float* x, std::size_t n) {
-  const std::size_t elements = type == q4_k || type == q6_k ? 256 : 32;
-  const std::size_t bytes = type == q4_k ? 144 : type == q6_k ? 210 : type == q8_0 ? 34 : 18;
+  if (type == q4_k) return q4_k_dot(w, x, n);
+  if (type == q6_k) return q6_k_dot(w, x, n);
+  const std::size_t bytes = type == q8_0 ? 34 : 18;
   double result = 0;
-  for (std::size_t c = 0; c < n; c += elements, w += bytes) {
+  for (std::size_t c = 0; c < n; c += 32, w += bytes) {
     auto sum = _mm512_setzero_pd();
-    const float d = half(w + (type == q6_k ? 208 : 0));
-    const auto mask = _mm512_set1_epi32(15);
-    for (std::size_t j = 0; j < elements; j += 16) {
+    const float d = load_half(w);
+    for (std::size_t j = 0; j < 32; j += 16) {
       __m512 values;
       if (type == q8_0) {
         values = _mm512_cvtepi32_ps(_mm512_cvtepi8_epi32(_mm_loadu_si128(reinterpret_cast<const __m128i*>(w + 2 + j))));
-      } else if (type == q4_0) {
+      } else {
         auto codes = bytes16(w + 2 + j % 16);
         if (j >= 16) codes = _mm512_srli_epi32(codes, 4);
-        values = _mm512_cvtepi32_ps(_mm512_sub_epi32(_mm512_and_si512(codes, mask), _mm512_set1_epi32(8)));
-      } else if (type == q4_k) {
-        const auto g = j / 32;
-        const auto* scales = w + 4;
-        const auto sc = g < 4 ? byte(scales, g) & 63u : (byte(scales, g + 4) & 15u) | ((byte(scales, g - 4) >> 6) << 4);
-        const auto mn = g < 4 ? byte(scales, g + 4) & 63u : (byte(scales, g + 4) >> 4) | ((byte(scales, g) >> 6) << 4);
-        auto codes = bytes16(w + 16 + (g / 2) * 32 + j % 32);
-        if (g % 2 != 0) codes = _mm512_srli_epi32(codes, 4);
-        values = _mm512_sub_ps(_mm512_mul_ps(_mm512_set1_ps(d * static_cast<float>(sc)),
-            _mm512_cvtepi32_ps(_mm512_and_si512(codes, mask))), _mm512_set1_ps(half(w + 2) * static_cast<float>(mn)));
-      } else {
-        const auto k = j % 128;
-        auto low = bytes16(w + (j / 128) * 64 + k % 32 + (k / 32 % 2) * 32);
-        if (k >= 64) low = _mm512_srli_epi32(low, 4);
-        auto high = bytes16(w + 128 + (j / 128) * 32 + k % 32);
-        high = _mm512_srlv_epi32(high, _mm512_set1_epi32(static_cast<int>(2 * (k / 32))));
-        auto codes = _mm512_or_si512(_mm512_and_si512(low, mask), _mm512_slli_epi32(_mm512_and_si512(high, _mm512_set1_epi32(3)), 4));
-        values = _mm512_mul_ps(_mm512_set1_ps(d * static_cast<float>(signed_byte(w + 192, j / 16))),
-            _mm512_cvtepi32_ps(_mm512_sub_epi32(codes, _mm512_set1_epi32(32))));
+        values = _mm512_cvtepi32_ps(_mm512_sub_epi32(_mm512_and_si512(codes,
+            _mm512_set1_epi32(15)), _mm512_set1_epi32(8)));
       }
       sum = _mm512_add_pd(sum, products(values, x + c + j));
     }
-    result += (elements == 32 ? static_cast<double>(d) : 1.0) * reduce(sum);
+    result += static_cast<double>(d) * reduce(sum);
   }
   return result;
 }

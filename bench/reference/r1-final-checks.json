@@ -1,0 +1,153 @@
+{
+  "engine_commit": "ef6b708",
+  "engine_source_sha256": "c191d97d044b9b9ce3c3269df6300ed71d38c61b4b741e30c904ab573103f8df",
+  "branch": "feat/r1-kquant-simd-speed",
+  "speed": {
+    "before": {
+      "pp": 6.950889282438586,
+      "tg": 5.747949478357268
+    },
+    "final": {
+      "pp": 23.912452398826087,
+      "tg": 21.215664559921517
+    },
+    "llama_cpp": {
+      "pp": 52.497571987295586,
+      "tg": 38.55812512982272
+    },
+    "generation_ratio": 0.5502255228564601,
+    "generation_target": 0.5,
+    "speedup_fresh": 3.6909970485657153,
+    "speedup_m5": 4.940339648691452
+  },
+  "builds": [
+    {
+      "config": "default",
+      "passed": 21,
+      "skipped": 1,
+      "binary_sha256": "527f7da034e9b847c1f13ca29d5d553e268f59728dec3e553ff1e1f546b43dae"
+    },
+    {
+      "config": "werror",
+      "passed": 21,
+      "skipped": 1,
+      "binary_sha256": "527f7da034e9b847c1f13ca29d5d553e268f59728dec3e553ff1e1f546b43dae"
+    },
+    {
+      "config": "avx2",
+      "passed": 21,
+      "skipped": 1,
+      "binary_sha256": "527f7da034e9b847c1f13ca29d5d553e268f59728dec3e553ff1e1f546b43dae"
+    },
+    {
+      "config": "avx512",
+      "passed": 21,
+      "skipped": 1,
+      "binary_sha256": "527f7da034e9b847c1f13ca29d5d553e268f59728dec3e553ff1e1f546b43dae"
+    },
+    {
+      "config": "sanitize",
+      "passed": 21,
+      "skipped": 1,
+      "binary_sha256": "f6bb590df4864b8ac3c3aa35459ba4333d1547d15dfea8f937727944918258da"
+    },
+    {
+      "config": "clang",
+      "passed": 21,
+      "skipped": 1,
+      "binary_sha256": "9dfd45fd06c06552a2c5b52b0e9dec942b1744fa7a05b3326d42fd546a1a29c4"
+    },
+    {
+      "config": "clang-avx2",
+      "passed": 21,
+      "skipped": 1,
+      "binary_sha256": "9dfd45fd06c06552a2c5b52b0e9dec942b1744fa7a05b3326d42fd546a1a29c4"
+    }
+  ],
+  "perplexity_checks": {
+    "q8_within_one_percent_f16": true,
+    "q4km_within_ten_percent_f16": true,
+    "q4km_within_two_percent_llama": true
+  },
+  "perplexity_all_no_increase": true,
+  "all_speed_generation_ids_exact": true,
+  "source_hash_matches_measurement": true,
+  "binary_hash_matches_measurement": true,
+  "roadmap_append_only": true,
+  "readme_table_matches_generator": true,
+  "chart_copies_identical": true,
+  "local_links_exist": true,
+  "diff_check_passed": true,
+  "profile_driver_gcc_clang_full_warning_syntax_checks_passed": true,
+  "weights_guard": {
+    "passed": true,
+    "limit_bytes": 1048576,
+    "largest_file": "bench/reference/m4-v2-Q4_0.json",
+    "largest_bytes": 574547
+  },
+  "artifacts": {
+    "README.md": {
+      "sha256": "ecada033ea489e54850ee51a6eb9cad11fb8d8bfa1336fe154847b3c19ece8e9",
+      "size_bytes": 13595
+    },
+    "ROADMAP.md": {
+      "sha256": "6b72e79f6f0b0abf6b49de1a904af4ac0f4e84266889c9938f05224f7bc1b167",
+      "size_bytes": 14483
+    },
+    "bench/SPEED.md": {
+      "sha256": "18345efae4a8e88c76f5fb5491e7bd386a1ab16cb52ddcb6c55fb3ad1de041e2",
+      "size_bytes": 16080
+    },
+    "bench/R1_PROFILE.md": {
+      "sha256": "7a0e6d6336d5967438e1d287d7e6301f1155d42af1dc132441e62727ac1d722d",
+      "size_bytes": 11268
+    },
+    "bench/M7_CHECKS.md": {
+      "sha256": "7ed19632e74b3dabbe48061ea5805ef5580007ae9abe7f2c7e2c1571ce8f8fe7",
+      "size_bytes": 14258
+    },
+    "bench/QUANT.md": {
+      "sha256": "85ed176229d1e7c9ad09764363184a1aa0b028a9b466cb9490d962fc42a3f1b3",
+      "size_bytes": 28761
+    },
+    "docs/README.md": {
+      "sha256": "1840348cbb12eae2b37b6ab8f3b5ea42b225708af54678a7f4b16fc19a2ca519",
+      "size_bytes": 1624
+    },
+    "docs/blog/design-and-optimization.md": {
+      "sha256": "34320e8891e15cff9157383665c999ed8ca590f904191770f0e11d6a5151f6cc",
+      "size_bytes": 11249
+    },
+    "bench/speed.svg": {
+      "sha256": "57e5441ad05de5ce6936b6596eb4085a858a9b15615a498186bde1d5f2d6441b",
+      "size_bytes": 2202
+    },
+    "docs/assets/m5-speed.svg": {
+      "sha256": "57e5441ad05de5ce6936b6596eb4085a858a9b15615a498186bde1d5f2d6441b",
+      "size_bytes": 2202
+    },
+    "bench/reference/m7-benchmarks.json": {
+      "sha256": "8b1eafd8b46143b41a7171f9ec7c6039fbabc41fafb58bef0f114e3d06b4b188",
+      "size_bytes": 8248
+    },
+    "bench/reference/r1-perplexity.json": {
+      "sha256": "720ffc9b214f6cf1653190943b45a865137f1f980ad0e785934518f52e3d5042",
+      "size_bytes": 1910
+    }
+  },
+  "notes": "Remote CI was not run because the branch was not pushed. The optional OpenAI client test skipped because its Python package is unavailable. M4 agreement scores were not rerun.",
+  "docs_merge_checks": {
+    "main_commit": "3b8698c88ca02ea1eafee43666e1bfb537ea1dac",
+    "default_gcc_build": "build-merge-check",
+    "ctest_passed": 21,
+    "ctest_skipped": 1,
+    "ctest_skip_reason": "Optional OpenAI-client test: model unavailable in the default test environment.",
+    "binary_sha256": "527f7da034e9b847c1f13ca29d5d553e268f59728dec3e553ff1e1f546b43dae",
+    "local_markdown_links_checked": 204,
+    "artifact_hashes_verified": true,
+    "table_and_chart_regeneration_passed": true,
+    "main_roadmap_prefix_unchanged": true,
+    "measurement_numbers_unchanged": true,
+    "weights_and_size_guard_passed": true
+  }
+}

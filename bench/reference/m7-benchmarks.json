@@ -8,7 +8,7 @@
       "threads": 4,
       "neuron": {
         "source": "bench/reference/tinystories-m5.json",
-        "source_sha256": "694cd7850084fa7ec38b346491b88410511c8f0dfd06d9b723d19e92a35695db",
+        "source_sha256": "7d34c3b7be9e0486aceee3e78e223086af90d0fa4d810b59d7a89d6caa539622",
         "protocol": "M1 prompts, context 2048, 128 generated tokens, three repetitions",
         "threads": 4,
         "samples": 9,
@@ -22,7 +22,7 @@
       },
       "llama_cpp": {
         "source": "bench/reference/tinystories-15m.json",
-        "source_sha256": "54b03cd70584d804ef2983baec7e85288dace1a00584818ca2f812eed00e8db0",
+        "source_sha256": "8e823836d6e7d3e87546381e546d76e764ccff7f657597de5b6d1ec05c2c8a1d",
         "protocol": "M1 prompts, context 2048, 128 generated tokens, three repetitions",
         "threads": 4,
         "samples": 9,
@@ -42,7 +42,7 @@
       "threads": 4,
       "neuron": {
         "source": "bench/reference/m7-speed-smollm-neuron.json",
-        "source_sha256": "92183042432cef6c8baf225c820d2f09238e2d372ed900ffbd0d10125ebeb795",
+        "source_sha256": "8ec4f053a61372d57680e640a633d28ed3cfcc8478c99b3a1654a9cb1e62a62b",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
@@ -56,7 +56,7 @@
       },
       "llama_cpp": {
         "source": "bench/reference/m7-speed-smollm-llama.json",
-        "source_sha256": "9721a207b8290f824ebd536257e847584d4b66a738876f93fd2de67ca03e2aa4",
+        "source_sha256": "01a404777608ca538f7b755441a4b0dd5354974b7e943c19f32577ef8ac03d8a",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
@@ -76,7 +76,7 @@
       "threads": 4,
       "neuron": {
         "source": "bench/reference/m7-speed-f16-neuron.json",
-        "source_sha256": "ae8f1eac238566b20b68d3d16843fe4f16648fe206347fbc1a77b6d300db8555",
+        "source_sha256": "049ffd250fb498741a1236338eadbe1b7205894c705161158201cd9fb17dcd0f",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
@@ -90,7 +90,7 @@
       },
       "llama_cpp": {
         "source": "bench/reference/m7-speed-f16-llama.json",
-        "source_sha256": "55b08aa0e3fefa549f2b9cfe0797a68507ff4352e58f7f5488a778d8d41f637e",
+        "source_sha256": "3f28f1c1775c6c1ddb06b233462664b8ed21616a9b8e4ec702a086dc3058f2b6",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
@@ -110,7 +110,7 @@
       "threads": 4,
       "neuron": {
         "source": "bench/reference/m7-speed-q8_0-neuron.json",
-        "source_sha256": "e261ee631a9aed24d133c8364f62812fde98567e043a2f82fad7427d9bcaa585",
+        "source_sha256": "fa95fc4b0c16ee4aed3808531e300e1e43aa06992808a8c2613cdd14bed24ac3",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
@@ -124,7 +124,7 @@
       },
       "llama_cpp": {
         "source": "bench/reference/m7-speed-q8_0-llama.json",
-        "source_sha256": "30e67d2794ae8dfa8a5abe2677fc697f2d20bfd02a3f3bf5c8e6f07eb17b52c2",
+        "source_sha256": "c5696e9ed8937ae8fc119b1ab1aca5dbf8d0b195219cac2811d3316f046f6602",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
@@ -144,7 +144,7 @@
       "threads": 4,
       "neuron": {
         "source": "bench/reference/m7-speed-q4_0-neuron.json",
-        "source_sha256": "b15bdac3f67226ab573e165ba54227a35d34aaf7df2e38f3ee68f2cc8e45681a",
+        "source_sha256": "6febdae9da516689050e93d6848e87e3a3b9586ce36462294dc1d503dcbd5a67",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
@@ -158,7 +158,7 @@
       },
       "llama_cpp": {
         "source": "bench/reference/m7-speed-q4_0-llama.json",
-        "source_sha256": "be8c9e502884486501bc6d5d17256050e1f7cad249414424fdafd6187beb8e76",
+        "source_sha256": "869718596da078d68a4b6e84acbe5353e1833ef83e36be23ad4debe932ea85e9",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
@@ -177,34 +177,34 @@
       "model_sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281",
       "threads": 4,
       "neuron": {
-        "source": "bench/reference/m5-speed-final.json",
-        "source_sha256": "e0eab67f3f061ba28c939277e0e3543c19dc75cf4b11d1ca2b276d2a02add738",
+        "source": "bench/reference/r1-speed-final.json",
+        "source_sha256": "71a4f150fe1b0d14360ba0308702e69fb0a97032c12ae6addfce1b7bd93f7103",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
         "prompt_n": 4,
-        "prompt_ms": 617.558686,
+        "prompt_ms": 167.276862,
         "predicted_n": 32,
-        "predicted_ms": 7218.74767,
+        "predicted_ms": 1461.18449,
         "generation_steps": 31,
-        "pp_tokens_per_second": 6.4771172208887045,
-        "tg_tokens_per_second": 4.294373680469704
+        "pp_tokens_per_second": 23.912452398826087,
+        "tg_tokens_per_second": 21.215664559921517
       },
       "llama_cpp": {
-        "source": "bench/reference/m5-speed-llama.json",
-        "source_sha256": "fbd6e1074f3d99f2c86e87c9ce4aabad6984ac62922a82deeeac8b6b53b66bef",
+        "source": "bench/reference/r1-speed-llama-final.json",
+        "source_sha256": "9dd0f8696a28d28a1371c9b4a34a3ca70ff5ff0f0921076b71a6e1eea196614a",
         "protocol": "Once upon a time, context 256, 32 generated tokens, one repetition, no warmup",
         "threads": 4,
         "samples": 1,
         "prompt_n": 4,
-        "prompt_ms": 67.504,
+        "prompt_ms": 76.194,
         "predicted_n": 32,
-        "predicted_ms": 795.813,
+        "predicted_ms": 803.981,
         "generation_steps": 31,
-        "pp_tokens_per_second": 59.255747807537325,
-        "tg_tokens_per_second": 38.953874842456706
+        "pp_tokens_per_second": 52.497571987295586,
+        "tg_tokens_per_second": 38.55812512982272
       }
     }
   ],
-  "method": "Rates pool token counts and milliseconds. Generation excludes the first sampled token. TinyStories reuses M1/M5; Q4_K_M reuses M5; other rows fill missing matched speed pairs in M7."
+  "method": "Rates pool token counts and milliseconds. Generation excludes the first sampled token. TinyStories reuses M1/M5; Q4_K_M uses the R1 pair; other rows retain the M7 pairs."
 }

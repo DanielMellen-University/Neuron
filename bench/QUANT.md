@@ -6,6 +6,14 @@ Hardware for both rounds: an Intel Core i5-1135G7 laptop (4 cores/8 threads,
 AVX-512 VNNI), 16 GB RAM, Ubuntu 22.04 base, GCC 11.4 and CMake 3.22.1.
 Neuron uses the default Release build and one thread.
 
+R1 leaves this quality study and its agreement scores unchanged. It speeds
+up the K-quant implementation (weights packed in groups of 256 values) and
+repeats the original perplexity slice for all four formats.
+[R1 profile and checks](R1_PROFILE.md) and [current speed](SPEED.md#r1-result)
+record the follow-up. No perplexity increased relative to M4 across the four
+formats; Q4_K_M changed from 12.145460061051 to 12.145459915405 on the same
+slice. The scalar speed numbers below are historical M4 data.
+
 ## Second round: 4,096 targets and twelve prompts
 
 Measured on 2026-11-16 and 2026-11-17 UTC. M4 is done.
