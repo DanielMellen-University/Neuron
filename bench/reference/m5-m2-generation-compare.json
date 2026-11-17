@@ -1,0 +1,215 @@
+{
+  "exact_match": true,
+  "generated_token_agreement_rate": 1.0,
+  "matching_generated_tokens": 1152,
+  "total_generated_tokens": 1152,
+  "runs": [
+    {
+      "model": "tinystories-15m",
+      "threads": 4,
+      "prompt_id": "ball",
+      "repetition": 0,
+      "status": "compared",
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 56,
+        "total_tokens": 56,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 128,
+        "total_tokens": 128,
+        "agreement_rate": 1.0
+      },
+      "speed_ratio_candidate_over_reference": {
+        "pp": 0.12314042603371429,
+        "tg": 0.6758705054395275
+      }
+    },
+    {
+      "model": "tinystories-15m",
+      "threads": 4,
+      "prompt_id": "ball",
+      "repetition": 1,
+      "status": "compared",
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 56,
+        "total_tokens": 56,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 128,
+        "total_tokens": 128,
+        "agreement_rate": 1.0
+      },
+      "speed_ratio_candidate_over_reference": {
+        "pp": 0.14782134940714287,
+        "tg": 0.7282147645179606
+      }
+    },
+    {
+      "model": "tinystories-15m",
+      "threads": 4,
+      "prompt_id": "ball",
+      "repetition": 2,
+      "status": "compared",
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 56,
+        "total_tokens": 56,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 128,
+        "total_tokens": 128,
+        "agreement_rate": 1.0
+      },
+      "speed_ratio_candidate_over_reference": {
+        "pp": 0.11995041727671427,
+        "tg": 0.7636012388555432
+      }
+    },
+    {
+      "model": "tinystories-15m",
+      "threads": 4,
+      "prompt_id": "garden",
+      "repetition": 0,
+      "status": "compared",
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 63,
+        "total_tokens": 63,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 128,
+        "total_tokens": 128,
+        "agreement_rate": 1.0
+      },
+      "speed_ratio_candidate_over_reference": {
+        "pp": 0.13308412794444446,
+        "tg": 0.6696536702888741
+      }
+    },
+    {
+      "model": "tinystories-15m",
+      "threads": 4,
+      "prompt_id": "garden",
+      "repetition": 1,
+      "status": "compared",
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 63,
+        "total_tokens": 63,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 128,
+        "total_tokens": 128,
+        "agreement_rate": 1.0
+      },
+      "speed_ratio_candidate_over_reference": {
+        "pp": 0.13263901431873018,
+        "tg": 0.7009604454976693
+      }
+    },
+    {
+      "model": "tinystories-15m",
+      "threads": 4,
+      "prompt_id": "garden",
+      "repetition": 2,
+      "status": "compared",
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 63,
+        "total_tokens": 63,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 128,
+        "total_tokens": 128,
+        "agreement_rate": 1.0
+      },
+      "speed_ratio_candidate_over_reference": {
+        "pp": 0.1299727338652381,
+        "tg": 0.7186633647269448
+      }
+    },
+    {
+      "model": "tinystories-15m",
+      "threads": 4,
+      "prompt_id": "rabbit",
+      "repetition": 0,
+      "status": "compared",
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 62,
+        "total_tokens": 62,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 128,
+        "total_tokens": 128,
+        "agreement_rate": 1.0
+      },
+      "speed_ratio_candidate_over_reference": {
+        "pp": 0.1321175376383871,
+        "tg": 0.6747762934582676
+      }
+    },
+    {
+      "model": "tinystories-15m",
+      "threads": 4,
+      "prompt_id": "rabbit",
+      "repetition": 1,
+      "status": "compared",
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 62,
+        "total_tokens": 62,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 128,
+        "total_tokens": 128,
+        "agreement_rate": 1.0
+      },
+      "speed_ratio_candidate_over_reference": {
+        "pp": 0.12361308880919357,
+        "tg": 0.6821622983266535
+      }
+    },
+    {
+      "model": "tinystories-15m",
+      "threads": 4,
+      "prompt_id": "rabbit",
+      "repetition": 2,
+      "status": "compared",
+      "prompt": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 62,
+        "total_tokens": 62,
+        "agreement_rate": 1.0
+      },
+      "generation": {
+        "first_divergent_token_index": null,
+        "matching_tokens": 128,
+        "total_tokens": 128,
+        "agreement_rate": 1.0
+      },
+      "speed_ratio_candidate_over_reference": {
+        "pp": 0.14443190292580646,
+        "tg": 0.7074580121740157
+      }
+    }
+  ]
+}

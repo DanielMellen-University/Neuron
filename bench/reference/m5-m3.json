@@ -1,0 +1,43 @@
+{
+  "model_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+  "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+  "neuron_binary_sha256": "492d9a44280643220f4c364f7161fef0b81b1b8ff23c027e3d2aaecf3f27869e",
+  "reference_tool_sha256": "2204e825518a71885dd9188bc8c13d97a31c977f419942342b98df01ab7edb3d",
+  "context": 2048,
+  "threads": 1,
+  "machine_before": {
+    "utc": "2026-11-17T07:47:13.087863+00:00",
+    "load_average": [
+      1.34912109375,
+      1.56689453125,
+      1.009765625
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "notes": "Final M5 tokenizer and ChatML fixtures only. No speed claim.",
+  "tokenizer_cases": 63,
+  "chat_cases": 4,
+  "machine_after": {
+    "utc": "2026-11-17T07:47:32.111623+00:00",
+    "load_average": [
+      1.2490234375,
+      1.529296875,
+      1.0078125
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  }
+}
