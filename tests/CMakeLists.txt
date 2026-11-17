@@ -38,3 +38,5 @@ foreach(isa IN ITEMS scalar avx2 avx512 vnni)
   add_test(NAME simd_${isa} COMMAND test_simd ${isa})
   set_tests_properties(simd_${isa} PROPERTIES SKIP_RETURN_CODE 77)
 endforeach()
+
+neuron_add_test(test_threads)

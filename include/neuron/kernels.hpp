@@ -30,6 +30,9 @@ namespace neuron::kernels {
 bool supported(std::string_view isa);
 void set_isa(std::string_view isa);
 std::string_view selected_isa();
+// Total participating threads, including the caller. NEURON_THREADS defaults to 1.
+void set_threads(std::size_t count);
+std::size_t threads();
 std::int64_t dot_i8(std::span<const std::uint8_t> a, std::span<const std::int8_t> b);
 double dot(std::span<const float> a, std::span<const float> b);
 void matmul(std::span<const float> weights, std::span<const float> input,

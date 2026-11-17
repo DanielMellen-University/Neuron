@@ -58,11 +58,13 @@ add_library(neuron
   src/perplexity.cpp
   src/tokenizer.cpp
   src/tensor.cpp
+  src/thread_pool.cpp
   src/version.cpp)
 target_include_directories(neuron PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_BINARY_DIR}/generated)
-target_link_libraries(neuron PRIVATE neuron_options)
+find_package(Threads REQUIRED)
+target_link_libraries(neuron PRIVATE neuron_options Threads::Threads)
 
 add_executable(neuron_cli src/main.cpp)
 set_target_properties(neuron_cli PROPERTIES OUTPUT_NAME neuron)

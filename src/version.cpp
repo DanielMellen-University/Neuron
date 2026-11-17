@@ -11,17 +11,7 @@ Version version() noexcept {
 std::string_view version_string() noexcept { return NEURON_VERSION_STRING; }
 
 std::string_view compiled_isa() noexcept {
-#if defined(__AVX512F__) && defined(__AVX512VNNI__)
-  return "avx512f avx512vnni avx2 fma";
-#elif defined(__AVX512F__)
-  return "avx512f avx2 fma";
-#elif defined(__AVX2__) && defined(__FMA__)
-  return "avx2 fma";
-#elif defined(__AVX2__)
-  return "avx2";
-#else
-  return "baseline";
-#endif
+  return "scalar avx2 avx512 vnni (runtime dispatch)";
 }
 
 }  // namespace neuron
