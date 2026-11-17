@@ -14,7 +14,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | M3 Qwen2.5 1.5B load, chat template, KV cache | done |
 | M4 int8 and 4-bit quantization | done |
 | M5 AVX-512 kernels and multithreading | done (speed target missed, accepted) |
-| M6 Terminal chat, web UI, OpenAI-compatible server | not started |
+| M6 Terminal chat, web UI, OpenAI-compatible server | done |
 | M7 Polish: README, benchmarks, demo GIF, blog post | not started |
 
 ## M1: llama.cpp baseline and harness
@@ -144,6 +144,15 @@ Acceptance criteria:
 ## M6: Terminal chat, web chat UI, OpenAI-compatible server
 
 Goal: three ways to use it.
+
+Implemented and checked locally on Ghost. Terminal chat streams replies,
+keeps history, resets and survives Ctrl-C. The dependency-free POSIX server
+binds to loopback by default, serves an embedded web page and implements
+both chat completion modes and model listing. The official OpenAI Python
+client passes against SmolLM2 and Qwen2.5 1.5B Q4_K_M. Model-free HTTP and
+terminal tests run in CTest, including the required error cases.
+[M6 checks](bench/M6_CHECKS.md) record commands, results and limitations.
+No M6 acceptance item remains open. Remote CI remains to run.
 
 Acceptance criteria:
 
