@@ -123,6 +123,13 @@ Acceptance criteria:
 
 Goal: make it fast on Ghost, one measured step at a time.
 
+Implemented locally on Ghost. All seven build/test configurations and the
+SIMD, threading, TinyStories and quick Qwen correctness guards pass.
+[Speed checks](bench/SPEED.md) record every optimization commit and result.
+M5 remains in progress: final Q4_K_M generation is 4.294374 tokens/s versus
+38.953875 for llama.cpp with four threads, or 11.02%, below the 50% target.
+Remote CI remains pending; no push was made.
+
 Acceptance criteria:
 
 - AVX2 and AVX-512 (VNNI for int8 dot products) kernels for the hot matmul paths, selected at runtime by CPUID, with the scalar kernel kept as the reference.
