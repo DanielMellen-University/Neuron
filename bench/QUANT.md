@@ -1,8 +1,149 @@
 # M4 quantization checks
 
-Measured on Ghost on 2026-11-16 UTC: Intel i5-1135G7, four cores,
+Hardware for both rounds: Ghost, Intel i5-1135G7, four cores,
 eight hardware threads, 16 GB RAM, Ubuntu 22.04 base, GCC 11.4 and
 CMake 3.22.1. Neuron uses the default Release build and one thread.
+
+## Second round: 4,096 targets and twelve prompts
+
+Measured on 2026-11-16 and 2026-11-17 UTC. M4 remains in progress.
+Q4_K_M meets both 4-bit perplexity limits. Q8_0 and both 4-bit candidates
+still miss free-running greedy agreement. The acceptance criteria are unchanged.
+
+The [method and input hashes](m4-method-v2.md) were committed in `6f55c17`
+before any new quality run. Sixteen independent 512-token chunks score
+4,096 targets. Twelve fixed neutral prompts supply 64 free-running tokens
+each, for 768 positions per format. No prompt was changed or dropped.
+Every generation reached 64 tokens. Teacher-forced top-1 agreement replays
+F16's exact IDs and is a supplementary diagnostic only.
+
+The [summary](reference/m4-v2-quantization.json) links full per-process
+records: [F16](reference/m4-v2-F16.json), [Q8_0](reference/m4-v2-Q8_0.json),
+[Q4_0](reference/m4-v2-Q4_0.json) and [Q4_K_M](reference/m4-v2-Q4_K_M.json).
+They contain commands, model and executable hashes, IDs, logit gaps,
+timings, GNU time resources and machine observations. Both engines use
+one thread, F32 K/V, no Flash Attention and identical input IDs and target
+positions. These are fixed-slice results, not full WikiText-2 perplexity.
+
+| Format | Neuron perplexity | llama.cpp perplexity | Free-running agreement | Teacher-forced top-1 agreement |
+| --- | ---: | ---: | ---: | ---: |
+| F16 | 11.580966 | 11.580968 | 768/768 (100.00%) | 768/768 (100.00%) |
+| Q8_0 | 11.584336 | 11.614251 | 551/768 (71.74%) | 764/768 (99.48%) |
+| Q4_0 | 13.129919 | 13.143771 | 51/768 (6.64%) | 648/768 (84.38%) |
+| Q4_K_M | 12.145460 | 12.254528 | 180/768 (23.44%) | 681/768 (88.67%) |
+
+| M4 acceptance item | Required | Observed | Result |
+| --- | --- | --- | --- |
+| int8 and 4-bit formats | loaded or produced | Q8_0, Q4_0, Q4_K and Q6_K; standard Q4_K_M mix | pass |
+| Block error bounds | within theoretical bound | 6,000 blocks per format; ratios at most 1.0 | pass |
+| int8 perplexity vs F16 | within 1% | Q8_0 +0.029094% | pass |
+| 4-bit perplexity vs F16 | within 10% | Q4_K_M +4.874323%; Q4_0 +13.374986% | pass with Q4_K_M |
+| 4-bit perplexity vs same llama.cpp file | within 2% | Q4_K_M -0.890023%; Q4_0 -0.105389% | pass |
+| int8 free-running agreement | at least 90% | 551/768 (71.74%) | fail |
+| 4-bit free-running agreement | at least 70% | Q4_K_M 180/768 (23.44%); Q4_0 51/768 (6.64%) | fail |
+| File size, memory, perplexity and agreement records | recorded per format | tables and linked JSON records | pass |
+
+Q8_0 matches all 64 free-running IDs on eight prompts. On the other four,
+there is exactly one teacher-forced argmax change per prompt. Those four
+local changes lead to 217 free-running positional mismatches. First
+divergences are weather 24, train 6, bicycle 3 and moon 4, using zero-based
+indices. F16's top-two gaps there are 0.0790672302, 0.039232254,
+0.217716217 and 0.000291824341. Only the last is below 1e-3. The larger
+sample still fails the criterion; the result is not explained by a single
+near-tie. Teacher forcing does not close either greedy acceptance item.
+
+Each cell below gives free-running / teacher-forced matching IDs out of 64.
+
+| Prompt | Q8_0 | Q4_0 | Q4_K_M |
+| --- | ---: | ---: | ---: |
+| library | 64 / 64 | 5 / 56 | 5 / 57 |
+| weather | 25 / 63 | 10 / 56 | 10 / 57 |
+| train | 6 / 63 | 2 / 48 | 0 / 51 |
+| bread | 64 / 64 | 3 / 56 | 4 / 59 |
+| museum | 64 / 64 | 0 / 58 | 31 / 57 |
+| garden_tools | 64 / 64 | 3 / 47 | 12 / 51 |
+| bicycle | 4 / 63 | 6 / 52 | 1 / 54 |
+| river | 64 / 64 | 4 / 54 | 10 / 56 |
+| notebook | 64 / 64 | 1 / 55 | 44 / 62 |
+| kitchen | 64 / 64 | 1 / 55 | 10 / 60 |
+| moon | 4 / 63 | 4 / 57 | 33 / 63 |
+| post_office | 64 / 64 | 12 / 54 | 20 / 54 |
+
+| Format | GGUF bytes | Neuron peak RSS (KiB) | llama.cpp perplexity RSS (KiB) |
+| --- | ---: | ---: | ---: |
+| F16 | 3,093,669,376 | 9,179,160 | 3,104,172 |
+| Q8_0 | 1,646,573,056 | 1,735,068 | 1,690,912 |
+| Q4_0 | 874,788,352 | 981,276 | 1,777,884 |
+| Q4_K_M | 986,048,512 | 1,090,076 | 1,649,192 |
+
+Neuron RSS is the largest maximum among that format's perplexity,
+free-running and teacher-forced processes. Perplexity uses context 512;
+generation uses 256. It includes tokenization, mapped weights, converted
+F16 weights, activations and K/V. It is separate from M3's full 2048-position
+measurement. llama.cpp RSS here comes from its perplexity process only.
+
+| Format | Neuron prompt tokens/s | Neuron generation tokens/s | Neuron PPL scored targets/s | llama.cpp PPL scored targets/s |
+| --- | ---: | ---: | ---: | ---: |
+| F16 | 0.785230 | 0.670816 | 0.359348 | 3.232377 |
+| Q8_0 | 1.011203 | 0.862442 | 0.461894 | 4.805548 |
+| Q4_0 | 0.913031 | 0.781080 | 0.417169 | 7.857662 |
+| Q4_K_M | 0.499152 | 0.379621 | 0.215708 | 6.986680 |
+
+Prompt and generation rates pool the twelve free-running processes,
+excluding model load. Generation times 63 steps after the first selected
+ID per prompt, for 756 steps. PPL rates divide 4,096 scored targets by the
+whole evaluation time, including warmup positions; they are not decode
+rates. This was one serial sweep with no warmup runs or repetitions.
+No build or other model process ran concurrently. Codex, ordinary services
+and light documentation work were present. Frequency and temperature
+were not held constant; power, governor, load and thermal observations are
+saved for each process. Q4_K_M is slower than F16 in this scalar kernel:
+0.379621 versus 0.670816 generation tokens/s. Smaller weights alone do not
+make this implementation faster. SIMD kernels and threading remain M5.
+
+Q4_K_M uses 168 Q4_K matrices and 29 Q6_K matrices, including the tied
+embedding/output head. The other 141 tensors remain F32. The quantizer
+reports 5.08 payload bits per weight. It uses no importance matrix or
+calibration on the benchmark text. [Production provenance](reference/m4-v2-models.json)
+records the pinned quantizer, command and hashes. Models remain outside git.
+
+Reproduce this round with the same external reference build described below:
+
+```sh
+export NEURON_MODELS_DIR=/home/daniel/codex-runs/Neuron-m1/models
+export NEURON_LLAMACPP_DIR=/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp
+"$NEURON_LLAMACPP_DIR/build/bin/llama-quantize" \
+  "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-f16.gguf" \
+  "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf" Q4_K_M 2
+cmake -S . -B build-m4-v2-reproduce -DCMAKE_CXX_COMPILER=g++
+cmake --build build-m4-v2-reproduce -j 2
+python3 bench/check_m4_v2.py --binary build-m4-v2-reproduce/neuron \
+  --reference-tool /tmp/neuron-m4-reference --models-dir "$NEURON_MODELS_DIR" \
+  --runs-dir bench/runs/m4-v2-reproduce --output bench/runs/m4-v2-reproduce-summary.json \
+  --notes 'Record actual machine activity and power conditions.'
+```
+
+Keep the existing pure Q8_0 and Q4_0 files, or regenerate them with the
+historical `--pure` commands below. Q4_K_M deliberately omits `--pure`.
+The harness saves every completed process and checks command, model and
+executable hashes on resume. It returns nonzero when quality gates fail,
+after writing every format's results. F16 teacher-forced agreement uses
+its free-running result by construction; the other three formats perform
+separate replay runs. `--teacher-tokens FILE` reads exactly 64 IDs separated by whitespace,
+feeds the previous F16 ID and records the current argmax.
+
+All 14 CTest entries pass in GCC default Release, Release Werror,
+Release Werror with AVX2 and AVX-512, Debug Werror with ASan/UBSan,
+and Clang Werror baseline and AVX2. AVX-512 tests ran locally too. Local
+Clang 14 uses GCC 11 headers and libraries explicitly; the exact flags and
+all configure/build/test logs are in [validation](reference/m4-v2-validation.json).
+Remote CI has not been run from this worktree. No push was made.
+
+The [M2 check](reference/m4-v2-m2.json) matches all 51 tokenizer cases and
+all vocabulary logits within 9.54e-6. [TinyStories regression](reference/tinystories-m4-v2.json)
+matches all 1,152 M1 IDs exactly. The [M3 fixture check](reference/m4-v2-m3.json)
+matches all 63 tokenizer cases and four ChatML fixtures. M3's full-context
+memory run was not repeated.
 
 ## Historical first round: 128 targets and three prompts
 
@@ -142,7 +283,7 @@ positions pooled across prompts. No teacher forcing, edit-distance alignment
 or exclusion of positions after divergence is used. An early stop cannot
 silently pass the 64-token requirement.
 
-## Reproduce
+## Historical first-round reproduction
 
 Run from the repository root, using G++ on Ghost. The pinned llama.cpp
 checkout is `9e9619d030bbe6b584d826a0a6cf06e38251f52b`. Only small adapter

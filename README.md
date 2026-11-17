@@ -10,7 +10,7 @@
 
 Neuron loads a small transformer language model and generates text on a laptop CPU, with no GPU and no inference libraries underneath. The target machine is an Intel i5-1135G7 (4 cores, 8 threads, 16 GB RAM, AVX2 and AVX-512 with VNNI). The end goal is Qwen2.5 1.5B Instruct, quantized to 4 bits, chatting at a usable speed.
 
-> **Status: M4 in progress.** Neuron loads Q8_0 and Q4_0 weights and evaluates perplexity. Quantized files are smaller, peak RSS is lower, and scalar generation is faster. The measured pure formats miss both greedy agreement targets, and Q4_0 misses the F16 perplexity limit. [Quantization checks](bench/QUANT.md) record the results and remaining criteria. TinyStories still passes the [M2 exact-match checks](bench/M2_CHECKS.md); the Qwen tokenizer and ChatML [M3 fixtures](bench/M3_CHECKS.md) also pass. [ROADMAP.md](ROADMAP.md) tracks each milestone.
+> **Status: M4 in progress.** Neuron loads Q8_0, Q4_0, Q4_K and Q6_K weights. The larger fixed check scores 4,096 targets and uses twelve prompts. Q4_K_M meets both 4-bit perplexity limits, but Q8_0 and Q4_K_M free-running agreement are 71.74% and 23.44%, below 90% and 70%. Teacher forcing does not replace those criteria. [Quantization checks](bench/QUANT.md) record sizes, memory, speeds, results and local validation. [ROADMAP.md](ROADMAP.md) keeps M4 in progress.
 
 ## Current features
 
@@ -87,11 +87,11 @@ FP32. Q8_0, Q4_0, Q4_K and Q6_K matrices stay mapped and decode during scalar pr
 [Quantization checks](bench/QUANT.md) document how to produce these GGUFs
 with the pinned external llama.cpp quantizer and compare their quality.
 
-Evaluate the committed short text with a quantized model:
+Evaluate the fixed WikiText-2 slice with a quantized model:
 
 ```sh
 ./build/neuron perplexity -m models/Qwen2.5-1.5B-Instruct-Q4_0.gguf \
-  --prompt-file bench/wikitext2-slice.txt --ctx-size 128 --chunks 2
+  --prompt-file bench/wikitext2-m4-v2.txt --ctx-size 512 --chunks 16
 ```
 
 This resets the cache between chunks and scores each chunk's second half.

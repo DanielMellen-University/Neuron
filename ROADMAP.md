@@ -85,19 +85,22 @@ Acceptance criteria:
 
 ## M4: int8 and 4-bit quantization
 
-Q8_0/Q4_0 loading, scalar inference, block-bound and GGUF layout tests,
-and fixed-chunk perplexity evaluation are implemented. Model-free checks
-and M2/M3 regressions pass locally. [Quantization checks](bench/QUANT.md)
-record exact commands, file sizes, peak RSS and saved quality results.
+Q8_0, Q4_0, Q4_K and Q6_K loading, scalar products, block bounds and
+GGUF layout/truncation checks are implemented. All local CI configurations
+and M2/M3 regressions pass. [Quantization checks](bench/QUANT.md) record
+both rounds and the unchanged acceptance criteria.
 
-M4 remains in progress. Pure Q8_0 perplexity is within 0.384% of F16,
-but greedy agreement is 67.71%, below 90%. Pure Q4_0 perplexity is 19.18%
-above F16, beyond 10%, although it is within 0.409% of llama.cpp Q4_0.
-Its greedy agreement is 11.98%, below 70%. Keeping the tied embedding/output
-matrix in F16 still cannot meet int8 agreement and leaves Q4_0 perplexity
-12.90% above F16. Better quantized quality remains open. The implemented
-formats, error-bound tests, perplexity mode and benchmark records are complete;
-M4 is not marked done because the quality acceptance items are unmet.
+M4 remains in progress after the precommitted larger method: 4,096 scored
+WikiText-2 targets and twelve neutral prompts with 64 tokens each.
+Q8_0 perplexity is 11.584336 versus F16's 11.580966, a 0.029094% increase,
+but free-running agreement is 551/768 (71.74%), below 90%.
+Q4_K_M perplexity is 12.145460, 4.874323% above F16 and 0.890023% below
+llama.cpp on the same file, so both 4-bit perplexity limits pass. Its
+free-running agreement is 180/768 (23.44%), below 70%. Pure Q4_0 still
+misses the F16 perplexity limit at +13.374986% and has 51/768 (6.64%)
+agreement. Teacher-forced rates are 99.48%, 84.38% and 88.67% for Q8_0,
+Q4_0 and Q4_K_M; they are diagnostics and do not replace free-running
+agreement. The remaining acceptance failures are both greedy criteria.
 
 Goal: the model fits comfortably and runs faster, with a measured, bounded quality loss.
 
