@@ -1,0 +1,38 @@
+[
+  {
+    "commit": "2646c5d",
+    "source_sha256": "8aa60a952270244796786a82a78bac80349528e79f9f56b4cc3843f665be92ca",
+    "measurement": "bench/reference/r1-speed-before.json",
+    "matches": true
+  },
+  {
+    "commit": "a72d061",
+    "source_sha256": "d226319dcd0c3b475dcae20a457a8db6f17014c676115f1503312e34698fda50",
+    "measurement": "bench/reference/r1-speed-kernels.json",
+    "matches": true
+  },
+  {
+    "commit": "0a1c4a2",
+    "source_sha256": "b0f41afa9e93ae8c0b69b92a354abf4a0af6de1f540bf692f10f9f423274d099",
+    "measurement": "bench/reference/r1-speed-packed.json",
+    "matches": true
+  },
+  {
+    "commit": "fa9aa08",
+    "source_sha256": "a797a6b47810dc169d5b52eac99ee13764149adad8722599422709f8a300c2ac",
+    "measurement": "bench/reference/r1-speed-scratch.json",
+    "matches": true
+  },
+  {
+    "commit": "a4d6d3b",
+    "source_sha256": "d9145290d523db9aa628a60f404ed421d971b9b2cc3d270eb4e69d431cc76097",
+    "measurement": "bench/reference/r1-speed-unroll.json",
+    "matches": true
+  },
+  {
+    "commit": "ef6b708",
+    "source_sha256": "c191d97d044b9b9ce3c3269df6300ed71d38c61b4b741e30c904ab573103f8df",
+    "measurement": "bench/reference/r1-speed-final.json",
+    "matches": true
+  }
+]
