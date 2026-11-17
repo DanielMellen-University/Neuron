@@ -1,6 +1,7 @@
 #define NEURON_TEST_MAIN
 #include "neuron/chat.hpp"
 #include "neuron_test.hpp"
+#include "../src/utf8.hpp"
 
 #include <array>
 #include <stdexcept>
@@ -19,4 +20,14 @@ NEURON_TEST(explicit_empty_system_and_no_generation_prompt) {
   CHECK(neuron::qwen2_chat({}).find("You are Qwen") != std::string::npos);
   const std::array<neuron::ChatMessage, 1> invalid{{{"tool","x"}}};
   CHECK_THROWS_AS(neuron::qwen2_chat(invalid), std::invalid_argument);
+}
+NEURON_TEST(streamed_utf8_handles_split_tokens_and_malformed_bytes) {
+  std::string pending = "hello \xf0\x9f";
+  CHECK_EQ(neuron::detail::take_utf8(pending, false), std::string("hello "));
+  CHECK_EQ(pending, std::string("\xf0\x9f"));
+  pending += "\x98\x80";
+  CHECK_EQ(neuron::detail::take_utf8(pending, false), std::string("\xf0\x9f\x98\x80"));
+  pending = "\xed\xa0\x80\xff\xe2";
+  CHECK(neuron::detail::valid_utf8(neuron::detail::take_utf8(pending, true)));
+  CHECK(pending.empty());
 }
