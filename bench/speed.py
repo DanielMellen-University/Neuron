@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Collect one fixed M5 speed sample or draw the committed SVG. Stdlib only."""
+"""Collect a short speed sample or draw the committed M5 SVG. Stdlib only."""
 import argparse
 import html
 import json
@@ -24,7 +24,7 @@ def source_hash():
 
 
 def measure(args):
-    model = args.models_dir.resolve() / 'Qwen2.5-1.5B-Instruct-Q4_K_M.gguf'
+    model = (args.model_file or args.models_dir / 'Qwen2.5-1.5B-Instruct-Q4_K_M.gguf').resolve()
     binary = args.binary.resolve()
     env = dict(os.environ, NEURON_ISA=args.isa, NEURON_THREADS=str(args.threads))
     command = [str(binary), 'run', '-m', str(model), '-p', PROMPT, '-n', str(TOKENS),
@@ -38,7 +38,8 @@ def measure(args):
             result = request(base, '/completion', dict(prompt=tokens, n_predict=TOKENS,
                 seed=42, temperature=0, samplers=['temperature'], repeat_penalty=1.0,
                 cache_prompt=False, return_tokens=True, stream=False, ignore_eos=False))
-            if result['truncated'] or result['timings']['prompt_n'] != len(tokens):
+            if (result['truncated'] or result['timings']['prompt_n'] != len(tokens)
+                    or result['timings'].get('cache_n', 0) != 0):
                 raise ValueError('invalid llama timing')
             result['prompt_tokens'] = tokens
             result['generated_tokens'] = result['tokens']
@@ -88,7 +89,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='mode', required=True)
     run = sub.add_parser('measure')
-    run.add_argument('--binary', type=Path, default=ROOT / 'build-m5/neuron')
+    run.add_argument('--binary', type=Path, default=ROOT / 'build/neuron')
+    run.add_argument('--model-file', type=Path, help='explicit GGUF; defaults to Qwen2.5 Q4_K_M')
     run.add_argument('--models-dir', type=Path, default=Path(os.environ.get('NEURON_MODELS_DIR', ROOT / 'models')))
     run.add_argument('--llamacpp-dir', type=Path, default=Path(os.environ.get('NEURON_LLAMACPP_DIR', ROOT / 'third_party/llama.cpp')))
     run.add_argument('--llama', action='store_true')

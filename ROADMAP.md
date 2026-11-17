@@ -15,7 +15,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | M4 int8 and 4-bit quantization | done |
 | M5 AVX-512 kernels and multithreading | done (speed target missed, accepted) |
 | M6 Terminal chat, web UI, OpenAI-compatible server | done |
-| M7 Polish: README, benchmarks, demo GIF, blog post | not started |
+| M7 Polish: README, benchmarks, demo GIF, blog post | done |
 
 ## M1: llama.cpp baseline and harness
 
@@ -163,6 +163,16 @@ Acceptance criteria:
 - The server binds to 127.0.0.1 by default.
 
 ## M7: Polish
+
+Completed locally on Ghost. The rewritten README includes the measured
+model/quant comparison and the accepted M4 agreement and M5 speed misses.
+The docs hub links the design post, generated M5 chart and real Qwen2.5
+Q4_K_M terminal GIF. All seven local build/test configurations pass, and
+the official client passes with SmolLM2 first and Qwen last.
+[M7 checks](bench/M7_CHECKS.md) map claims to committed records and retain
+the reproduction commands. No M7 acceptance item remains open. No tag or
+release was created; those require explicit approval. Remote CI remains
+to run after this branch is pushed.
 
 Goal: someone landing on the repo understands what it is, how fast it is, and how it works in two minutes.
 

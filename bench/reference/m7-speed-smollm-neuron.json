@@ -1,0 +1,285 @@
+{
+  "step": "M7 smollm neuron",
+  "engine": "neuron",
+  "isa": "avx512",
+  "threads": 4,
+  "prompt": "Once upon a time",
+  "n_predict": 32,
+  "context": 256,
+  "warmups": 0,
+  "repetitions": 1,
+  "model": {
+    "file": "SmolLM2-135M-Instruct-f16.gguf",
+    "sha256": "f535f83ec568d040f88ddc04a199fa6da90923bbb41d4dcaed02caa924d6ef57",
+    "size_bytes": 270885952
+  },
+  "binary_sha256": "b92a070de1be637f56cf4c1d55926771f4ea4163947533ed48c3394b3aa0a1a5",
+  "source_sha256": "8aa60a952270244796786a82a78bac80349528e79f9f56b4cc3843f665be92ca",
+  "parent_commit": "938c60ed5d6af8ad01e228771a248351ef2b6916",
+  "command": [
+    "/home/daniel/codex-runs/Neuron-m7/build-m7-default/neuron",
+    "run",
+    "-m",
+    "/home/daniel/codex-runs/Neuron-m1/models/SmolLM2-135M-Instruct-f16.gguf",
+    "-p",
+    "Once upon a time",
+    "-n",
+    "32",
+    "--greedy",
+    "--json",
+    "--ctx-size",
+    "256"
+  ],
+  "environment": {
+    "NEURON_ISA": "avx512",
+    "NEURON_THREADS": "4"
+  },
+  "notes": "Short M7 sample on Ghost. No simultaneous builds, tests or other model runs. Codex and normal background services present. Power and load observed in before/after; no frequency control.",
+  "before": {
+    "utc": "2026-11-17T14:47:03.172495+00:00",
+    "load_average": [
+      0.30810546875,
+      0.25048828125,
+      0.15185546875
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "after": {
+    "utc": "2026-11-17T14:47:04.240282+00:00",
+    "load_average": [
+      0.30810546875,
+      0.25048828125,
+      0.15185546875
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "result": {
+    "isa": "avx512",
+    "threads": 4,
+    "prompt_tokens": [
+      6403,
+      1980,
+      253,
+      655
+    ],
+    "generated_tokens": [
+      28,
+      339,
+      436,
+      253,
+      1805,
+      555,
+      28,
+      253,
+      1805,
+      4166,
+      28,
+      284,
+      253,
+      1805,
+      555,
+      1163,
+      30,
+      339,
+      436,
+      253,
+      1805,
+      555,
+      28,
+      253,
+      1805,
+      4166,
+      28,
+      284,
+      253,
+      1805,
+      555,
+      1163
+    ],
+    "top2": [
+      {
+        "first": 28,
+        "second": 281,
+        "gap": 2.93099403
+      },
+      {
+        "first": 339,
+        "second": 281,
+        "gap": 0.554341316
+      },
+      {
+        "first": 436,
+        "second": 761,
+        "gap": 0.54583168
+      },
+      {
+        "first": 253,
+        "second": 1891,
+        "gap": 1.01788521
+      },
+      {
+        "first": 1805,
+        "second": 2222,
+        "gap": 2.75204945
+      },
+      {
+        "first": 555,
+        "second": 4166,
+        "gap": 0.911231041
+      },
+      {
+        "first": 28,
+        "second": 351,
+        "gap": 1.15926743
+      },
+      {
+        "first": 253,
+        "second": 915,
+        "gap": 0.101448059
+      },
+      {
+        "first": 1805,
+        "second": 555,
+        "gap": 1.49977684
+      },
+      {
+        "first": 4166,
+        "second": 555,
+        "gap": 0.914104462
+      },
+      {
+        "first": 28,
+        "second": 30,
+        "gap": 2.88936043
+      },
+      {
+        "first": 284,
+        "second": 253,
+        "gap": 0.873809814
+      },
+      {
+        "first": 253,
+        "second": 1209,
+        "gap": 1.94883347
+      },
+      {
+        "first": 1805,
+        "second": 4166,
+        "gap": 3.49705601
+      },
+      {
+        "first": 555,
+        "second": 7706,
+        "gap": 2.77325249
+      },
+      {
+        "first": 1163,
+        "second": 30,
+        "gap": 0.779741287
+      },
+      {
+        "first": 30,
+        "second": 28,
+        "gap": 2.20009995
+      },
+      {
+        "first": 339,
+        "second": 198,
+        "gap": 2.07428169
+      },
+      {
+        "first": 436,
+        "second": 761,
+        "gap": 0.435560226
+      },
+      {
+        "first": 253,
+        "second": 260,
+        "gap": 1.49516869
+      },
+      {
+        "first": 1805,
+        "second": 555,
+        "gap": 1.2566843
+      },
+      {
+        "first": 555,
+        "second": 4166,
+        "gap": 0.453356743
+      },
+      {
+        "first": 28,
+        "second": 617,
+        "gap": 0.831739426
+      },
+      {
+        "first": 253,
+        "second": 284,
+        "gap": 0.577085495
+      },
+      {
+        "first": 1805,
+        "second": 555,
+        "gap": 3.69546127
+      },
+      {
+        "first": 4166,
+        "second": 555,
+        "gap": 3.65497589
+      },
+      {
+        "first": 28,
+        "second": 30,
+        "gap": 3.13383102
+      },
+      {
+        "first": 284,
+        "second": 253,
+        "gap": 2.38761139
+      },
+      {
+        "first": 253,
+        "second": 339,
+        "gap": 2.39628601
+      },
+      {
+        "first": 1805,
+        "second": 4166,
+        "gap": 4.50619888
+      },
+      {
+        "first": 555,
+        "second": 4166,
+        "gap": 2.85700417
+      },
+      {
+        "first": 1163,
+        "second": 30,
+        "gap": 3.0662365
+      }
+    ],
+    "timings": {
+      "prompt_n": 4,
+      "prompt_ms": 46.14435,
+      "predicted_n": 32,
+      "predicted_ms": 428.236652,
+      "prompt_per_second": 86.684502,
+      "predicted_per_second": 72.3898804
+    }
+  },
+  "tg_tokens_per_second": 72.38988035054973
+}

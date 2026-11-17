@@ -1,0 +1,123 @@
+{
+  "command": [
+    "/home/daniel/codex-runs/Neuron-m7/build-m7-default/neuron",
+    "chat",
+    "-m",
+    "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "--threads",
+    "4",
+    "--isa",
+    "avx512",
+    "--ctx-size",
+    "256",
+    "-n",
+    "16"
+  ],
+  "model": {
+    "file": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281"
+  },
+  "binary_sha256": "b92a070de1be637f56cf4c1d55926771f4ea4163947533ed48c3394b3aa0a1a5",
+  "source_sha256": "8aa60a952270244796786a82a78bac80349528e79f9f56b4cc3843f665be92ca",
+  "parent_commit": "938c60ed5d6af8ad01e228771a248351ef2b6916",
+  "before": {
+    "utc": "2026-11-17T14:48:37.189807+00:00",
+    "load_average": [
+      0.5537109375,
+      0.443359375,
+      0.23681640625
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "after": {
+    "utc": "2026-11-17T14:48:57.657400+00:00",
+    "load_average": [
+      0.6064453125,
+      0.46240234375,
+      0.248046875
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "events": [
+    [
+      0.110215,
+      "Chat: /reset clears history, /exit quits, Ctrl-C stops a reply.\r\nyou> "
+    ],
+    [
+      0.713637,
+      "My name is Ada. Reply with OK.\r\n"
+    ],
+    [
+      0.713929,
+      "assistant> "
+    ],
+    [
+      7.701906,
+      "OK"
+    ],
+    [
+      7.873309,
+      "\r\nyou> "
+    ],
+    [
+      8.47673,
+      "What is my name? Reply with only the name.\r\n"
+    ],
+    [
+      8.477157,
+      "assistant> "
+    ],
+    [
+      17.751087,
+      "Ada"
+    ],
+    [
+      17.922789,
+      "\r\nyou> "
+    ],
+    [
+      18.526291,
+      "/reset\r\n"
+    ],
+    [
+      18.526357,
+      "History cleared.\r\nyou> "
+    ],
+    [
+      19.129697,
+      "/exit\r\n"
+    ]
+  ],
+  "inputs": [
+    "My name is Ada. Reply with OK.",
+    "What is my name? Reply with only the name.",
+    "/reset",
+    "/exit"
+  ],
+  "duration_seconds": 19.193222,
+  "exit_code": 0,
+  "transcript": "Chat: /reset clears history, /exit quits, Ctrl-C stops a reply.\r\nyou> My name is Ada. Reply with OK.\r\nassistant> OK\r\nyou> What is my name? Reply with only the name.\r\nassistant> Ada\r\nyou> /reset\r\nHistory cleared.\r\nyou> /exit\r\n",
+  "notes": "Real Qwen terminal capture on Ghost after the SmolLM2 smoke check. No simultaneous model runs, builds or tests. Timed output is unedited.",
+  "rendering": {
+    "speed": 1,
+    "frame_ms": 100,
+    "width": 960,
+    "height": 340,
+    "font": "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+    "font_size": 17
+  }
+}

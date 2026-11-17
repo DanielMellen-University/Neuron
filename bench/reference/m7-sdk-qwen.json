@@ -1,0 +1,23 @@
+{
+  "model": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+  "openai_version": "3.52.0",
+  "threads": 4,
+  "context": 512,
+  "first_reply": "OK",
+  "history_reply": "Ada",
+  "usage": {
+    "completion_tokens": 2,
+    "prompt_tokens": 60,
+    "total_tokens": 62,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "stream_matches_nonstream": true,
+  "errors_checked": [
+    "model_not_found",
+    "context_length_exceeded",
+    "invalid_json"
+  ],
+  "elapsed_seconds": 29.824,
+  "passed": true
+}

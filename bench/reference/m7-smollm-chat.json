@@ -1,0 +1,223 @@
+{
+  "command": [
+    "/home/daniel/codex-runs/Neuron-m7/build-m7-default/neuron",
+    "chat",
+    "-m",
+    "/home/daniel/codex-runs/Neuron-m1/models/SmolLM2-135M-Instruct-f16.gguf",
+    "--threads",
+    "4",
+    "--isa",
+    "avx512",
+    "--ctx-size",
+    "256",
+    "-n",
+    "16"
+  ],
+  "model": {
+    "file": "SmolLM2-135M-Instruct-f16.gguf",
+    "sha256": "f535f83ec568d040f88ddc04a199fa6da90923bbb41d4dcaed02caa924d6ef57"
+  },
+  "binary_sha256": "b92a070de1be637f56cf4c1d55926771f4ea4163947533ed48c3394b3aa0a1a5",
+  "source_sha256": "8aa60a952270244796786a82a78bac80349528e79f9f56b4cc3843f665be92ca",
+  "parent_commit": "938c60ed5d6af8ad01e228771a248351ef2b6916",
+  "before": {
+    "utc": "2026-11-17T14:46:13.088490+00:00",
+    "load_average": [
+      0.259765625,
+      0.212890625,
+      0.1337890625
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "after": {
+    "utc": "2026-11-17T14:46:18.046910+00:00",
+    "load_average": [
+      0.5595703125,
+      0.27587890625,
+      0.15478515625
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "events": [
+    [
+      0.363116,
+      "Chat: /reset clears history, /exit quits, Ctrl-C stops a reply.\r\nyou> "
+    ],
+    [
+      0.966658,
+      "My name is Ada. Reply with OK.\r\n"
+    ],
+    [
+      0.966983,
+      "assistant> "
+    ],
+    [
+      1.459189,
+      "Hello"
+    ],
+    [
+      1.47474,
+      ","
+    ],
+    [
+      1.488924,
+      " I"
+    ],
+    [
+      1.502981,
+      "'m"
+    ],
+    [
+      1.517034,
+      " Ada"
+    ],
+    [
+      1.531124,
+      ","
+    ],
+    [
+      1.545344,
+      " a"
+    ],
+    [
+      1.559542,
+      " helpful"
+    ],
+    [
+      1.573713,
+      " AI"
+    ],
+    [
+      1.587915,
+      " assistant"
+    ],
+    [
+      1.602131,
+      " designed"
+    ],
+    [
+      1.616354,
+      " to"
+    ],
+    [
+      1.632649,
+      " assist"
+    ],
+    [
+      1.64917,
+      " with"
+    ],
+    [
+      1.66622,
+      " various"
+    ],
+    [
+      1.682721,
+      " tasks\r\nyou> "
+    ],
+    [
+      2.285179,
+      "What is my name? Reply with only the name.\r\n"
+    ],
+    [
+      2.285664,
+      "assistant> "
+    ],
+    [
+      3.308831,
+      "My"
+    ],
+    [
+      3.323776,
+      " name"
+    ],
+    [
+      3.33871,
+      " is"
+    ],
+    [
+      3.353646,
+      " Ada"
+    ],
+    [
+      3.370858,
+      ","
+    ],
+    [
+      3.388893,
+      " and"
+    ],
+    [
+      3.406612,
+      " I"
+    ],
+    [
+      3.424255,
+      "'m"
+    ],
+    [
+      3.440528,
+      " a"
+    ],
+    [
+      3.45801,
+      " helpful"
+    ],
+    [
+      3.475673,
+      " AI"
+    ],
+    [
+      3.492348,
+      " assistant"
+    ],
+    [
+      3.509906,
+      "."
+    ],
+    [
+      3.527377,
+      "\r\nyou> "
+    ],
+    [
+      4.130948,
+      "/reset\r\nHistory cleared.\r\nyou> "
+    ],
+    [
+      4.734108,
+      "/exit\r\n"
+    ]
+  ],
+  "inputs": [
+    "My name is Ada. Reply with OK.",
+    "What is my name? Reply with only the name.",
+    "/reset",
+    "/exit"
+  ],
+  "duration_seconds": 4.772495,
+  "exit_code": 0,
+  "transcript": "Chat: /reset clears history, /exit quits, Ctrl-C stops a reply.\r\nyou> My name is Ada. Reply with OK.\r\nassistant> Hello, I'm Ada, a helpful AI assistant designed to assist with various tasks\r\nyou> What is my name? Reply with only the name.\r\nassistant> My name is Ada, and I'm a helpful AI assistant.\r\nyou> /reset\r\nHistory cleared.\r\nyou> /exit\r\n",
+  "notes": "SmolLM2 smoke check before Qwen; real PTY, history, reset and exit. No simultaneous benchmark or build.",
+  "rendering": {
+    "speed": 1,
+    "frame_ms": 100,
+    "width": 960,
+    "height": 340,
+    "font": "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+    "font_size": 17
+  }
+}

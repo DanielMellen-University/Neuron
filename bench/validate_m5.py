@@ -11,11 +11,12 @@ from harness import ROOT, machine_state, sha256, write_json
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--build-prefix', default='build-m5-final', help='fresh build directory prefix')
     parser.add_argument('--configs', nargs='+', default=['default', 'werror', 'avx2', 'avx512', 'sanitize', 'clang', 'clang-avx2'])
     args = parser.parse_args()
     report = dict(before=machine_state(), checks=[])
     for config in args.configs:
-        directory = 'build-m5-final-' + config
+        directory = args.build_prefix + '-' + config
         flags = ['-DCMAKE_CXX_COMPILER=g++', '-DCMAKE_BUILD_TYPE=' + ('Debug' if config == 'sanitize' else 'Release')]
         if config != 'default':
             flags += ['-DNEURON_WERROR=ON']
