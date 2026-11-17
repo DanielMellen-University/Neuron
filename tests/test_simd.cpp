@@ -67,6 +67,21 @@ int main(int argc, char** argv) {
         compare(a, b);
       }
     }
+    for (std::size_t n : {0u, 1u, 15u, 16u, 17u, 31u, 32u, 63u, 64u, 65u, 4097u}) {
+      std::vector<std::uint8_t> a(n);
+      std::vector<std::int8_t> b(n);
+      for (std::size_t i = 0; i < n; ++i) {
+        a[i] = static_cast<std::uint8_t>(random() % 256);
+        b[i] = static_cast<std::int8_t>(static_cast<int>(random() % 256) - 128);
+      }
+      if (neuron::scalar::dot_i8(a, b) != neuron::kernels::dot_i8(a, b))
+        throw std::runtime_error("int8 dot differs from scalar");
+      std::fill(a.begin(), a.end(), 255);
+      std::fill(b.begin(), b.end(), -128);
+      if (neuron::scalar::dot_i8(a, b) != neuron::kernels::dot_i8(a, b))
+        throw std::runtime_error("int8 extremes differ from scalar");
+      comparisons += 2;
+    }
     bool rejected = false;
     try { neuron::kernels::set_isa("invalid"); } catch (const std::invalid_argument&) { rejected = true; }
     if (!rejected) throw std::runtime_error("unknown ISA accepted");

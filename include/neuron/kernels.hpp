@@ -6,6 +6,7 @@
 #include <string_view>
 
 namespace neuron::scalar {
+std::int64_t dot_i8(std::span<const std::uint8_t> a, std::span<const std::int8_t> b);
 // weights[rows, cols], input[batch, cols], output[batch, rows], row major.
 void matmul(std::span<const float> weights, std::span<const float> input,
             std::span<float> output, std::size_t rows, std::size_t cols,
@@ -24,11 +25,12 @@ void rope(std::span<float> values, std::size_t head_size, std::size_t rotary_dim
 }  // namespace neuron::scalar
 
 namespace neuron::kernels {
-// Runtime dispatch. NEURON_ISA=auto|scalar|avx2|avx512.
+// Runtime dispatch. NEURON_ISA=auto|scalar|avx2|avx512|vnni.
 // Set configuration before inference, not while another caller is running.
 bool supported(std::string_view isa);
 void set_isa(std::string_view isa);
 std::string_view selected_isa();
+std::int64_t dot_i8(std::span<const std::uint8_t> a, std::span<const std::int8_t> b);
 double dot(std::span<const float> a, std::span<const float> b);
 void matmul(std::span<const float> weights, std::span<const float> input,
             std::span<float> output, std::size_t rows, std::size_t cols,

@@ -43,6 +43,19 @@ TARGET double dot_avx512(const float* a, const float* b, std::size_t n) {
   for (; i < n; ++i) result += static_cast<double>(a[i]) * b[i];
   return result;
 }
+TARGET std::int64_t dot_i8_avx512(const std::uint8_t* a, const std::int8_t* b, std::size_t n) {
+  std::int64_t result = 0;
+  std::size_t i = 0;
+  for (; i + 32 <= n; i += 32) {
+    const auto u = _mm512_cvtepu8_epi16(_mm256_loadu_si256(reinterpret_cast<const __m256i*>(a + i)));
+    const auto v = _mm512_cvtepi8_epi16(_mm256_loadu_si256(reinterpret_cast<const __m256i*>(b + i)));
+    alignas(64) std::int32_t sums[16];
+    _mm512_storeu_si512(reinterpret_cast<void*>(sums), _mm512_madd_epi16(u, v));
+    for (auto value : sums) result += value;
+  }
+  for (; i < n; ++i) result += static_cast<int>(a[i]) * static_cast<int>(b[i]);
+  return result;
+}
 TARGET double quant_avx512(const std::byte* w, std::uint32_t type, const float* x, std::size_t n) {
   const std::size_t elements = type == q4_k || type == q6_k ? 256 : 32;
   const std::size_t bytes = type == q4_k ? 144 : type == q6_k ? 210 : type == q8_0 ? 34 : 18;

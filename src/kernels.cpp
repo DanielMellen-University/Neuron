@@ -17,6 +17,12 @@ bool product_is(std::size_t a, std::size_t b, std::size_t size) {
   return (a == 0 || b <= std::numeric_limits<std::size_t>::max() / a) && a * b == size;
 }
 }  // namespace
+std::int64_t dot_i8(std::span<const std::uint8_t> a, std::span<const std::int8_t> b) {
+  require(a.size() == b.size());
+  std::int64_t sum = 0;
+  for (std::size_t i = 0; i < a.size(); ++i) sum += static_cast<int>(a[i]) * static_cast<int>(b[i]);
+  return sum;
+}
 void matmul(std::span<const float> weights, std::span<const float> input,
             std::span<float> output, std::size_t rows, std::size_t cols, std::size_t batch) {
   require(rows > 0 && cols > 0 && batch > 0 && product_is(rows, cols, weights.size()) &&

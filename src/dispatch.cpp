@@ -18,8 +18,13 @@ bool cpu_avx512() {
   return __builtin_cpu_supports("avx512f") && __builtin_cpu_supports("avx512bw") &&
       __builtin_cpu_supports("avx512dq") && __builtin_cpu_supports("avx512vl");
 }
+bool cpu_vnni() {
+  __builtin_cpu_init();
+  return cpu_avx512() && __builtin_cpu_supports("avx512vnni");
+}
 std::string choose(std::string_view name) {
-  if (name == "auto") return cpu_avx512() ? "avx512" : cpu_avx2() ? "avx2" : "scalar";
+  if (name == "auto") return cpu_vnni() ? "vnni" : cpu_avx512() ? "avx512" : cpu_avx2() ? "avx2" : "scalar";
+  if (name == "vnni" && cpu_vnni()) return "vnni";
   if (name == "avx512" && cpu_avx512()) return "avx512";
   if (name == "scalar" || (name == "avx2" && cpu_avx2())) return std::string(name);
   throw std::invalid_argument("kernel: unknown or unavailable ISA: " + std::string(name));
@@ -36,24 +41,31 @@ void shape(bool ok) {
 }
 }
 bool supported(std::string_view isa) {
-  return (isa == "avx512" && cpu_avx512()) || isa == "auto" || isa == "scalar" || (isa == "avx2" && cpu_avx2());
+  return (isa == "vnni" && cpu_vnni()) || (isa == "avx512" && cpu_avx512()) || isa == "auto" || isa == "scalar" || (isa == "avx2" && cpu_avx2());
 }
 void set_isa(std::string_view isa) { selection() = choose(isa); }
 std::string_view selected_isa() { return selection(); }
 double dot(std::span<const float> a, std::span<const float> b) {
   shape(a.size() == b.size());
-  if (selection() == "avx512") return detail::dot_avx512(a.data(), b.data(), a.size());
+  if ((selection() == "avx512" || selection() == "vnni")) return detail::dot_avx512(a.data(), b.data(), a.size());
   if (selection() == "avx2") return detail::dot_avx2(a.data(), b.data(), a.size());
   double sum = 0;
   for (std::size_t i = 0; i < a.size(); ++i) sum += static_cast<double>(a[i]) * b[i];
   return sum;
+}
+std::int64_t dot_i8(std::span<const std::uint8_t> a, std::span<const std::int8_t> b) {
+  shape(a.size() == b.size());
+  if (selection() == "vnni") return detail::dot_i8_vnni(a.data(), b.data(), a.size());
+  if (selection() == "avx512") return detail::dot_i8_avx512(a.data(), b.data(), a.size());
+  if (selection() == "avx2") return detail::dot_i8_avx2(a.data(), b.data(), a.size());
+  return scalar::dot_i8(a, b);
 }
 void matmul(std::span<const float> w, std::span<const float> x, std::span<float> y,
             std::size_t rows, std::size_t cols, std::size_t batch) {
   if (selection() == "scalar") { scalar::matmul(w, x, y, rows, cols, batch); return; }
   shape(rows > 0 && cols > 0 && batch > 0 && product_is(rows, cols, w.size()) &&
         product_is(batch, cols, x.size()) && product_is(batch, rows, y.size()));
-  const auto kernel = selection() == "avx512" ? detail::dot_avx512 : detail::dot_avx2;
+  const auto kernel = (selection() == "avx512" || selection() == "vnni") ? detail::dot_avx512 : detail::dot_avx2;
   for (std::size_t b = 0; b < batch; ++b) for (std::size_t r = 0; r < rows; ++r)
     y[b * rows + r] = static_cast<float>(kernel(w.data() + r * cols, x.data() + b * cols, cols));
 }
@@ -65,8 +77,17 @@ void matmul_quantized(std::span<const std::byte> w, std::uint32_t type,
   shape(rows > 0 && cols > 0 && cols % elements == 0 && batch > 0 &&
         w.size() % bytes == 0 && product_is(rows, cols / elements, w.size() / bytes) &&
         product_is(batch, cols, x.size()) && product_is(batch, rows, y.size()));
-  const auto kernel = selection() == "avx512" ? detail::quant_avx512 : detail::quant_avx2;
+  const auto kernel = (selection() == "avx512" || selection() == "vnni") ? detail::quant_avx512 : detail::quant_avx2;
   const auto stride = cols / elements * bytes;
+  if (selection() == "vnni") {
+    const auto activations = detail::prepare_activations(x);
+    if (!activations.empty()) {
+      for (std::size_t b = 0; b < batch; ++b) for (std::size_t r = 0; r < rows; ++r)
+        y[b * rows + r] = static_cast<float>(detail::quant_vnni(w.data() + r * stride, type,
+            activations.data() + b * cols / 16, cols));
+      return;
+    }
+  }
   for (std::size_t b = 0; b < batch; ++b) for (std::size_t r = 0; r < rows; ++r)
     y[b * rows + r] = static_cast<float>(kernel(w.data() + r * stride, type, x.data() + b * cols, cols));
 }

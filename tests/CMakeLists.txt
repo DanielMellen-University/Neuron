@@ -34,7 +34,7 @@ add_test(NAME test_m4_method
 
 add_executable(test_simd test_simd.cpp)
 target_link_libraries(test_simd PRIVATE neuron neuron_options)
-foreach(isa IN ITEMS scalar avx2 avx512)
+foreach(isa IN ITEMS scalar avx2 avx512 vnni)
   add_test(NAME simd_${isa} COMMAND test_simd ${isa})
   set_tests_properties(simd_${isa} PROPERTIES SKIP_RETURN_CODE 77)
 endforeach()
