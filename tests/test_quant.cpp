@@ -223,13 +223,14 @@ NEURON_TEST(k_gguf_independent_layout_and_every_payload_truncation) {
     std::array<float, 1024> expected{};
     for (std::size_t block = 0; block < 4; ++block) {
       std::vector<std::byte> bytes(size);
-      const std::uint16_t half = static_cast<std::uint16_t>(0x3c00 + block * 0x400);
+      auto half = static_cast<std::uint16_t>(0x3c00 + block * 0x400);
+      if (type == neuron::q6_k && block % 2 != 0) half = static_cast<std::uint16_t>(half | 0x8000u);
       if (type == neuron::q4_k) {
         std::memcpy(bytes.data(), &half, 2); std::memcpy(bytes.data() + 2, &half, 2);
         // Every scale bit, offset bit and nibble position varies. Pack by
         // bit position rather than invoking Neuron's reference encoder.
         for (unsigned g = 0; g < 8; ++g) {
-          const unsigned sc = 7 * g + 3, mn = 63 - 8 * g;
+          const unsigned sc = 7 * g + 3, mn = (17 * g + 29) % 64;
           for (unsigned bit = 0; bit < 6; ++bit) {
             const unsigned si = g < 4 ? 4 + g : bit < 4 ? 8 + g : g;
             const unsigned mi = g < 4 ? 8 + g : bit < 4 ? 8 + g : 4 + g;
@@ -253,7 +254,8 @@ NEURON_TEST(k_gguf_independent_layout_and_every_payload_truncation) {
           const unsigned half_index = i % 128, quarter = half_index / 32, lane = half_index % 32;
           bytes[(i / 128) * 64 + (quarter % 2) * 32 + lane] |= static_cast<std::byte>((q & 15u) << (quarter / 2 * 4));
           bytes[128 + i / 128 * 32 + lane] |= static_cast<std::byte>((q >> 4) << (quarter * 2));
-          expected[block * 256 + i] = std::ldexp(static_cast<float>(static_cast<int>(sc) * (static_cast<int>(q) - 32)), static_cast<int>(block));
+          expected[block * 256 + i] = std::ldexp(static_cast<float>(static_cast<int>(sc) * (static_cast<int>(q) - 32)) *
+              (block % 2 == 0 ? 1.0f : -1.0f), static_cast<int>(block));
         }
       }
       for (auto v : bytes) b.put(v);
