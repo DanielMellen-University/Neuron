@@ -1,6 +1,6 @@
 # M5 speed and correctness on Ghost
 
-M5 is implemented and remains in progress. The final Qwen2.5 1.5B
+M5 is implemented. The speed target was missed and accepted. The final Qwen2.5 1.5B
 Q4_K_M run generated **4.294374 tokens/s**, versus **38.953875 tokens/s** for
 llama.cpp with the same file and four threads: **11.02%**. The target is
 50%, or 19.476937 tokens/s in this comparison. That speed target was missed.
@@ -132,7 +132,7 @@ values and reject invalid counts and paths.
 
 [CI](../.github/workflows/ci.yml) forces AVX2 in its GCC/Clang AVX2 jobs,
 compiles the AVX-512 functions, runs GCC ASan/UBSan, and checks weights and
-file sizes. Local equivalents all pass. No push was made, so remote
+file sizes. Local equivalents all pass.
 GitHub Actions remains pending. No weight file or file over 1 MiB was added.
 
 ## Correctness guards
