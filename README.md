@@ -10,13 +10,15 @@
 
 Neuron loads a small transformer language model and generates text on a laptop CPU, with no GPU and no inference libraries underneath. The target machine is an Intel i5-1135G7 (4 cores, 8 threads, 16 GB RAM, AVX2 and AVX-512 with VNNI). The end goal is Qwen2.5 1.5B Instruct, quantized to 4 bits, chatting at a usable speed.
 
-> **Status: M4 done, M5 next.** Neuron loads Q8_0, Q4_0, Q4_K and Q6_K weights, and its perplexity matches llama.cpp within 0.9% for each format on a fixed 4,096-target check. Free-running greedy agreement missed its targets (Q8_0 71.74% vs 90%, Q4_K_M 23.44% vs 70%); Daniel accepted M4 on Nov 16 2026 with those numbers recorded. Q4_K_M is currently slower than F16 in the scalar path. [Quantization checks](bench/QUANT.md) record sizes, memory, speeds, results and local validation.
+> **Status: M5 implemented, speed target missed.** Runtime AVX2, AVX-512 and VNNI kernels and a thread pool that splits output rows are implemented. Final Q4_K_M generation is 4.294 tokens/s versus llama.cpp's 38.954 with four threads (11.02%). M5 remains in progress because the target is 50%. [Speed checks](bench/SPEED.md) record each optimization step and correctness guard. M4 remains accepted with its recorded greedy agreement misses; [quantization checks](bench/QUANT.md) preserve those results.
 
 ## Current features
 
 - **GGUF loading** with checked metadata and tensor tables, mapped F32/Q8_0/Q4_0/Q4_K/Q6_K weights and F16 weights converted to FP32.
-- **Llama and Qwen2 tokenizers** with score-based merging or byte BPE, Unicode pre-tokenization and special tokens.
-- **Scalar FP32 inference** for Llama and Qwen2 with RMSNorm, adjacent-pair or split-half RoPE, GQA, QKV bias and SwiGLU.
+- **Llama, Qwen2 and SmolLM2 tokenizers** with score-based merging or byte BPE, Unicode pre-tokenization and special tokens.
+- **FP32 inference** for Llama and Qwen2 with RMSNorm, adjacent-pair or split-half RoPE, GQA, QKV bias and SwiGLU.
+- **Runtime SIMD kernels** for F32, Q8_0, Q4_0, Q4_K and Q6_K matmuls and dot products, with scalar references and explicit ISA selection.
+- **Persistent matmul thread pool** with configurable splitting by output rows.
 - **Per-layer KV cache** with checked context bounds.
 - **Qwen2.5 ChatML** with a default or explicit system prompt and multi-turn message history.
 - **Greedy CLI generation** with streaming text, JSON token IDs, top-two logit gaps and reference checks.
@@ -24,7 +26,6 @@ Neuron loads a small transformer language model and generates text on a laptop C
 
 ## Planned features
 
-- AVX-512 and VNNI kernels plus multithreading, with a speed chart for each optimization step.
 - Terminal chat, a small web chat UI and an OpenAI-compatible local HTTP server.
 
 ## Quick start
@@ -44,14 +45,16 @@ Build options:
 
 | Option | Default | Effect |
 | --- | --- | --- |
-| `NEURON_AVX2` | `OFF` | Compile with AVX2, FMA, and F16C |
-| `NEURON_AVX512` | `OFF` | Compile with AVX-512 F/BW/DQ/VL/VNNI (implies AVX2) |
-| `NEURON_NATIVE` | `OFF` | Compile with `-march=native` |
+| `NEURON_AVX2` | `OFF` | Compatibility option; AVX2 kernels are always compiled with function target attributes |
+| `NEURON_AVX512` | `OFF` | Compatibility option; AVX-512 and VNNI kernels are always compiled with function target attributes |
+| `NEURON_NATIVE` | `OFF` | Compatibility option; baseline code keeps its portable x86-64 target |
 | `NEURON_WERROR` | `OFF` | Treat warnings as errors (CI turns this on) |
 | `NEURON_SANITIZE` | `OFF` | AddressSanitizer and UndefinedBehaviorSanitizer |
 | `NEURON_BUILD_TESTS` | `ON` | Build the unit tests |
 
-`./build/neuron --version` prints the instruction sets the binary was built for, for example `neuron 0.1.0 (avx512f avx512vnni avx2 fma)`.
+`./build/neuron --version` prints the compiled kernel variants, selected runtime
+ISA and thread count. One default build works on CPUs without AVX-512.
+Runtime checks include CPU and OS support before calling a SIMD kernel.
 
 Model weights are never committed. `scripts/fetch_models.sh` downloads pinned TinyStories 15M F32, SmolLM2 135M Instruct F16 and Qwen2.5 1.5B Instruct F16 GGUF files into the git-ignored `models/` directory and checks their SHA-256 hashes. Set `NEURON_MODELS_DIR` to use another directory.
 
@@ -83,7 +86,7 @@ message in chat mode. Omit `--system` to use the model's default system text.
 flags, and `neuron tokenize` prints its IDs. `--prompt-file FILE` reads prompt
 bytes instead of `-p`. These commands support text-only Qwen2.5 chat.
 Interactive terminal chat remains M6 work. Qwen's F16 weights are upcast to
-FP32. Q8_0, Q4_0, Q4_K and Q6_K matrices stay mapped and decode during scalar products.
+FP32. Q8_0, Q4_0, Q4_K and Q6_K matrices stay mapped and decode during products.
 [Quantization checks](bench/QUANT.md) document how to produce these GGUFs
 with the pinned external llama.cpp quantizer and compare their quality.
 
@@ -110,7 +113,24 @@ python3 bench/harness.py compare bench/reference/tinystories-15m.json \
   bench/runs/tinystories.json --threads 1 --exact-match
 ```
 
-Neuron currently uses one thread. `--threads 1` selects the corresponding reference rows; it does not change Neuron's execution. [bench/M2_CHECKS.md](bench/M2_CHECKS.md) also documents the full-vocabulary logit check and tokenizer fixtures. [M3 checks](bench/M3_CHECKS.md) provide the separate Qwen tokenizer, ChatML, greedy and memory commands.
+`run-neuron --threads N --isa PATH` sets Neuron's execution settings. The
+compare command's `--threads N` selects the corresponding reference rows.
+[bench/M2_CHECKS.md](bench/M2_CHECKS.md) also documents the full-vocabulary logit check and tokenizer fixtures. [M3 checks](bench/M3_CHECKS.md) provide the separate Qwen tokenizer, ChatML, greedy and memory commands.
+
+Matmuls default to one thread and `--isa auto`. Auto selects AVX-512, then
+AVX2, then scalar. VNNI is available explicitly; its precision-preserving
+activation packing was slower on Ghost. Select a path and thread count:
+
+```sh
+./build/neuron run -m "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf" \
+  -p "Once upon a time" -n 32 --greedy --isa avx512 --threads 4
+# Environment defaults also apply to library callers and perplexity:
+NEURON_ISA=scalar NEURON_THREADS=1 ./build/neuron --version
+```
+
+`NEURON_ISA=auto|scalar|avx2|avx512|vnni` and `NEURON_THREADS=1..256` set
+defaults; CLI flags override them. An explicitly requested unavailable ISA
+returns an error. Configure library execution before starting inference.
 
 The [llama.cpp baseline](bench/BASELINE.md) has measured speeds, reference tokens, and exact commands to build and run the external reference engine. This requires Python 3.8+, Git, curl, GCC and CMake. `python3 bench/harness.py compare reference.json candidate.json --exact-match` compares prompt and generated token IDs and reports speed ratios. The comparison tests run without models or llama.cpp.
 
@@ -127,7 +147,7 @@ flowchart LR
   S -->|next token| F
   S --> O[text out]
   subgraph kernels
-    M[matmul F32, Q8_0, Q4_0, Q4_K, Q6_K scalar<br/>planned: AVX2, AVX-512 VNNI]
+    M[matmul F32, Q8_0, Q4_0, Q4_K, Q6_K<br/>scalar, AVX2, AVX-512, VNNI<br/>output rows split across threads]
   end
   F --> M
 ```
@@ -136,14 +156,14 @@ flowchart LR
 2. The tokenizer turns the prompt into token ids.
 3. Each forward pass runs one token through every transformer layer and appends that token's keys and values to the KV cache, so earlier tokens are not recomputed.
 4. The sampler picks the next token from the logits and feeds it back in.
-5. Matrix-vector products use scalar reference kernels. Later SIMD kernels will be checked against those references.
+5. Matrix-vector products use runtime-selected kernels, checked against scalar references. The thread pool assigns independent output rows to workers.
 
 ## Limitations
 
 These are true today and some will stay true by design.
 
 - **Dense Llama and Qwen2 F32/F16/Q8_0/Q4_0/Q4_K/Q6_K models only.** TinyStories and Qwen2.5 1.5B Instruct are the local check targets. Other tokenizer families, other quantization formats, RoPE scaling and tool-call chat templates are not supported.
-- **Scalar and single-threaded.** There are no optimized SIMD kernels, interactive terminal chat, web UI or server yet.
+- **Generation speed below the M5 target.** The measured ratio and remaining gap are in [bench/SPEED.md](bench/SPEED.md). Interactive terminal chat, web UI and server remain planned.
 - **x86-64 Linux only.** No ARM, macOS, or Windows builds are planned.
 - **CPU only.** No CUDA, Metal, or Vulkan.
 - **Small models.** The engine targets models up to about 1.5B parameters that fit in 16 GB of RAM.
@@ -178,4 +198,5 @@ ROADMAP.md          milestones and acceptance criteria
 - [bench/M2_CHECKS.md](bench/M2_CHECKS.md): TinyStories tokenizer, logits and exact generation checks
 - [bench/M3_CHECKS.md](bench/M3_CHECKS.md): Qwen2.5, ChatML, cache, context and memory checks
 - [bench/QUANT.md](bench/QUANT.md): Q8_0/Q4_0/Q4_K/Q6_K formats, perplexity and greedy agreement
+- [bench/SPEED.md](bench/SPEED.md): SIMD, threading, per-step speed chart and correctness guards
 - [LICENSE](LICENSE): MIT

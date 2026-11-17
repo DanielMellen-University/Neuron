@@ -1,0 +1,285 @@
+{
+  "step": "threads",
+  "engine": "neuron",
+  "isa": "avx512",
+  "threads": 4,
+  "prompt": "Once upon a time",
+  "n_predict": 32,
+  "context": 256,
+  "warmups": 0,
+  "repetitions": 1,
+  "model": {
+    "file": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281",
+    "size_bytes": 986048512
+  },
+  "binary_sha256": "ab088f47f504b228ddf71181de1a925c1eaf1c017c147a1476d5f003d0633ebe",
+  "source_sha256": "450278908709ff1fd07507ed8ceaf9a12d807693c9f940d3b7e0dbd8e5812666",
+  "parent_commit": "c05839a56c894b9f9f8d7556fc56050bea09b7fa",
+  "command": [
+    "/home/daniel/codex-runs/Neuron-m5/build-m5/neuron",
+    "run",
+    "-m",
+    "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "-p",
+    "Once upon a time",
+    "-n",
+    "32",
+    "--greedy",
+    "--json",
+    "--ctx-size",
+    "256"
+  ],
+  "environment": {
+    "NEURON_ISA": "avx512",
+    "NEURON_THREADS": "4"
+  },
+  "notes": "No concurrent builds or tests. Codex and normal services present. Observed power state recorded. Uses faster AVX-512 after measured VNNI regression.",
+  "before": {
+    "utc": "2026-11-17T05:54:48.453191+00:00",
+    "load_average": [
+      0.39599609375,
+      0.484375,
+      0.517578125
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "after": {
+    "utc": "2026-11-17T05:54:55.342265+00:00",
+    "load_average": [
+      0.71044921875,
+      0.55078125,
+      0.53955078125
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "result": {
+    "isa": "avx512",
+    "threads": 4,
+    "prompt_tokens": [
+      12522,
+      5193,
+      264,
+      882
+    ],
+    "generated_tokens": [
+      11,
+      264,
+      3908,
+      3743,
+      6941,
+      47290,
+      572,
+      5619,
+      304,
+      279,
+      6118,
+      13,
+      2932,
+      572,
+      5619,
+      448,
+      1059,
+      6930,
+      21357,
+      11,
+      264,
+      2613,
+      21357,
+      1803,
+      13,
+      2932,
+      572,
+      3432,
+      264,
+      2244,
+      882,
+      11
+    ],
+    "top2": [
+      {
+        "first": 11,
+        "second": 3837,
+        "gap": 1.91843987
+      },
+      {
+        "first": 264,
+        "second": 1052,
+        "gap": 0.0181503296
+      },
+      {
+        "first": 3908,
+        "second": 11477,
+        "gap": 0.445819855
+      },
+      {
+        "first": 3743,
+        "second": 8171,
+        "gap": 0.167596817
+      },
+      {
+        "first": 6941,
+        "second": 572,
+        "gap": 1.90789795
+      },
+      {
+        "first": 47290,
+        "second": 20445,
+        "gap": 1.49230766
+      },
+      {
+        "first": 572,
+        "second": 1030,
+        "gap": 0.0597991943
+      },
+      {
+        "first": 5619,
+        "second": 11435,
+        "gap": 0.209243774
+      },
+      {
+        "first": 304,
+        "second": 448,
+        "gap": 0.11741066
+      },
+      {
+        "first": 279,
+        "second": 1059,
+        "gap": 0.0441932678
+      },
+      {
+        "first": 6118,
+        "second": 13551,
+        "gap": 0.223602295
+      },
+      {
+        "first": 13,
+        "second": 979,
+        "gap": 1.59697342
+      },
+      {
+        "first": 2932,
+        "second": 576,
+        "gap": 3.01528931
+      },
+      {
+        "first": 572,
+        "second": 5485,
+        "gap": 1.27818489
+      },
+      {
+        "first": 5619,
+        "second": 3432,
+        "gap": 0.0720214844
+      },
+      {
+        "first": 448,
+        "second": 10265,
+        "gap": 0.972728729
+      },
+      {
+        "first": 1059,
+        "second": 264,
+        "gap": 0.674669266
+      },
+      {
+        "first": 6930,
+        "second": 4780,
+        "gap": 0.175647736
+      },
+      {
+        "first": 21357,
+        "second": 23069,
+        "gap": 3.26214027
+      },
+      {
+        "first": 11,
+        "second": 1803,
+        "gap": 1.12159348
+      },
+      {
+        "first": 264,
+        "second": 892,
+        "gap": 3.17482376
+      },
+      {
+        "first": 2613,
+        "second": 21357,
+        "gap": 0.655534744
+      },
+      {
+        "first": 21357,
+        "second": 22360,
+        "gap": 0.20759964
+      },
+      {
+        "first": 1803,
+        "second": 15328,
+        "gap": 1.36865807
+      },
+      {
+        "first": 13,
+        "second": 11,
+        "gap": 1.96789932
+      },
+      {
+        "first": 2932,
+        "second": 47290,
+        "gap": 0.66189003
+      },
+      {
+        "first": 572,
+        "second": 10245,
+        "gap": 1.13250923
+      },
+      {
+        "first": 3432,
+        "second": 9842,
+        "gap": 0.358800888
+      },
+      {
+        "first": 264,
+        "second": 773,
+        "gap": 0.412403107
+      },
+      {
+        "first": 2244,
+        "second": 2696,
+        "gap": 1.59447479
+      },
+      {
+        "first": 882,
+        "second": 1899,
+        "gap": 5.5646553
+      },
+      {
+        "first": 11,
+        "second": 323,
+        "gap": 0.583820343
+      }
+    ],
+    "timings": {
+      "prompt_n": 4,
+      "prompt_ms": 605.475128,
+      "predicted_n": 32,
+      "predicted_ms": 5450.225,
+      "prompt_per_second": 6.60638202,
+      "predicted_per_second": 5.68783857
+    }
+  },
+  "tg_tokens_per_second": 5.6878385754716545
+}

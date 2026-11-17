@@ -37,6 +37,8 @@ jobs:
       - name: Build
         run: cmake --build build -j "$(nproc)"
       - name: Test
+        env:
+          NEURON_ISA: ${{ matrix.isa == 'avx2' && 'avx2' || 'auto' }}
         run: ctest --test-dir build --output-on-failure
 
   avx512-build:

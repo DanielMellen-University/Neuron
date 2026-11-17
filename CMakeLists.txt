@@ -30,13 +30,10 @@ if(NEURON_WERROR)
   target_compile_options(neuron_options INTERFACE -Werror)
 endif()
 
-if(NEURON_NATIVE)
-  target_compile_options(neuron_options INTERFACE -march=native)
-elseif(NEURON_AVX512)
-  target_compile_options(neuron_options INTERFACE
-    -mavx2 -mfma -mf16c -mavx512f -mavx512bw -mavx512dq -mavx512vl -mavx512vnni)
-elseif(NEURON_AVX2)
-  target_compile_options(neuron_options INTERFACE -mavx2 -mfma -mf16c)
+# SIMD functions carry their own target attributes. These compatibility options
+# never enable host-specific instructions in the rest of the executable.
+if(NEURON_NATIVE OR NEURON_AVX2 OR NEURON_AVX512)
+  message(STATUS "SIMD kernels use runtime CPUID dispatch; baseline code stays portable")
 endif()
 
 if(NEURON_SANITIZE)
@@ -52,16 +49,22 @@ add_library(neuron
   src/chat.cpp
   src/gguf.cpp
   src/kernels.cpp
+  src/dispatch.cpp
+  src/kernels_avx2.cpp
+  src/kernels_avx512.cpp
+  src/kernels_vnni.cpp
   src/model.cpp
   src/quant.cpp
   src/perplexity.cpp
   src/tokenizer.cpp
   src/tensor.cpp
+  src/thread_pool.cpp
   src/version.cpp)
 target_include_directories(neuron PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_BINARY_DIR}/generated)
-target_link_libraries(neuron PRIVATE neuron_options)
+find_package(Threads REQUIRED)
+target_link_libraries(neuron PRIVATE neuron_options Threads::Threads)
 
 add_executable(neuron_cli src/main.cpp)
 set_target_properties(neuron_cli PROPERTIES OUTPUT_NAME neuron)

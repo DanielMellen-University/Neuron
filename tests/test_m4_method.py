@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Check teacher replay and missing-tail accounting without downloaded weights."""
 import json
+import os
 from pathlib import Path
 import struct
 import subprocess
@@ -51,6 +52,20 @@ def model(path):
 
 
 class MethodTests(unittest.TestCase):
+    def test_execution_flags_override_invalid_environment(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'tiny.gguf'
+            model(path)
+            command = [str(BINARY), 'run', '-m', str(path), '-p', 'a', '-n', '4', '--greedy', '--json']
+            env = dict(os.environ, NEURON_ISA='invalid', NEURON_THREADS='invalid')
+            result = json.loads(subprocess.check_output(command + ['--isa', 'scalar', '--threads', '2'], env=env))
+            self.assertEqual(result['isa'], 'scalar')
+            self.assertEqual(result['threads'], 2)
+            for flags in [[], ['--isa', 'scalar'], ['--threads', '2'],
+                          ['--isa', 'scalar', '--threads', '257']]:
+                run = subprocess.run(command + flags, env=env, capture_output=True)
+                self.assertEqual(run.returncode, 2)
+
     def test_missing_tail_keeps_fixed_denominator(self):
         self.assertEqual(comparison([1] * 64, [1] * 2)['agreement_rate'], 2 / 64)
         self.assertEqual(comparison([1] * 64, [])['first_divergent_token_index'], 0)

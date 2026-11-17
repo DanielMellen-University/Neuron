@@ -137,13 +137,13 @@ def request(base, route, payload=None):
 
 
 @contextlib.contextmanager
-def server(binary, model, threads):
+def server(binary, model, threads, context=2048):
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
     command = [str(binary), "--model", str(model), "--host", "127.0.0.1", "--port", str(port),
                "--threads", str(threads), "--threads-batch", str(threads),
-               "--ctx-size", "2048", "--batch-size", "512", "--ubatch-size", "512",
+               "--ctx-size", str(context), "--batch-size", "512", "--ubatch-size", "512",
                "--parallel", "1", "--n-gpu-layers", "0", "--flash-attn", "off",
                "--cache-ram", "0", "--ctx-checkpoints", "0", "--no-webui"]
     if model.name == MODELS["tinystories-15m"]:
@@ -295,7 +295,9 @@ def select_threads(result, threads):
 
 
 def run_neuron(args):
-    """Collect actual single-threaded Neuron runs with the M1 prompts."""
+    """Collect Neuron runs with the M1 prompts and explicit execution settings."""
+    if args.threads < 1:
+        raise ValueError("threads must be positive")
     model = args.model_file.resolve()
     binary = args.binary.resolve()
     prompts = read_json(ROOT / "bench/prompts.json")
@@ -310,16 +312,17 @@ def run_neuron(args):
                    "version": subprocess.check_output([str(binary), "--version"], text=True).strip()},
         "machine": {"name": "Ghost", "notes": args.notes, "before": machine_state()},
         "settings": {"n_predict": N_PREDICT, "greedy": True, "context": 2048,
-                     "threads": 1, "repetitions": args.repetitions,
+                     "threads": args.threads, "isa": args.isa, "repetitions": args.repetitions,
                      "prompts_sha256": sha256(ROOT / "bench/prompts.json")},
         "runs": [], "commands": [],
     }
     for repetition in range(args.repetitions):
         for prompt in prompts:
             command = [str(binary), "run", "-m", str(model), "-p", prompt["text"],
-                       "-n", str(N_PREDICT), "--greedy", "--json", "--ctx-size", "2048"]
+                       "-n", str(N_PREDICT), "--greedy", "--json", "--ctx-size", "2048",
+                       "--threads", str(args.threads), "--isa", args.isa]
             row = json.loads(subprocess.check_output(command, text=True, timeout=120))
-            row.update(threads=1, prompt_id=prompt["id"], repetition=repetition, prompt=prompt["text"])
+            row.update(threads=args.threads, prompt_id=prompt["id"], repetition=repetition, prompt=prompt["text"])
             result["runs"].append(row)
             result["commands"].append(command)
             print(f"neuron: {prompt['id']} repetition {repetition}: {len(row['generated_tokens'])} tokens",
@@ -345,12 +348,14 @@ def main(argv=None):
     collect.add_argument("--machine", default="Ghost")
     collect.add_argument("--notes", required=True, help="other activity and benchmark conditions")
     collect.add_argument("--output", type=Path, required=True)
-    neuron = commands.add_parser("run-neuron", help="collect scalar TinyStories runs at one thread")
+    neuron = commands.add_parser("run-neuron", help="collect TinyStories runs")
     neuron.add_argument("--binary", type=Path, required=True)
     neuron.add_argument("--model-file", type=Path, required=True)
     neuron.add_argument("--output", type=Path, required=True)
     neuron.add_argument("--repetitions", type=int, default=3)
     neuron.add_argument("--notes", required=True)
+    neuron.add_argument("--threads", type=int, default=1)
+    neuron.add_argument("--isa", choices=["auto", "scalar", "avx2", "avx512", "vnni"], default="auto")
     compare = commands.add_parser("compare", help="compare candidate tokens and speed to a reference")
     compare.add_argument("reference", type=Path)
     compare.add_argument("candidate", type=Path)

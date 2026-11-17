@@ -31,3 +31,12 @@ add_test(NAME test_qwen_fixtures
 
 add_test(NAME test_m4_method
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_m4_method.py $<TARGET_FILE:neuron_cli>)
+
+add_executable(test_simd test_simd.cpp)
+target_link_libraries(test_simd PRIVATE neuron neuron_options)
+foreach(isa IN ITEMS scalar avx2 avx512 vnni)
+  add_test(NAME simd_${isa} COMMAND test_simd ${isa})
+  set_tests_properties(simd_${isa} PROPERTIES SKIP_RETURN_CODE 77)
+endforeach()
+
+neuron_add_test(test_threads)

@@ -1,0 +1,283 @@
+{
+  "step": "scalar",
+  "engine": "neuron",
+  "isa": "scalar",
+  "threads": 1,
+  "prompt": "Once upon a time",
+  "n_predict": 32,
+  "context": 256,
+  "warmups": 0,
+  "repetitions": 1,
+  "model": {
+    "file": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281",
+    "size_bytes": 986048512
+  },
+  "binary_sha256": "9e54795c9227ab9d317914fdb098ae588804e6622d12629ebbe66ded97f7a3fd",
+  "source_sha256": "6eff4f0f6098b4ac6abed5bded9adfe0edec2c1f7d873bc0ab34ce0659fe434b",
+  "parent_commit": "0f2df53008625422a191caadeaa892c3bd0dec9b",
+  "command": [
+    "/home/daniel/codex-runs/Neuron-m5/build-m5-scalar/neuron",
+    "run",
+    "-m",
+    "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "-p",
+    "Once upon a time",
+    "-n",
+    "32",
+    "--greedy",
+    "--json",
+    "--ctx-size",
+    "256"
+  ],
+  "environment": {
+    "NEURON_ISA": "scalar",
+    "NEURON_THREADS": "1"
+  },
+  "notes": "No concurrent builds or tests. Codex and normal services present. Observed power state recorded.",
+  "before": {
+    "utc": "2026-11-17T05:41:39.570083+00:00",
+    "load_average": [
+      0.28125,
+      0.2216796875,
+      0.44287109375
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "after": {
+    "utc": "2026-11-17T05:43:10.630555+00:00",
+    "load_average": [
+      0.85546875,
+      0.43798828125,
+      0.50048828125
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "result": {
+    "prompt_tokens": [
+      12522,
+      5193,
+      264,
+      882
+    ],
+    "generated_tokens": [
+      11,
+      264,
+      3908,
+      3743,
+      6941,
+      47290,
+      572,
+      5619,
+      304,
+      279,
+      6118,
+      13,
+      2932,
+      572,
+      5619,
+      448,
+      1059,
+      6930,
+      21357,
+      11,
+      264,
+      2613,
+      21357,
+      1803,
+      13,
+      2932,
+      572,
+      3432,
+      264,
+      2244,
+      882,
+      11
+    ],
+    "top2": [
+      {
+        "first": 11,
+        "second": 3837,
+        "gap": 1.91843987
+      },
+      {
+        "first": 264,
+        "second": 1052,
+        "gap": 0.0181503296
+      },
+      {
+        "first": 3908,
+        "second": 11477,
+        "gap": 0.445819855
+      },
+      {
+        "first": 3743,
+        "second": 8171,
+        "gap": 0.167596817
+      },
+      {
+        "first": 6941,
+        "second": 572,
+        "gap": 1.90789795
+      },
+      {
+        "first": 47290,
+        "second": 20445,
+        "gap": 1.49230766
+      },
+      {
+        "first": 572,
+        "second": 1030,
+        "gap": 0.0597991943
+      },
+      {
+        "first": 5619,
+        "second": 11435,
+        "gap": 0.209243774
+      },
+      {
+        "first": 304,
+        "second": 448,
+        "gap": 0.11741066
+      },
+      {
+        "first": 279,
+        "second": 1059,
+        "gap": 0.0441932678
+      },
+      {
+        "first": 6118,
+        "second": 13551,
+        "gap": 0.223602295
+      },
+      {
+        "first": 13,
+        "second": 979,
+        "gap": 1.59697342
+      },
+      {
+        "first": 2932,
+        "second": 576,
+        "gap": 3.01528931
+      },
+      {
+        "first": 572,
+        "second": 5485,
+        "gap": 1.27818489
+      },
+      {
+        "first": 5619,
+        "second": 3432,
+        "gap": 0.0720214844
+      },
+      {
+        "first": 448,
+        "second": 10265,
+        "gap": 0.972728729
+      },
+      {
+        "first": 1059,
+        "second": 264,
+        "gap": 0.674669266
+      },
+      {
+        "first": 6930,
+        "second": 4780,
+        "gap": 0.175647736
+      },
+      {
+        "first": 21357,
+        "second": 23069,
+        "gap": 3.26214027
+      },
+      {
+        "first": 11,
+        "second": 1803,
+        "gap": 1.12159348
+      },
+      {
+        "first": 264,
+        "second": 892,
+        "gap": 3.17482376
+      },
+      {
+        "first": 2613,
+        "second": 21357,
+        "gap": 0.655534744
+      },
+      {
+        "first": 21357,
+        "second": 22360,
+        "gap": 0.20759964
+      },
+      {
+        "first": 1803,
+        "second": 15328,
+        "gap": 1.36865807
+      },
+      {
+        "first": 13,
+        "second": 11,
+        "gap": 1.96789932
+      },
+      {
+        "first": 2932,
+        "second": 47290,
+        "gap": 0.66189003
+      },
+      {
+        "first": 572,
+        "second": 10245,
+        "gap": 1.13250923
+      },
+      {
+        "first": 3432,
+        "second": 9842,
+        "gap": 0.358800888
+      },
+      {
+        "first": 264,
+        "second": 773,
+        "gap": 0.412403107
+      },
+      {
+        "first": 2244,
+        "second": 2696,
+        "gap": 1.59447479
+      },
+      {
+        "first": 882,
+        "second": 1899,
+        "gap": 5.5646553
+      },
+      {
+        "first": 11,
+        "second": 323,
+        "gap": 0.583820343
+      }
+    ],
+    "timings": {
+      "prompt_n": 4,
+      "prompt_ms": 8582.81385,
+      "predicted_n": 32,
+      "predicted_ms": 81647.3204,
+      "prompt_per_second": 0.466047624,
+      "predicted_per_second": 0.379681781
+    }
+  },
+  "tg_tokens_per_second": 0.3796817807140184
+}

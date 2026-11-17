@@ -9,6 +9,7 @@
 #include <string_view>
 
 #include "neuron/model.hpp"
+#include "neuron/kernels.hpp"
 #include "neuron/perplexity.hpp"
 #include "neuron/chat.hpp"
 #include "neuron/tokenizer.hpp"
@@ -33,6 +34,8 @@ void print_usage() {
       "--recompute checks generation by evaluating the full sequence at every step.\n"
       "--teacher-tokens FILE replays whitespace-separated IDs while recording argmax.\n"
       "--json emits prompt/generated token IDs and timings. logits writes raw F32.\n"
+      "--threads N sets total matmul threads (default NEURON_THREADS or 1).\n"
+      "--isa auto|scalar|avx2|avx512|vnni overrides NEURON_ISA.\n"
       "--ctx-size defaults to 2048, matching the M1 reference context.\n");
 }
 std::size_t count(std::string_view text) {
@@ -51,7 +54,8 @@ using Clock = std::chrono::steady_clock;
 double seconds(Clock::time_point start) { return std::chrono::duration<double>(Clock::now() - start).count(); }
 int execute(int argc, char** argv) {
   if (argc == 2 && std::strcmp(argv[1], "--version") == 0) {
-    std::printf("neuron %s (%s)\n", neuron::version_string().data(), neuron::compiled_isa().data()); return 0;
+    std::printf("neuron %s (%s; selected %s; threads %zu)\n", neuron::version_string().data(),
+        neuron::compiled_isa().data(), neuron::kernels::selected_isa().data(), neuron::kernels::threads()); return 0;
   }
   if (argc == 1 || (argc == 2 && (std::strcmp(argv[1], "--help") == 0 || std::strcmp(argv[1], "-h") == 0))) {
     print_usage(); return 0;
@@ -70,7 +74,9 @@ int execute(int argc, char** argv) {
       if (i + 1 >= argc) throw std::invalid_argument("missing value for " + std::string(option));
       return argv[++i];
     };
-    if (option == "-m") path = value();
+    if (option == "--threads") neuron::kernels::set_threads(count(value()));
+    else if (option == "--isa") neuron::kernels::set_isa(value());
+    else if (option == "-m") path = value();
     else if (option == "-p") { prompt = value(); has_prompt = true; }
     else if (option == "--prompt-file") {
       const auto prompt_path = value();
@@ -169,7 +175,8 @@ int execute(int argc, char** argv) {
   }
   const double generation_seconds = seconds(generation_start);
   if (json) {
-    std::printf("{\"prompt_tokens\":"); ids(tokens); std::printf(",\"generated_tokens\":"); ids(generated);
+    std::printf("{\"isa\":\"%s\",\"threads\":%zu,\"prompt_tokens\":",
+        neuron::kernels::selected_isa().data(), neuron::kernels::threads()); ids(tokens); std::printf(",\"generated_tokens\":"); ids(generated);
     std::printf(",\"top2\":[");
     for (std::size_t i = 0; i < top2.size(); ++i)
       std::printf("%s{\"first\":%d,\"second\":%d,\"gap\":%.9g}", i == 0 ? "" : ",", top2[i].first, top2[i].second, static_cast<double>(top2[i].gap));

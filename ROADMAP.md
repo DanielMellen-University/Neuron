@@ -13,7 +13,7 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | M2 TinyStories FP32 forward pass and tokenizer | done |
 | M3 Qwen2.5 1.5B load, chat template, KV cache | done |
 | M4 int8 and 4-bit quantization | done |
-| M5 AVX-512 kernels and multithreading | not started |
+| M5 AVX-512 kernels and multithreading | done (speed target missed, accepted) |
 | M6 Terminal chat, web UI, OpenAI-compatible server | not started |
 | M7 Polish: README, benchmarks, demo GIF, blog post | not started |
 
@@ -122,6 +122,15 @@ Acceptance criteria:
 ## M5: AVX-512 kernels and multithreading
 
 Goal: make it fast on Ghost, one measured step at a time.
+
+Implemented locally on Ghost. All seven build/test configurations and the
+SIMD, threading, TinyStories and quick Qwen correctness guards pass.
+[Speed checks](bench/SPEED.md) record every optimization commit and result.
+MISSED (speed): final Q4_K_M generation is 4.294374 tokens/s versus
+38.953875 for llama.cpp with four threads, or 11.02%, below the 50% target.
+Accepted by Daniel on Nov 17 2026 as a non-bug miss; refinement is deferred
+until after M7. AVX-512 tests were run on Ghost; CI runs AVX2 tests and
+compile-checks AVX-512.
 
 Acceptance criteria:
 

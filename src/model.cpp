@@ -24,8 +24,8 @@ float positive_float(const Gguf& file, const std::string& key, float fallback) {
 }  // namespace
 void Model::Weight::multiply(std::span<const float> input, std::span<float> output,
                              std::size_t rows, std::size_t cols) const {
-  if (blocks.empty()) scalar::matmul(data, input, output, rows, cols);
-  else scalar::matmul_quantized(blocks, type, input, output, rows, cols);
+  if (blocks.empty()) kernels::matmul(data, input, output, rows, cols);
+  else kernels::matmul_quantized(blocks, type, input, output, rows, cols);
 }
 void Model::Weight::row(std::size_t index, std::span<float> output) const {
   if (blocks.empty()) std::copy_n(data.begin() + static_cast<std::ptrdiff_t>(index * output.size()), output.size(), output.begin());
@@ -128,9 +128,8 @@ std::vector<float> Model::step(std::int32_t token, bool output) {
     for (std::size_t h = 0; h < c.heads; ++h) {
       const auto group = h / (c.heads / c.kv_heads);
       for (std::size_t t = 0; t <= position_; ++t) {
-        double dot = 0;
-        for (std::size_t d = 0; d < c.head_size; ++d)
-          dot += static_cast<double>(q[h * c.head_size + d]) * l.keys[t * kv_width + group * c.head_size + d];
+        const double dot = kernels::dot(std::span(q).subspan(h * c.head_size, c.head_size),
+            std::span(l.keys).subspan(t * kv_width + group * c.head_size, c.head_size));
         scores[t] = static_cast<float>(dot) * scale;
       }
       scalar::softmax(scores);
