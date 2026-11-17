@@ -32,7 +32,7 @@ def measure(args):
     before = machine_state()
     if args.llama:
         binary = args.llamacpp_dir.resolve() / 'build/bin/llama-server'
-        with server(binary, model, args.threads) as (base, command):
+        with server(binary, model, args.threads, context=256) as (base, command):
             tokens = request(base, '/tokenize', dict(content=PROMPT, add_special=True,
                                                     parse_special=True))['tokens']
             result = request(base, '/completion', dict(prompt=tokens, n_predict=TOKENS,
@@ -44,15 +44,18 @@ def measure(args):
             result['generated_tokens'] = result['tokens']
     else:
         result = json.loads(subprocess.check_output(command, env=env, text=True))
+    if not args.llama and 'isa' in result:
+        if result['threads'] != args.threads or (args.isa != 'auto' and result['isa'] != args.isa):
+            raise ValueError('execution settings differ from requested settings')
     if len(result['generated_tokens']) != TOKENS:
         raise ValueError('generation stopped before 32 tokens')
     row = dict(step=args.step, engine='llama.cpp' if args.llama else 'neuron',
-        isa=args.isa, threads=args.threads, prompt=PROMPT, n_predict=TOKENS,
-        context=2048 if args.llama else 256, warmups=0, repetitions=1,
+        isa='native' if args.llama else args.isa, threads=args.threads, prompt=PROMPT, n_predict=TOKENS,
+        context=256, warmups=0, repetitions=1,
         model=dict(file=model.name, sha256=sha256(model), size_bytes=model.stat().st_size),
         binary_sha256=sha256(binary), source_sha256=source_hash(),
         parent_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
-        command=command, environment=dict(NEURON_ISA=args.isa, NEURON_THREADS=str(args.threads)),
+        command=command, environment={} if args.llama else dict(NEURON_ISA=args.isa, NEURON_THREADS=str(args.threads)),
         notes=args.notes, before=before, after=machine_state(),
         result=result, tg_tokens_per_second=1000 * (TOKENS - 1) / result['timings']['predicted_ms'])
     if args.llama:

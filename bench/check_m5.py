@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Quick M5 model guards. Uses the unchanged M4 scalar path as the reference."""
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -12,8 +13,13 @@ from harness import ROOT, machine_state, read_json, sha256, write_json
 def invoke(binary, arguments, isa, threads):
     env = dict(os.environ, NEURON_ISA=isa, NEURON_THREADS=str(threads))
     command = [str(binary.resolve()), *arguments]
-    return dict(command=command, isa=isa, threads=threads,
-                result=json.loads(subprocess.check_output(command, env=env, text=True)))
+    result = json.loads(subprocess.check_output(command, env=env, text=True))
+    if arguments[0] == 'perplexity':
+        tokens = result['tokens']
+        result['input_tokens_sha256'] = hashlib.sha256(json.dumps(tokens, separators=(',', ':')).encode()).hexdigest()
+        result['input_token_count'] = len(tokens)
+        result['tokens'] = tokens[:result['context'] * result['chunks']]
+    return dict(command=command, binary_sha256=sha256(binary), isa=isa, threads=threads, result=result)
 
 
 def main():
@@ -24,8 +30,11 @@ def main():
     parser.add_argument('--isa', default='auto')
     parser.add_argument('--threads', type=int, default=1)
     parser.add_argument('--quality', action='store_true')
+    parser.add_argument('--isas', nargs='+', help='quality candidates; scalar runs once per format')
+    parser.add_argument('--resume', action='store_true', help='reuse completed quality runs with matching commands and hashes')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
+    cached = read_json(args.output) if args.resume and args.output.exists() else {}
     report = dict(before=machine_state(), binary_sha256=sha256(args.binary), runs=[])
     if args.quality:
         # Two short independent chunks keep the unchanged scalar run affordable.
@@ -33,20 +42,40 @@ def main():
         text = ROOT / 'bench/wikitext2-m4-v2.txt'
         report.update(context=32, chunks=2, scored_tokens=32, text_sha256=sha256(text),
                       scalar_binary_sha256=sha256(args.scalar_binary or args.binary))
+        if cached and any(cached.get(key) != report[key] for key in ('context', 'chunks', 'text_sha256')):
+            raise ValueError('cached quality inputs differ')
         for name, suffix in [('F16', 'f16'), ('Q8_0', 'Q8_0'), ('Q4_0', 'Q4_0'), ('Q4_K_M', 'Q4_K_M')]:
             model = args.models_dir / f'Qwen2.5-1.5B-Instruct-{suffix}.gguf'
+            model_hash = sha256(model)
             command = ['perplexity', '-m', str(model), '--prompt-file', str(text),
                        '--ctx-size', '32', '--chunks', '2']
-            scalar = invoke(args.scalar_binary or args.binary, command, 'scalar', 1)
-            simd = invoke(args.binary, command, args.isa, args.threads)
-            relative = simd['result']['perplexity'] / scalar['result']['perplexity'] - 1
-            passed = abs(relative) < 0.001 and scalar['result']['tokens'] == simd['result']['tokens']
-            report['runs'].append(dict(format=name, model_sha256=sha256(model), scalar=scalar,
-                                       candidate=simd, relative_change=relative, passed=passed))
-            write_json(args.output, report)
-            print(f'{name}: scalar {scalar["result"]["perplexity"]:.9f}, candidate {simd["result"]["perplexity"]:.9f}, change {relative:.9g}', flush=True)
-            if not passed:
-                raise ValueError('perplexity guard failed')
+
+            def reuse_or_invoke(binary, isa, threads, role):
+                expected_command = [str(binary.resolve()), *command]
+                binary_hash = sha256(binary)
+                for row in cached.get('runs', []):
+                    run = row[role]
+                    hash_key = 'scalar_binary_sha256' if role == 'scalar' else 'binary_sha256'
+                    if (row['format'] == name and row['model_sha256'] == model_hash
+                            and run['command'] == expected_command and run['isa'] == isa
+                            and run['threads'] == threads
+                            and run.get('binary_sha256', cached.get(hash_key)) == binary_hash):
+                        print(f'{name}: reusing {role} {isa} ({threads} threads)', flush=True)
+                        run['binary_sha256'] = binary_hash
+                        return run
+                return invoke(binary, command, isa, threads)
+
+            scalar = reuse_or_invoke(args.scalar_binary or args.binary, 'scalar', 1, 'scalar')
+            for isa in args.isas or [args.isa]:
+                simd = reuse_or_invoke(args.binary, isa, args.threads, 'candidate')
+                relative = simd['result']['perplexity'] / scalar['result']['perplexity'] - 1
+                passed = abs(relative) < 0.001 and scalar['result']['input_tokens_sha256'] == simd['result']['input_tokens_sha256']
+                report['runs'].append(dict(format=name, model_sha256=model_hash, scalar=scalar,
+                                           candidate=simd, relative_change=relative, passed=passed))
+                write_json(args.output, report)
+                print(f'{name} {isa}: scalar {scalar["result"]["perplexity"]:.9f}, candidate {simd["result"]["perplexity"]:.9f}, change {relative:.9g}', flush=True)
+                if not passed:
+                    raise ValueError('perplexity guard failed')
     else:
         for file, reference in [('stories15M.gguf', 'tinystories-15m.json'),
                                 ('SmolLM2-135M-Instruct-f16.gguf', 'smollm2-135m-instruct.json')]:
