@@ -80,6 +80,38 @@ int main(int argc, char** argv) {
         compare(a, b);
       }
     }
+    // K blocks with raw payload bytes, real model widths and finite F16
+    // endpoints. Tolerance: 1e-5 * (1 + abs(scalar)), as above. The scalar
+    // path decodes each FP32 weight before its FP64 product independently.
+    for (auto type : {neuron::q4_k, neuron::q6_k}) {
+      const auto bytes = neuron::quant_block_bytes(type);
+      for (std::size_t blocks : {1u, 2u, 6u, 35u}) {
+        const std::size_t rows = 5, cols = blocks * 256, batch = 2;
+        std::vector<std::byte> storage(rows * blocks * bytes + 1);
+        auto packed = std::span(storage).subspan(1);
+        for (auto& value : packed) value = static_cast<std::byte>(random() & 255u);
+        const std::uint16_t halves[] = {0, 1, 0x3ff, 0x400, 0x3555, 0x7bff, 0x8001, 0xbc00};
+        for (std::size_t b = 0; b < rows * blocks; ++b) {
+          auto* p = packed.data() + b * bytes;
+          const auto d = halves[b % 8], m = halves[(b + 3) % 8];
+          std::memcpy(p + (type == neuron::q6_k ? 208 : 0), &d, 2);
+          if (type == neuron::q4_k) std::memcpy(p + 2, &m, 2);
+          // Alternate all-zero and all-one codes and extreme signed scales.
+          if (b % 3 == 0) std::fill_n(p + (type == neuron::q4_k ? 16 : 0),
+              type == neuron::q4_k ? 128 : 192, std::byte{0xff});
+          if (type == neuron::q6_k) for (std::size_t g = 0; g < 16; ++g)
+            p[192 + g] = g % 2 == 0 ? std::byte{0x80} : std::byte{0x7f};
+        }
+        std::vector<float> x(batch * cols), a(batch * rows), b(batch * rows);
+        for (auto& value : x) value = uniform(random);
+        neuron::scalar::matmul_quantized(packed, type, x, a, rows, cols, batch);
+        neuron::kernels::matmul_quantized(packed, type, x, b, rows, cols, batch);
+        compare(a, b);
+        std::fill(x.begin(), x.end(), 0.0f);
+        neuron::kernels::matmul_quantized(packed, type, x, b, rows, cols, batch);
+        for (float value : b) if (value != 0) throw std::runtime_error("K zero input differs");
+      }
+    }
     for (std::size_t n : {0u, 1u, 15u, 16u, 17u, 31u, 32u, 63u, 64u, 65u, 4097u}) {
       std::vector<std::uint8_t> a(n);
       std::vector<std::int8_t> b(n);

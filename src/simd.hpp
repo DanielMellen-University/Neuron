@@ -4,8 +4,20 @@
 #include <array>
 #include <span>
 #include <vector>
+#include <bit>
+#include <cstring>
+#include "neuron/gguf.hpp"
 
 namespace neuron::detail {
+// The normal F16 case is exact bit expansion. Keep subnormal/Inf/NaN
+// handling in the shared converter without a call for every weight group.
+inline float load_half(const std::byte* p) {
+  std::uint16_t h;
+  std::memcpy(&h, p, sizeof(h));
+  if ((h & 0x7c00u) == 0 || (h & 0x7c00u) == 0x7c00u) return f16_to_f32(h);
+  return std::bit_cast<float>(((static_cast<std::uint32_t>(h) & 0x8000u) << 16) |
+      (((static_cast<std::uint32_t>(h) & 0x7fffu) + 0x1c000u) << 13));
+}
 using Dot = double (*)(const float*, const float*, std::size_t);
 using QuantDot = double (*)(const std::byte*, std::uint32_t, const float*, std::size_t);
 double dot_avx2(const float* a, const float* b, std::size_t n);

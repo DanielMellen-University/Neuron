@@ -92,7 +92,10 @@ void matmul_quantized(std::span<const std::byte> w, std::uint32_t type,
   const auto kernel = (selection() == "avx512" || selection() == "vnni") ? detail::quant_avx512 : detail::quant_avx2;
   const auto stride = cols / elements * bytes;
   // Pack once for the whole matmul, then share read-only across row workers.
-  const auto activations = selection() == "vnni" ? detail::prepare_activations(x) : std::vector<detail::Activation>{};
+  // Four-plane VNNI packing costs more than direct K decoding. Use the
+  // AVX-512 K kernels for this selection too, without rounding activations.
+  const auto activations = selection() == "vnni" && elements == 32 ?
+      detail::prepare_activations(x) : std::vector<detail::Activation>{};
   detail::parallel_rows(rows, [&](std::size_t begin, std::size_t end) {
     for (std::size_t b = 0; b < batch; ++b) {
       if (reference) {
