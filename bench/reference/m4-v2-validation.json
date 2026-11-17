@@ -1,0 +1,597 @@
+{
+  "machine": {
+    "utc": "2026-11-16T11:36:51.531764+00:00",
+    "load_average": [
+      1.16796875,
+      0.89794921875,
+      0.55419921875
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "checks": [
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-default",
+        "-DCMAKE_CXX_COMPILER=g++"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-default\n",
+      "log_sha256": "26cb4f095fe9aeb2ec1373f146e4f712dbb7c6d052adcd1c78707762bd462851"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-default",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target neuron_cli\nConsolidate compiler generated dependencies of target test_gguf\n[ 43%] Building CXX object CMakeFiles/neuron_cli.dir/src/main.cpp.o\n[ 43%] Built target test_gguf\nConsolidate compiler generated dependencies of target test_quant\n[ 50%] Built target test_quant\nConsolidate compiler generated dependencies of target test_kernels\n[ 56%] Built target test_kernels\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable neuron\n[100%] Built target neuron_cli\n",
+      "log_sha256": "2ba2a1a677e0c7bdb1cbec66ee1bc5896e9b538c4b7f3ecac68bc52aa1373c0b"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-default",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-default\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-default\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.50 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.47 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.50 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.56 sec\n",
+      "log_sha256": "a8b87cc7d745c8a85f6de80cde900f23e334531d52dd93e77f41214fd7a6805a"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-sanitize",
+        "-DCMAKE_CXX_COMPILER=g++",
+        "-DNEURON_WERROR=ON",
+        "-DNEURON_SANITIZE=ON",
+        "-DCMAKE_BUILD_TYPE=Debug"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-sanitize\n",
+      "log_sha256": "02a82a9f5255f456ceb1efca18c54397779aa2f7b7f66d1910dbf9134212e1de"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-sanitize",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target neuron_cli\nConsolidate compiler generated dependencies of target test_gguf\n[ 43%] Built target test_gguf\n[ 43%] Building CXX object CMakeFiles/neuron_cli.dir/src/main.cpp.o\nConsolidate compiler generated dependencies of target test_quant\n[ 50%] Built target test_quant\nConsolidate compiler generated dependencies of target test_kernels\n[ 56%] Built target test_kernels\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable neuron\n[100%] Built target neuron_cli\n",
+      "log_sha256": "21efa1789498fa29eac4a723ab79b541668b574f1467edd7d0382415b4c75dd2"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-sanitize",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-sanitize\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-sanitize\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.02 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    4.66 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.01 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.02 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.01 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.04 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.01 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.01 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.01 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.01 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.01 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.46 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed   39.66 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.15 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =  45.07 sec\n",
+      "log_sha256": "523bf4acdf890906c7f2d533b2cf19f6e01c2258529524fcd697cb342aa08545"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-avx2",
+        "-DCMAKE_CXX_COMPILER=g++",
+        "-DNEURON_WERROR=ON",
+        "-DNEURON_AVX2=ON"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx2\n",
+      "log_sha256": "5884bafd4d603ab99d07fec0e24b582df4abdf11eed54f93710e74fab0c12459"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-avx2",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target test_gguf\nConsolidate compiler generated dependencies of target neuron_cli\n[ 40%] Building CXX object CMakeFiles/neuron_cli.dir/src/main.cpp.o\n[ 43%] Built target test_gguf\nConsolidate compiler generated dependencies of target test_quant\n[ 50%] Built target test_quant\nConsolidate compiler generated dependencies of target test_kernels\n[ 56%] Built target test_kernels\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable neuron\n[100%] Built target neuron_cli\n",
+      "log_sha256": "b556b1a52be899d5d474fb19b957608584672c3da47c4edc79c0b35c3b3baba1"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-avx2",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx2\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx2\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.49 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.47 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.51 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.56 sec\n",
+      "log_sha256": "188691bcfd04aaace2cbcc16d7ca665bf0e308664cc0e0ce7f353ad5b9042426"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-avx512",
+        "-DCMAKE_CXX_COMPILER=g++",
+        "-DNEURON_WERROR=ON",
+        "-DNEURON_AVX512=ON"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx512\n",
+      "log_sha256": "a46ef93681f30cade6a32ed10f958c94edd2c8d2f34467595466fe4caa02e0b4"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-avx512",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target neuron_cli\nConsolidate compiler generated dependencies of target test_gguf\n[ 43%] Building CXX object CMakeFiles/neuron_cli.dir/src/main.cpp.o\n[ 43%] Built target test_gguf\nConsolidate compiler generated dependencies of target test_quant\n[ 50%] Built target test_quant\nConsolidate compiler generated dependencies of target test_kernels\n[ 56%] Built target test_kernels\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable neuron\n[100%] Built target neuron_cli\n",
+      "log_sha256": "2ba2a1a677e0c7bdb1cbec66ee1bc5896e9b538c4b7f3ecac68bc52aa1373c0b"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-avx512",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx512\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx512\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.50 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.46 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.48 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.54 sec\n",
+      "log_sha256": "5b2ecefdb6180c7f105994c92a1b1829ec77228f199ba484013edd0e7a51210c"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-clang",
+        "-DCMAKE_CXX_COMPILER=clang++",
+        "-DNEURON_WERROR=ON",
+        "-DCMAKE_CXX_FLAGS=--gcc-toolchain=/usr -isystem /usr/include/c++/11 -isystem /usr/include/x86_64-linux-gnu/c++/11",
+        "-DCMAKE_EXE_LINKER_FLAGS=-L/usr/lib/gcc/x86_64-linux-gnu/11"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang\n",
+      "log_sha256": "888fc36609dac1fa7c49864ddd81c348a19520ab23e7a211a0b1e98141d816f9"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-clang",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target test_gguf\nConsolidate compiler generated dependencies of target neuron_cli\n[ 40%] Building CXX object CMakeFiles/neuron_cli.dir/src/main.cpp.o\n[ 43%] Built target test_gguf\nConsolidate compiler generated dependencies of target test_quant\n[ 50%] Built target test_quant\nConsolidate compiler generated dependencies of target test_kernels\n[ 56%] Built target test_kernels\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable neuron\n[100%] Built target neuron_cli\n",
+      "log_sha256": "b556b1a52be899d5d474fb19b957608584672c3da47c4edc79c0b35c3b3baba1"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-clang",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.68 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.46 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.55 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.79 sec\n",
+      "log_sha256": "214ce4c92acd632b1a350d28ed2ca648e9768c6650a90e98a9e59fc2e648e01c"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-clang-avx2",
+        "-DCMAKE_CXX_COMPILER=clang++",
+        "-DNEURON_WERROR=ON",
+        "-DNEURON_AVX2=ON",
+        "-DCMAKE_CXX_FLAGS=--gcc-toolchain=/usr -isystem /usr/include/c++/11 -isystem /usr/include/x86_64-linux-gnu/c++/11",
+        "-DCMAKE_EXE_LINKER_FLAGS=-L/usr/lib/gcc/x86_64-linux-gnu/11"
+      ],
+      "returncode": 0,
+      "log": "-- The CXX compiler identification is Clang 14.0.0\n-- Detecting CXX compiler ABI info\n-- Detecting CXX compiler ABI info - done\n-- Check for working CXX compiler: /usr/bin/clang++ - skipped\n-- Detecting CXX compile features\n-- Detecting CXX compile features - done\n-- Found Python3: /usr/bin/python3.10 (found suitable version \"3.10.12\", minimum required is \"3.8\") found components: Interpreter \n-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang-avx2\n",
+      "log_sha256": "03860124426714dc5a3a63c92a9fcb0bbe52d03f3101badd5d184ea617e9a115"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-clang-avx2",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "[  6%] Building CXX object CMakeFiles/neuron.dir/src/chat.cpp.o\n[  6%] Building CXX object CMakeFiles/neuron.dir/src/gguf.cpp.o\n[ 10%] Building CXX object CMakeFiles/neuron.dir/src/kernels.cpp.o\n[ 13%] Building CXX object CMakeFiles/neuron.dir/src/model.cpp.o\n[ 16%] Building CXX object CMakeFiles/neuron.dir/src/quant.cpp.o\n[ 20%] Building CXX object CMakeFiles/neuron.dir/src/perplexity.cpp.o\n[ 23%] Building CXX object CMakeFiles/neuron.dir/src/tokenizer.cpp.o\n[ 26%] Building CXX object CMakeFiles/neuron.dir/src/tensor.cpp.o\n[ 30%] Building CXX object CMakeFiles/neuron.dir/src/version.cpp.o\n[ 33%] Linking CXX static library libneuron.a\n[ 33%] Built target neuron\n[ 40%] Building CXX object tests/CMakeFiles/test_gguf.dir/test_gguf.cpp.o\n[ 40%] Building CXX object CMakeFiles/neuron_cli.dir/src/main.cpp.o\n[ 43%] Linking CXX executable test_gguf\n[ 46%] Linking CXX executable neuron\n[ 46%] Built target test_gguf\n[ 50%] Building CXX object tests/CMakeFiles/test_quant.dir/test_quant.cpp.o\n[ 50%] Built target neuron_cli\n[ 53%] Building CXX object tests/CMakeFiles/test_kernels.dir/test_kernels.cpp.o\n[ 56%] Linking CXX executable test_kernels\n[ 56%] Built target test_kernels\n[ 60%] Building CXX object tests/CMakeFiles/test_tokenizer.dir/test_tokenizer.cpp.o\n[ 63%] Linking CXX executable test_quant\n[ 63%] Built target test_quant\n[ 66%] Building CXX object tests/CMakeFiles/test_unicode.dir/test_unicode.cpp.o\n[ 70%] Linking CXX executable test_tokenizer\n[ 70%] Built target test_tokenizer\n[ 73%] Building CXX object tests/CMakeFiles/test_model.dir/test_model.cpp.o\n[ 76%] Linking CXX executable test_unicode\n[ 76%] Built target test_unicode\n[ 80%] Building CXX object tests/CMakeFiles/test_chat.dir/test_chat.cpp.o\n[ 83%] Linking CXX executable test_chat\n[ 83%] Built target test_chat\n[ 86%] Building CXX object tests/CMakeFiles/test_shape.dir/test_shape.cpp.o\n[ 90%] Linking CXX executable test_model\n[ 90%] Built target test_model\n[ 93%] Building CXX object tests/CMakeFiles/test_version.dir/test_version.cpp.o\n[ 96%] Linking CXX executable test_shape\n[ 96%] Built target test_shape\n[100%] Linking CXX executable test_version\n[100%] Built target test_version\n",
+      "log_sha256": "0dd157622c164307373a6b12ca8fdd9cf89f27251c44a498bc85d4059116e46b"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-clang-avx2",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang-avx2\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang-avx2\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.63 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.47 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.54 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.74 sec\n",
+      "log_sha256": "995a1f6d415b7fb60cb247765b24b497bc3aa3e38b428c82b694e3ea29e137f4"
+    },
+    {
+      "command": [
+        "build-m4r2-default/tests/test_quant"
+      ],
+      "returncode": 0,
+      "log": "type=8 blocks=6000 maximum_error/bound=0.999477885\ntype=2 blocks=6000 maximum_error/bound=1\n[ ok ] round_trip_bounds_include_half_scale_rounding_and_q4_clipping\n[ ok ] quantization_rejects_bad_shapes_and_nonfinite_input\n[ ok ] gguf_block_layout_rows_and_truncation\n[ ok ] quantized_matmul_matches_independent_dequantization_batched\n[ ok ] mapped_quantized_transformer_and_tied_embeddings_match_dense\ntype=12 blocks=6000 maximum_error/bound=0.99157374\ntype=14 blocks=6000 maximum_error/bound=0.989739144\n[ ok ] k_round_trip_bounds_include_both_scale_levels\n[ ok ] k_gguf_independent_layout_and_every_payload_truncation\n7/7 passed\n",
+      "log_sha256": "43c19c8dd6744ae29a235621ae473245ef366a19dfbb9ba9ea3892323ed937fb"
+    },
+    {
+      "command": [
+        "python3",
+        "bench/check_m2.py",
+        "--binary",
+        "build-m4r2-default/neuron",
+        "--model",
+        "/home/daniel/codex-runs/Neuron-m1/models/stories15M.gguf",
+        "--reference-tool",
+        "/tmp/neuron-m4-reference",
+        "--output",
+        "bench/reference/m4-v2-m2.json"
+      ],
+      "returncode": 0,
+      "log": "Tokenizer: 51/51 exact matches\nrabbit: max abs diff 9.53674316406e-06\ngarden: max abs diff 8.58306884766e-06\nball: max abs diff 9.53674316406e-06\n",
+      "log_sha256": "2a30d42769b6c3d12362b00f2ac63ce7267a64d51cdaf16c99ff22e37cc20fd7"
+    },
+    {
+      "command": [
+        "python3",
+        "bench/harness.py",
+        "run-neuron",
+        "--binary",
+        "build-m4r2-default/neuron",
+        "--model-file",
+        "/home/daniel/codex-runs/Neuron-m1/models/stories15M.gguf",
+        "--output",
+        "bench/reference/tinystories-m4-v2.json",
+        "--notes",
+        "Correctness regression. Serial model processes; Codex and background services active."
+      ],
+      "returncode": 0,
+      "log": "neuron: rabbit repetition 0: 128 tokens\nneuron: garden repetition 0: 128 tokens\nneuron: ball repetition 0: 128 tokens\nneuron: rabbit repetition 1: 128 tokens\nneuron: garden repetition 1: 128 tokens\nneuron: ball repetition 1: 128 tokens\nneuron: rabbit repetition 2: 128 tokens\nneuron: garden repetition 2: 128 tokens\nneuron: ball repetition 2: 128 tokens\n[\n  {\n    \"threads\": 1,\n    \"samples\": 9,\n    \"prompt_n\": 543,\n    \"prompt_ms\": 3063.053533,\n    \"predicted_n\": 1152,\n    \"predicted_ms\": 15942.118499999999,\n    \"generation_steps\": 1143,\n    \"pp_tokens_per_second\": 177.27408096200585,\n    \"tg_tokens_per_second\": 71.69687014934685\n  }\n]\n",
+      "log_sha256": "bcdcbd9ea1ac8bb2479f0808eef9c29293a94dea7a493b4bef442a4da55a9d2c"
+    },
+    {
+      "command": [
+        "python3",
+        "bench/harness.py",
+        "compare",
+        "bench/reference/tinystories-15m.json",
+        "bench/reference/tinystories-m4-v2.json",
+        "--threads",
+        "1",
+        "--exact-match"
+      ],
+      "returncode": 0,
+      "log": "{\n  \"exact_match\": true,\n  \"generated_token_agreement_rate\": 1.0,\n  \"matching_generated_tokens\": 1152,\n  \"total_generated_tokens\": 1152,\n  \"runs\": [\n    {\n      \"model\": \"tinystories-15m\",\n      \"threads\": 1,\n      \"prompt_id\": \"ball\",\n      \"repetition\": 0,\n      \"status\": \"compared\",\n      \"prompt\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 56,\n        \"total_tokens\": 56,\n        \"agreement_rate\": 1.0\n      },\n      \"generation\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 128,\n        \"total_tokens\": 128,\n        \"agreement_rate\": 1.0\n      },\n      \"speed_ratio_candidate_over_reference\": {\n        \"pp\": 0.05884364544457143,\n        \"tg\": 0.25482115734701105\n      }\n    },\n    {\n      \"model\": \"tinystories-15m\",\n      \"threads\": 1,\n      \"prompt_id\": \"ball\",\n      \"repetition\": 1,\n      \"status\": \"compared\",\n      \"prompt\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 56,\n        \"total_tokens\": 56,\n        \"agreement_rate\": 1.0\n      },\n      \"generation\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 128,\n        \"total_tokens\": 128,\n        \"agreement_rate\": 1.0\n      },\n      \"speed_ratio_candidate_over_reference\": {\n        \"pp\": 0.06063261309642857,\n        \"tg\": 0.2549747094603213\n      }\n    },\n    {\n      \"model\": \"tinystories-15m\",\n      \"threads\": 1,\n      \"prompt_id\": \"ball\",\n      \"repetition\": 2,\n      \"status\": \"compared\",\n      \"prompt\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 56,\n        \"total_tokens\": 56,\n        \"agreement_rate\": 1.0\n      },\n      \"generation\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 128,\n        \"total_tokens\": 128,\n        \"agreement_rate\": 1.0\n      },\n      \"speed_ratio_candidate_over_reference\": {\n        \"pp\": 0.05846463807803571,\n        \"tg\": 0.254722758471063\n      }\n    },\n    {\n      \"model\": \"tinystories-15m\",\n      \"threads\": 1,\n      \"prompt_id\": \"garden\",\n      \"repetition\": 0,\n      \"status\": \"compared\",\n      \"prompt\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 63,\n        \"total_tokens\": 63,\n        \"agreement_rate\": 1.0\n      },\n      \"generation\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 128,\n        \"total_tokens\": 128,\n        \"agreement_rate\": 1.0\n      },\n      \"speed_ratio_candidate_over_reference\": {\n        \"pp\": 0.05860355487695239,\n        \"tg\": 0.25658822605710396\n      }\n    },\n    {\n      \"model\": \"tinystories-15m\",\n      \"threads\": 1,\n      \"prompt_id\": \"garden\",\n      \"repetition\": 1,\n      \"status\": \"compared\",\n      \"prompt\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 63,\n        \"total_tokens\": 63,\n        \"agreement_rate\": 1.0\n      },\n      \"generation\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 128,\n        \"total_tokens\": 128,\n        \"agreement_rate\": 1.0\n      },\n      \"speed_ratio_candidate_over_reference\": {\n        \"pp\": 0.057338328019047625,\n        \"tg\": 0.25401603408250395\n      }\n    },\n    {\n      \"model\": \"tinystories-15m\",\n      \"threads\": 1,\n      \"prompt_id\": \"garden\",\n      \"repetition\": 2,\n      \"status\": \"compared\",\n      \"prompt\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 63,\n        \"total_tokens\": 63,\n        \"agreement_rate\": 1.0\n      },\n      \"generation\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 128,\n        \"total_tokens\": 128,\n        \"agreement_rate\": 1.0\n      },\n      \"speed_ratio_candidate_over_reference\": {\n        \"pp\": 0.05777070195000001,\n        \"tg\": 0.25288595787345663\n      }\n    },\n    {\n      \"model\": \"tinystories-15m\",\n      \"threads\": 1,\n      \"prompt_id\": \"rabbit\",\n      \"repetition\": 0,\n      \"status\": \"compared\",\n      \"prompt\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 62,\n        \"total_tokens\": 62,\n        \"agreement_rate\": 1.0\n      },\n      \"generation\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 128,\n        \"total_tokens\": 128,\n        \"agreement_rate\": 1.0\n      },\n      \"speed_ratio_candidate_over_reference\": {\n        \"pp\": 0.057664704730564516,\n        \"tg\": 0.26017106323520633\n      }\n    },\n    {\n      \"model\": \"tinystories-15m\",\n      \"threads\": 1,\n      \"prompt_id\": \"rabbit\",\n      \"repetition\": 1,\n      \"status\": \"compared\",\n      \"prompt\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 62,\n        \"total_tokens\": 62,\n        \"agreement_rate\": 1.0\n      },\n      \"generation\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 128,\n        \"total_tokens\": 128,\n        \"agreement_rate\": 1.0\n      },\n      \"speed_ratio_candidate_over_reference\": {\n        \"pp\": 0.057307127610999986,\n        \"tg\": 0.2547775496947134\n      }\n    },\n    {\n      \"model\": \"tinystories-15m\",\n      \"threads\": 1,\n      \"prompt_id\": \"rabbit\",\n      \"repetition\": 2,\n      \"status\": \"compared\",\n      \"prompt\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 62,\n        \"total_tokens\": 62,\n        \"agreement_rate\": 1.0\n      },\n      \"generation\": {\n        \"first_divergent_token_index\": null,\n        \"matching_tokens\": 128,\n        \"total_tokens\": 128,\n        \"agreement_rate\": 1.0\n      },\n      \"speed_ratio_candidate_over_reference\": {\n        \"pp\": 0.05828983948006451,\n        \"tg\": 0.2537716890779063\n      }\n    }\n  ]\n}\n",
+      "log_sha256": "98a4dcfc52effca3f9f399c79394cbd76b337fab037227d10175577bb1cfc185"
+    },
+    {
+      "command": [
+        "python3",
+        "bench/check_m3.py",
+        "--binary",
+        "build-m4r2-default/neuron",
+        "--model",
+        "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+        "--reference-tool",
+        "/tmp/neuron-m4-reference",
+        "--fixtures-only",
+        "--output",
+        "bench/reference/m4-v2-m3.json",
+        "--notes",
+        "Tokenizer and ChatML fixtures. Serial model processes; Codex and background services active."
+      ],
+      "returncode": 0,
+      "log": "Tokenizer: 63 exact cases; ChatML: 4 exact byte/ID cases\n",
+      "log_sha256": "8955e6e832b2d96e011469068d19be02d4959824954d641c2bcadb12b36c69f5"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-default",
+        "-DCMAKE_CXX_COMPILER=g++"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-default\n",
+      "log_sha256": "26cb4f095fe9aeb2ec1373f146e4f712dbb7c6d052adcd1c78707762bd462851"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-default",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target neuron_cli\nConsolidate compiler generated dependencies of target test_gguf\n[ 46%] Built target neuron_cli\n[ 46%] Built target test_gguf\nConsolidate compiler generated dependencies of target test_kernels\nConsolidate compiler generated dependencies of target test_quant\n[ 56%] Building CXX object tests/CMakeFiles/test_quant.dir/test_quant.cpp.o\n[ 56%] Built target test_kernels\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable test_quant\n[100%] Built target test_quant\n",
+      "log_sha256": "8bce2833a5a7d8e880bbc51f9b93805ba751a4939b638a306f85095bc10311ee"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-default",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-default\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-default\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.54 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.49 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.88 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.07 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   5.01 sec\n",
+      "log_sha256": "0bd467b62ac2a737b4827bffc8f6382cea6a9414a70f2cc112f4092584b5cf57"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-sanitize",
+        "-DCMAKE_CXX_COMPILER=g++",
+        "-DNEURON_WERROR=ON",
+        "-DNEURON_SANITIZE=ON",
+        "-DCMAKE_BUILD_TYPE=Debug"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-sanitize\n",
+      "log_sha256": "02a82a9f5255f456ceb1efca18c54397779aa2f7b7f66d1910dbf9134212e1de"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-sanitize",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target neuron_cli\nConsolidate compiler generated dependencies of target test_gguf\n[ 43%] Built target test_gguf\n[ 46%] Built target neuron_cli\nConsolidate compiler generated dependencies of target test_kernels\nConsolidate compiler generated dependencies of target test_quant\n[ 56%] Built target test_kernels\n[ 56%] Building CXX object tests/CMakeFiles/test_quant.dir/test_quant.cpp.o\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable test_quant\n[100%] Built target test_quant\n",
+      "log_sha256": "bb28c2acaf1a3abf335dfc4c6839b6eeac2caa8d9e6199c18ff9e441eca3609a"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-sanitize",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-sanitize\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-sanitize\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.03 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    4.67 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.01 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.02 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.01 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.04 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.01 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.01 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.01 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.01 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.01 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.49 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed   39.83 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.15 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =  45.30 sec\n",
+      "log_sha256": "ea5c2c3238eefa9acc26775e9b53142f8bf8c3ca1453b890943e3041569edefd"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-avx2"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx2\n",
+      "log_sha256": "5884bafd4d603ab99d07fec0e24b582df4abdf11eed54f93710e74fab0c12459"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-avx2",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target test_gguf\nConsolidate compiler generated dependencies of target neuron_cli\n[ 46%] Built target test_gguf\n[ 46%] Built target neuron_cli\nConsolidate compiler generated dependencies of target test_kernels\nConsolidate compiler generated dependencies of target test_quant\n[ 56%] Building CXX object tests/CMakeFiles/test_quant.dir/test_quant.cpp.o\n[ 56%] Built target test_kernels\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable test_quant\n[100%] Built target test_quant\n",
+      "log_sha256": "1febf9a3f7d0bedddedb5cdab1c922443a4479c63384c48c5d5367bd37774438"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-avx2",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx2\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx2\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.49 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.47 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.51 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.56 sec\n",
+      "log_sha256": "188691bcfd04aaace2cbcc16d7ca665bf0e308664cc0e0ce7f353ad5b9042426"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-avx512"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx512\n",
+      "log_sha256": "a46ef93681f30cade6a32ed10f958c94edd2c8d2f34467595466fe4caa02e0b4"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-avx512",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target test_gguf\nConsolidate compiler generated dependencies of target neuron_cli\n[ 40%] Built target neuron_cli\n[ 46%] Built target test_gguf\nConsolidate compiler generated dependencies of target test_kernels\nConsolidate compiler generated dependencies of target test_quant\n[ 56%] Built target test_kernels\n[ 56%] Building CXX object tests/CMakeFiles/test_quant.dir/test_quant.cpp.o\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable test_quant\n[100%] Built target test_quant\n",
+      "log_sha256": "93ad2d2031eb5ddc45026a1a6f8b797e5097f38c44400ca4381840a59bc966f6"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-avx512",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx512\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-avx512\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.49 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.47 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.53 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.59 sec\n",
+      "log_sha256": "44f2cba4f26a45c392a3e02790d5cd4605160d276c9a5a9b1033f621b70b382f"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-clang"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang\n",
+      "log_sha256": "888fc36609dac1fa7c49864ddd81c348a19520ab23e7a211a0b1e98141d816f9"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-clang",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target neuron_cli\nConsolidate compiler generated dependencies of target test_gguf\n[ 46%] Built target test_gguf\n[ 46%] Built target neuron_cli\nConsolidate compiler generated dependencies of target test_kernels\nConsolidate compiler generated dependencies of target test_quant\n[ 56%] Built target test_kernels\n[ 56%] Building CXX object tests/CMakeFiles/test_quant.dir/test_quant.cpp.o\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable test_quant\n[100%] Built target test_quant\n",
+      "log_sha256": "4840d3737920c44eec91abf074cf43dab54409659d2ea6b7cda9e65f32f39ca9"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-clang",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.73 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.01 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.48 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.57 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.89 sec\n",
+      "log_sha256": "ad8650d7c6ebe7544e7464a008283a284d3ee1734b1120a6e74225a4ef1bc94c"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-clang-avx2"
+      ],
+      "returncode": 0,
+      "log": "-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang-avx2\n",
+      "log_sha256": "bf46bd1d94782c340c3a1623d6d035bffbd574bcd315971b48830aedd4777331"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-clang-avx2",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "Consolidate compiler generated dependencies of target neuron\n[ 33%] Built target neuron\nConsolidate compiler generated dependencies of target neuron_cli\nConsolidate compiler generated dependencies of target test_gguf\n[ 46%] Built target neuron_cli\n[ 46%] Built target test_gguf\nConsolidate compiler generated dependencies of target test_kernels\nConsolidate compiler generated dependencies of target test_quant\n[ 53%] Building CXX object tests/CMakeFiles/test_quant.dir/test_quant.cpp.o\n[ 56%] Built target test_kernels\nConsolidate compiler generated dependencies of target test_tokenizer\n[ 63%] Built target test_tokenizer\nConsolidate compiler generated dependencies of target test_unicode\n[ 70%] Built target test_unicode\nConsolidate compiler generated dependencies of target test_model\n[ 76%] Built target test_model\nConsolidate compiler generated dependencies of target test_chat\n[ 83%] Built target test_chat\nConsolidate compiler generated dependencies of target test_shape\n[ 90%] Built target test_shape\nConsolidate compiler generated dependencies of target test_version\n[ 96%] Built target test_version\n[100%] Linking CXX executable test_quant\n[100%] Built target test_quant\n",
+      "log_sha256": "e74ed4145ff4c2e59777211f151dc01bd2b2b969d708d2f66284b5ba32ccb0a0"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-clang-avx2",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang-avx2\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-clang-avx2\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.67 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.47 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.72 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.96 sec\n",
+      "log_sha256": "2d9bfb7f095b1e2b8d4c9f8b133653aefecd779c854603cc310b1b8a20074fb9"
+    },
+    {
+      "command": [
+        "cmake",
+        "-S",
+        ".",
+        "-B",
+        "build-m4r2-gcc-werror",
+        "-DCMAKE_CXX_COMPILER=g++",
+        "-DNEURON_WERROR=ON",
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "returncode": 0,
+      "log": "-- The CXX compiler identification is GNU 11.4.0\n-- Detecting CXX compiler ABI info\n-- Detecting CXX compiler ABI info - done\n-- Check for working CXX compiler: /usr/bin/g++ - skipped\n-- Detecting CXX compile features\n-- Detecting CXX compile features - done\n-- Found Python3: /usr/bin/python3.10 (found suitable version \"3.10.12\", minimum required is \"3.8\") found components: Interpreter \n-- Configuring done\n-- Generating done\n-- Build files have been written to: /home/daniel/codex-runs/Neuron-m4/build-m4r2-gcc-werror\n",
+      "log_sha256": "15091d2db9b69576cfe7ffb221f0bd25fc2ec23501ea02d11e48fa9700cc6b20"
+    },
+    {
+      "command": [
+        "cmake",
+        "--build",
+        "build-m4r2-gcc-werror",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "log": "[  3%] Building CXX object CMakeFiles/neuron.dir/src/chat.cpp.o\n[  6%] Building CXX object CMakeFiles/neuron.dir/src/gguf.cpp.o\n[ 10%] Building CXX object CMakeFiles/neuron.dir/src/kernels.cpp.o\n[ 13%] Building CXX object CMakeFiles/neuron.dir/src/model.cpp.o\n[ 16%] Building CXX object CMakeFiles/neuron.dir/src/quant.cpp.o\n[ 20%] Building CXX object CMakeFiles/neuron.dir/src/perplexity.cpp.o\n[ 23%] Building CXX object CMakeFiles/neuron.dir/src/tokenizer.cpp.o\n[ 26%] Building CXX object CMakeFiles/neuron.dir/src/tensor.cpp.o\n[ 30%] Building CXX object CMakeFiles/neuron.dir/src/version.cpp.o\n[ 33%] Linking CXX static library libneuron.a\n[ 33%] Built target neuron\n[ 40%] Building CXX object CMakeFiles/neuron_cli.dir/src/main.cpp.o\n[ 40%] Building CXX object tests/CMakeFiles/test_gguf.dir/test_gguf.cpp.o\n[ 43%] Linking CXX executable neuron\n[ 43%] Built target neuron_cli\n[ 46%] Building CXX object tests/CMakeFiles/test_quant.dir/test_quant.cpp.o\n[ 50%] Linking CXX executable test_gguf\n[ 50%] Built target test_gguf\n[ 53%] Building CXX object tests/CMakeFiles/test_kernels.dir/test_kernels.cpp.o\n[ 56%] Linking CXX executable test_kernels\n[ 56%] Built target test_kernels\n[ 60%] Building CXX object tests/CMakeFiles/test_tokenizer.dir/test_tokenizer.cpp.o\n[ 63%] Linking CXX executable test_quant\n[ 63%] Built target test_quant\n[ 66%] Building CXX object tests/CMakeFiles/test_unicode.dir/test_unicode.cpp.o\n[ 70%] Linking CXX executable test_tokenizer\n[ 70%] Built target test_tokenizer\n[ 73%] Building CXX object tests/CMakeFiles/test_model.dir/test_model.cpp.o\n[ 76%] Linking CXX executable test_unicode\n[ 76%] Built target test_unicode\n[ 80%] Building CXX object tests/CMakeFiles/test_chat.dir/test_chat.cpp.o\n[ 83%] Linking CXX executable test_chat\n[ 83%] Built target test_chat\n[ 86%] Building CXX object tests/CMakeFiles/test_shape.dir/test_shape.cpp.o\n[ 90%] Linking CXX executable test_shape\n[ 90%] Built target test_shape\n[ 93%] Building CXX object tests/CMakeFiles/test_version.dir/test_version.cpp.o\n[ 96%] Linking CXX executable test_model\n[ 96%] Built target test_model\n[100%] Linking CXX executable test_version\n[100%] Built target test_version\n",
+      "log_sha256": "88195deb8a6a1bb54c4933ba37732abb66be6c8e861417c88ee97a45db7ba1cd"
+    },
+    {
+      "command": [
+        "ctest",
+        "--test-dir",
+        "build-m4r2-gcc-werror",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "log": "Internal ctest changing into directory: /home/daniel/codex-runs/Neuron-m4/build-m4r2-gcc-werror\nTest project /home/daniel/codex-runs/Neuron-m4/build-m4r2-gcc-werror\n      Start  1: test_gguf\n 1/14 Test  #1: test_gguf ........................   Passed    0.01 sec\n      Start  2: test_quant\n 2/14 Test  #2: test_quant .......................   Passed    0.52 sec\n      Start  3: test_kernels\n 3/14 Test  #3: test_kernels .....................   Passed    0.00 sec\n      Start  4: test_tokenizer\n 4/14 Test  #4: test_tokenizer ...................   Passed    0.00 sec\n      Start  5: test_unicode\n 5/14 Test  #5: test_unicode .....................   Passed    0.00 sec\n      Start  6: test_model\n 6/14 Test  #6: test_model .......................   Passed    0.00 sec\n      Start  7: test_chat\n 7/14 Test  #7: test_chat ........................   Passed    0.00 sec\n      Start  8: test_shape\n 8/14 Test  #8: test_shape .......................   Passed    0.00 sec\n      Start  9: test_version\n 9/14 Test  #9: test_version .....................   Passed    0.00 sec\n      Start 10: cli_version\n10/14 Test #10: cli_version ......................   Passed    0.00 sec\n      Start 11: cli_rejects_unknown_args\n11/14 Test #11: cli_rejects_unknown_args .........   Passed    0.00 sec\n      Start 12: test_harness_compare\n12/14 Test #12: test_harness_compare .............   Passed    0.47 sec\n      Start 13: test_qwen_fixtures\n13/14 Test #13: test_qwen_fixtures ...............   Passed    3.53 sec\n      Start 14: test_m4_method\n14/14 Test #14: test_m4_method ...................   Passed    0.06 sec\n\n100% tests passed, 0 tests failed out of 14\n\nTotal Test time (real) =   4.61 sec\n",
+      "log_sha256": "574cca3944ec76b37bdb9392c01681e3b86846a31a95fb3d72019a69ecc517e4"
+    },
+    {
+      "command": [
+        "build-m4r2-default/tests/test_quant"
+      ],
+      "returncode": 0,
+      "log": "type=8 blocks=6000 maximum_error/bound=0.999477885\ntype=2 blocks=6000 maximum_error/bound=1\n[ ok ] round_trip_bounds_include_half_scale_rounding_and_q4_clipping\n[ ok ] quantization_rejects_bad_shapes_and_nonfinite_input\n[ ok ] gguf_block_layout_rows_and_truncation\n[ ok ] quantized_matmul_matches_independent_dequantization_batched\n[ ok ] mapped_quantized_transformer_and_tied_embeddings_match_dense\ntype=12 blocks=6000 maximum_error/bound=0.99157374\ntype=14 blocks=6000 maximum_error/bound=0.989739144\n[ ok ] k_round_trip_bounds_include_both_scale_levels\n[ ok ] k_gguf_independent_layout_and_every_payload_truncation\n7/7 passed\n"
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "bad=$(git ls-files | grep -Ei '\\.(gguf|ggml|safetensors|bin|pt|pth|onnx|npy|npz)$' || true)\nif [ -n \"$bad\" ]; then echo \"weight files committed:\"; echo \"$bad\"; exit 1; fi\nbig=$(git ls-files -z | xargs -0 -r du -k | awk '$1 > 1024 {print $2}')\nif [ -n \"$big\" ]; then echo \"files over 1 MiB:\"; echo \"$big\"; exit 1; fi"
+      ],
+      "returncode": 0,
+      "log": "Weights guard passed: no weight files or files over 1 MiB.\n"
+    }
+  ]
+}

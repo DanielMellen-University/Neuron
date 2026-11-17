@@ -1,0 +1,43 @@
+{
+  "model_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+  "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+  "neuron_binary_sha256": "9e54795c9227ab9d317914fdb098ae588804e6622d12629ebbe66ded97f7a3fd",
+  "reference_tool_sha256": "2204e825518a71885dd9188bc8c13d97a31c977f419942342b98df01ab7edb3d",
+  "context": 2048,
+  "threads": 1,
+  "machine_before": {
+    "utc": "2026-11-16T11:36:32.249367+00:00",
+    "load_average": [
+      1.12939453125,
+      0.875,
+      0.541015625
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "notes": "Tokenizer and ChatML fixtures. Serial model processes; Codex and background services active.",
+  "tokenizer_cases": 63,
+  "chat_cases": 4,
+  "machine_after": {
+    "utc": "2026-11-16T11:36:51.524074+00:00",
+    "load_average": [
+      1.16796875,
+      0.89794921875,
+      0.55419921875
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  }
+}

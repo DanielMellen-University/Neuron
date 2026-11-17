@@ -15,7 +15,7 @@ struct ModelConfig {
   bool rope_neox;
 };
 
-// Dense llama or Qwen2 transformer. F32 weights stay mapped; F16 weights are converted
+// Dense llama or Qwen2 transformer. F32/Q8_0/Q4_0 stay mapped; F16 weights are converted
 // once on load. Activations and the single-sequence K/V state use FP32.
 class Model {
  public:
@@ -32,6 +32,11 @@ class Model {
   struct Weight {
     std::vector<float> converted;
     std::span<const float> data;
+    std::span<const std::byte> blocks;
+    std::uint32_t type = 0;
+    void multiply(std::span<const float> input, std::span<float> output,
+                  std::size_t rows, std::size_t cols) const;
+    void row(std::size_t index, std::span<float> output) const;
   };
   struct Layer {
     Weight attn_norm, q, k, v, q_bias, k_bias, v_bias, attn_output, ffn_norm, gate, up, down;

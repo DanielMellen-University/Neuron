@@ -1,0 +1,21 @@
+{
+  "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+  "quantizer_sha256": "df104a34266108fb1cbb70800e2056073c1a1931a1b308f51cbf371c3cb1cc89",
+  "source_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+  "output_sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281",
+  "output_size_bytes": 986048512,
+  "tensor_types": {
+    "F32": 141,
+    "Q4_K": 168,
+    "Q6_K": 29
+  },
+  "payload_bits_per_weight_reported": 5.08,
+  "command": [
+    "/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp/build/bin/llama-quantize",
+    "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-f16.gguf",
+    "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "Q4_K_M",
+    "2"
+  ],
+  "log_sha256": "7581d6120bcab6f461b1f221bf228e530ae8920cdf47422e449413fb0093546d"
+}

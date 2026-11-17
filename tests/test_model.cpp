@@ -1,5 +1,6 @@
 #define NEURON_TEST_MAIN
 #include "neuron/model.hpp"
+#include "neuron/perplexity.hpp"
 #include "neuron_test.hpp"
 #include "gguf_fixture.hpp"
 
@@ -131,4 +132,29 @@ NEURON_TEST(cached_generation_equals_full_recomputation_for_32_tokens) {
       CHECK_EQ(cached.position(), sequence.size());
     }
   }
+}
+
+NEURON_TEST(perplexity_scores_second_half_and_resets_chunks) {
+  fixture::File f(tiny_model(false)); neuron::Model model(f.path);
+  const std::array<std::int32_t, 9> tokens{0,1,2,0, 2,0,1,2, 1};
+  double expected = 0;
+  for (std::size_t chunk = 0; chunk < 2; ++chunk) {
+    model.reset();
+    for (std::size_t i = 0; i < 3; ++i) {
+      const auto logits = model.step(tokens[chunk * 4 + i]);
+      if (i >= 1) expected += neuron::token_nll(logits, tokens[chunk * 4 + i + 1]);
+    }
+  }
+  const auto result = neuron::perplexity(model, tokens);
+  CHECK_EQ(result.chunks, 2u); CHECK_EQ(result.scored_tokens, 4u);
+  CHECK_EQ(result.negative_log_likelihood, expected);
+  CHECK_EQ(result.value(), std::exp(expected / 4));
+  CHECK_EQ(neuron::perplexity(model, tokens, 1).scored_tokens, 2u);
+  CHECK_THROWS_AS(neuron::perplexity(model, tokens, 3), std::invalid_argument);
+  CHECK_THROWS_AS(neuron::perplexity(model, std::span(tokens).first(3)), std::invalid_argument);
+  neuron::Model odd(f.path, 3);
+  CHECK_THROWS_AS(neuron::perplexity(odd, tokens), std::invalid_argument);
+  const std::array<float, 3> logits{10000,10000,10000};
+  CHECK_LT(std::abs(neuron::token_nll(logits, 1) - std::log(3.0)), 1e-11);
+  CHECK_THROWS_AS(neuron::token_nll(logits, -1), std::invalid_argument);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <span>
 
 namespace neuron::scalar {
@@ -8,6 +9,10 @@ namespace neuron::scalar {
 void matmul(std::span<const float> weights, std::span<const float> input,
             std::span<float> output, std::size_t rows, std::size_t cols,
             std::size_t batch = 1);
+// Mapped quantized rows, FP32 activations, double block accumulators.
+void matmul_quantized(std::span<const std::byte> weights, std::uint32_t type,
+                      std::span<const float> input, std::span<float> output,
+                      std::size_t rows, std::size_t cols, std::size_t batch = 1);
 void rmsnorm(std::span<const float> input, std::span<const float> weights,
              std::span<float> output, float epsilon);
 void softmax(std::span<float> values);

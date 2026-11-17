@@ -36,7 +36,7 @@ struct GgufTensor {
   std::size_t bytes;
 };
 
-// Little-endian GGUF v2/v3, with dense F32/F16 tensor storage. The mapping
+// Little-endian GGUF v2/v3, with F32/F16 and Q8_0/Q4_0 tensor storage. The mapping
 // outlives every tensor_data span. Invalid input throws std::runtime_error.
 class Gguf {
  public:

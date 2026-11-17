@@ -10,20 +10,20 @@
 
 Neuron loads a small transformer language model and generates text on a laptop CPU, with no GPU and no inference libraries underneath. The target machine is an Intel i5-1135G7 (4 cores, 8 threads, 16 GB RAM, AVX2 and AVX-512 with VNNI). The end goal is Qwen2.5 1.5B Instruct, quantized to 4 bits, chatting at a usable speed.
 
-> **Status: M3 complete locally.** Neuron runs Qwen2.5 1.5B Instruct F16 with ChatML and a per-layer KV cache. All 63 tokenizer cases and four chat fixtures match llama.cpp, and each M1 prompt produces the same first 32 generated IDs. A two-exchange conversation recalls the prior user name. [M3 checks](bench/M3_CHECKS.md) record the commands, cache checks and full-context memory result. TinyStories still passes the [M2 exact-match checks](bench/M2_CHECKS.md). [ROADMAP.md](ROADMAP.md) tracks the acceptance criteria.
+> **Status: M4 done, M5 next.** Neuron loads Q8_0, Q4_0, Q4_K and Q6_K weights, and its perplexity matches llama.cpp within 0.9% for each format on a fixed 4,096-target check. Free-running greedy agreement missed its targets (Q8_0 71.74% vs 90%, Q4_K_M 23.44% vs 70%); Daniel accepted M4 on Nov 16 2026 with those numbers recorded. Q4_K_M is currently slower than F16 in the scalar path. [Quantization checks](bench/QUANT.md) record sizes, memory, speeds, results and local validation.
 
 ## Current features
 
-- **GGUF loading** with checked metadata and tensor tables, mapped F32 weights and F16 weights converted to FP32.
+- **GGUF loading** with checked metadata and tensor tables, mapped F32/Q8_0/Q4_0/Q4_K/Q6_K weights and F16 weights converted to FP32.
 - **Llama and Qwen2 tokenizers** with score-based merging or byte BPE, Unicode pre-tokenization and special tokens.
 - **Scalar FP32 inference** for Llama and Qwen2 with RMSNorm, adjacent-pair or split-half RoPE, GQA, QKV bias and SwiGLU.
 - **Per-layer KV cache** with checked context bounds.
 - **Qwen2.5 ChatML** with a default or explicit system prompt and multi-turn message history.
 - **Greedy CLI generation** with streaming text, JSON token IDs, top-two logit gaps and reference checks.
+- **Perplexity evaluation** with fixed context chunks and a pinned short quality check.
 
 ## Planned features
 
-- int8 and 4-bit quantization with a measured quality check against FP32.
 - AVX-512 and VNNI kernels plus multithreading, with a speed chart for each optimization step.
 - Terminal chat, a small web chat UI and an OpenAI-compatible local HTTP server.
 
@@ -83,7 +83,20 @@ message in chat mode. Omit `--system` to use the model's default system text.
 flags, and `neuron tokenize` prints its IDs. `--prompt-file FILE` reads prompt
 bytes instead of `-p`. These commands support text-only Qwen2.5 chat.
 Interactive terminal chat remains M6 work. Qwen's F16 weights are upcast to
-FP32, so loading and scalar generation use substantial memory and time.
+FP32. Q8_0, Q4_0, Q4_K and Q6_K matrices stay mapped and decode during scalar products.
+[Quantization checks](bench/QUANT.md) document how to produce these GGUFs
+with the pinned external llama.cpp quantizer and compare their quality.
+
+Evaluate the fixed WikiText-2 slice with a quantized model:
+
+```sh
+./build/neuron perplexity -m models/Qwen2.5-1.5B-Instruct-Q4_0.gguf \
+  --prompt-file bench/wikitext2-m4-v2.txt --ctx-size 512 --chunks 16
+```
+
+This resets the cache between chunks and scores each chunk's second half.
+It writes JSON with loss, perplexity, counts and input token IDs. Omit
+`--chunks` to evaluate all complete chunks; an incomplete tail is ignored.
 
 The CLI defaults to a 2048-token context to match M1. TinyStories declares only 128 training tokens; `--ctx-size 128` enforces that smaller limit. A prompt plus requested generation exceeding the selected limit is rejected. The override leaves the model file unchanged and makes no quality claim beyond its training context.
 
@@ -114,12 +127,12 @@ flowchart LR
   S -->|next token| F
   S --> O[text out]
   subgraph kernels
-    M[matmul FP32 scalar<br/>planned: int8, Q4, AVX2, AVX-512 VNNI]
+    M[matmul F32, Q8_0, Q4_0, Q4_K, Q6_K scalar<br/>planned: AVX2, AVX-512 VNNI]
   end
   F --> M
 ```
 
-1. The loader maps the GGUF file and checks its tensor table. F32 weights stay mapped; F16 weights are converted to FP32 once on load.
+1. The loader maps the GGUF file and checks its tensor table. F32 and quantized matrices stay mapped; F16 weights are converted to FP32 once on load.
 2. The tokenizer turns the prompt into token ids.
 3. Each forward pass runs one token through every transformer layer and appends that token's keys and values to the KV cache, so earlier tokens are not recomputed.
 4. The sampler picks the next token from the logits and feeds it back in.
@@ -129,7 +142,7 @@ flowchart LR
 
 These are true today and some will stay true by design.
 
-- **Dense Llama and Qwen2 F32/F16 models only.** TinyStories and Qwen2.5 1.5B Instruct are the local check targets. Other tokenizer families, quantized weights, RoPE scaling and tool-call chat templates are not supported.
+- **Dense Llama and Qwen2 F32/F16/Q8_0/Q4_0/Q4_K/Q6_K models only.** TinyStories and Qwen2.5 1.5B Instruct are the local check targets. Other tokenizer families, other quantization formats, RoPE scaling and tool-call chat templates are not supported.
 - **Scalar and single-threaded.** There are no optimized SIMD kernels, interactive terminal chat, web UI or server yet.
 - **x86-64 Linux only.** No ARM, macOS, or Windows builds are planned.
 - **CPU only.** No CUDA, Metal, or Vulkan.
@@ -164,4 +177,5 @@ ROADMAP.md          milestones and acceptance criteria
 - [bench/BASELINE.md](bench/BASELINE.md): llama.cpp reference measurements and reproduction
 - [bench/M2_CHECKS.md](bench/M2_CHECKS.md): TinyStories tokenizer, logits and exact generation checks
 - [bench/M3_CHECKS.md](bench/M3_CHECKS.md): Qwen2.5, ChatML, cache, context and memory checks
+- [bench/QUANT.md](bench/QUANT.md): Q8_0/Q4_0/Q4_K/Q6_K formats, perplexity and greedy agreement
 - [LICENSE](LICENSE): MIT

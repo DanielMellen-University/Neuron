@@ -1,0 +1,226 @@
+{
+  "configurations": [
+    {
+      "directory": "build-m4-default",
+      "commands": [
+        [
+          "cmake",
+          "-S",
+          ".",
+          "-B",
+          "build-m4-default",
+          "-DCMAKE_CXX_COMPILER=g++"
+        ],
+        [
+          "cmake",
+          "--build",
+          "build-m4-default",
+          "-j",
+          "2"
+        ],
+        [
+          "ctest",
+          "--test-dir",
+          "build-m4-default",
+          "--output-on-failure"
+        ]
+      ],
+      "ctest_passed": 13,
+      "ctest_failed": 0,
+      "ctest_log_sha256": "b8b0371848f74b2b3946e5abe883af5049fecca70616c7fe27dac0cff12c4e3c",
+      "final_configure_build_ctest": "passed after documentation and benchmark CLI changes"
+    },
+    {
+      "directory": "build-m4",
+      "commands": [
+        [
+          "cmake",
+          "-S",
+          ".",
+          "-B",
+          "build-m4",
+          "-DCMAKE_CXX_COMPILER=g++",
+          "-DNEURON_WERROR=ON"
+        ],
+        [
+          "cmake",
+          "--build",
+          "build-m4",
+          "-j",
+          "2"
+        ],
+        [
+          "ctest",
+          "--test-dir",
+          "build-m4",
+          "--output-on-failure"
+        ]
+      ],
+      "ctest_passed": 13,
+      "ctest_failed": 0,
+      "ctest_log_sha256": "8144768b977902266b58fec109a269322944536dbdff5f277cea2feada3479ad"
+    },
+    {
+      "directory": "build-m4-sanitize",
+      "commands": [
+        [
+          "cmake",
+          "-S",
+          ".",
+          "-B",
+          "build-m4-sanitize",
+          "-DCMAKE_CXX_COMPILER=g++",
+          "-DNEURON_WERROR=ON",
+          "-DNEURON_SANITIZE=ON",
+          "-DCMAKE_BUILD_TYPE=Debug"
+        ],
+        [
+          "cmake",
+          "--build",
+          "build-m4-sanitize",
+          "-j",
+          "2"
+        ],
+        [
+          "ctest",
+          "--test-dir",
+          "build-m4-sanitize",
+          "--output-on-failure"
+        ]
+      ],
+      "ctest_passed": 13,
+      "ctest_failed": 0,
+      "ctest_log_sha256": "4ff8fa120b78770529025c36c6fa5aeca7066134645a8a54e1932e6bda32e325",
+      "final_configure_build_ctest": "passed after documentation and benchmark CLI changes"
+    },
+    {
+      "directory": "build-m4-avx2",
+      "commands": [
+        [
+          "cmake",
+          "-S",
+          ".",
+          "-B",
+          "build-m4-avx2",
+          "-DCMAKE_CXX_COMPILER=g++",
+          "-DNEURON_WERROR=ON",
+          "-DNEURON_AVX2=ON"
+        ],
+        [
+          "cmake",
+          "--build",
+          "build-m4-avx2",
+          "-j",
+          "2"
+        ],
+        [
+          "ctest",
+          "--test-dir",
+          "build-m4-avx2",
+          "--output-on-failure"
+        ]
+      ],
+      "ctest_passed": 13,
+      "ctest_failed": 0,
+      "ctest_log_sha256": "2d7dceec4717fe4e0a777bff9adae7454516b3f6f6662f379cf799e4cda3c94e"
+    },
+    {
+      "directory": "build-m4-avx512",
+      "commands": [
+        [
+          "cmake",
+          "-S",
+          ".",
+          "-B",
+          "build-m4-avx512",
+          "-DCMAKE_CXX_COMPILER=g++",
+          "-DNEURON_WERROR=ON",
+          "-DNEURON_AVX512=ON"
+        ],
+        [
+          "cmake",
+          "--build",
+          "build-m4-avx512",
+          "-j",
+          "2"
+        ],
+        [
+          "ctest",
+          "--test-dir",
+          "build-m4-avx512",
+          "--output-on-failure"
+        ]
+      ],
+      "ctest_passed": 13,
+      "ctest_failed": 0,
+      "ctest_log_sha256": "a119690236cef03e66fe2aadbee918fa7812489825189fb5150803ed2f634cd9"
+    }
+  ],
+  "round_trip": {
+    "blocks_per_format": 6000,
+    "values_per_block": 32,
+    "q8_maximum_error_over_bound": 0.999477885,
+    "q4_maximum_error_over_bound": 1.0
+  },
+  "tiny_tokenizer_cases": 51,
+  "tiny_generated_ids_matched": 1152,
+  "tiny_max_logit_difference": 9.5367431640625e-06,
+  "qwen_fixture_check": {
+    "model_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+    "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+    "neuron_binary_sha256": "dafaad9ae7dc24768f32e1a654b1546feb24bf79a1417f2f7e97ebee5ea1344f",
+    "reference_tool_sha256": "2204e825518a71885dd9188bc8c13d97a31c977f419942342b98df01ab7edb3d",
+    "context": 2048,
+    "threads": 1,
+    "machine_before": {
+      "utc": "2026-11-16T10:09:17.384344+00:00",
+      "load_average": [
+        0.970703125,
+        0.4560546875,
+        0.40966796875
+      ],
+      "power": {
+        "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+        "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+        "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+        "/sys/class/power_supply/ADP1/online": "1",
+        "/sys/class/power_supply/BAT0/status": "Full",
+        "/sys/class/power_supply/BAT0/capacity": "100"
+      }
+    },
+    "notes": "M4 correctness regression; builds running concurrently.",
+    "tokenizer_cases": 63,
+    "chat_cases": 4,
+    "machine_after": {
+      "utc": "2026-11-16T10:09:41.129696+00:00",
+      "load_average": [
+        1.43798828125,
+        0.61181640625,
+        0.4638671875
+      ],
+      "power": {
+        "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+        "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+        "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+        "/sys/class/power_supply/ADP1/online": "1",
+        "/sys/class/power_supply/BAT0/status": "Full",
+        "/sys/class/power_supply/BAT0/capacity": "100"
+      }
+    }
+  },
+  "remote_ci": "not run; local clang compile-only Werror with GCC 11 headers",
+  "weights_and_size_guard": "passed before commits",
+  "clang": {
+    "compiler": "Clang 14",
+    "result": "all src/*.cpp and tests/test_*.cpp pass compile-only Werror checks with GCC 11 headers; local linking unavailable",
+    "flags": "-std=c++20 -O3 -DNDEBUG -fsyntax-only -Werror -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wnull-dereference -isystem /usr/include/c++/11 -isystem /usr/include/x86_64-linux-gnu/c++/11 -Iinclude -Ibuild-m4/generated -Itests"
+  },
+  "resumption": {
+    "saved_measurements_reused": 15,
+    "new_measurements": 0,
+    "report_byte_identical": true,
+    "quality_check_exit_status": 1,
+    "report_sha256": "10d6c2d3ace4e230670f4bfb10acfb9a79d989051036dfb21c6b3037e8560889"
+  },
+  "aggregation_sanity": "passing case accepted; int8 below 90 percent and Q4 below 70 percent rejected"
+}
