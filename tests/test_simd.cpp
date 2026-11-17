@@ -124,6 +124,17 @@ int main(int argc, char** argv) {
         neuron::scalar::matmul_quantized(packed, type, x, a, rows, cols, batch);
         neuron::kernels::matmul_quantized(packed, type, x, b, rows, cols, batch);
         compare(a, b);
+        if (isa == "avx512" || isa == "vnni") {
+          // Exercise plain AVX-512 even when dispatch uses the VNNI
+          // subfeature on this host. Non-VNNI runners execute this too.
+          std::vector<neuron::detail::KActivation> activations;
+          if (!neuron::detail::prepare_k_activations(x, activations)) throw std::runtime_error("packing rejected");
+          for (std::size_t batch_index = 0; batch_index < batch; ++batch_index)
+            for (std::size_t r = 0; r < rows; ++r)
+              b[batch_index * rows + r] = static_cast<float>(neuron::detail::kquant_avx512(
+                  packed.data() + r * blocks * bytes, type, activations.data() + batch_index * blocks, cols));
+          compare(a, b);
+        }
         std::fill(x.begin(), x.end(), 0.0f);
         neuron::kernels::matmul_quantized(packed, type, x, b, rows, cols, batch);
         for (float value : b) if (value != 0) throw std::runtime_error("K zero input differs");

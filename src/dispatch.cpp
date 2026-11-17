@@ -94,11 +94,11 @@ void matmul_quantized(std::span<const std::byte> w, std::uint32_t type,
   thread_local std::vector<detail::KActivation> packed_k;
   const bool use_k = !reference && elements == 256 && detail::prepare_k_activations(x, packed_k);
   const auto* k_data = packed_k.data();
-  const auto k_kernel = selection() == "vnni" ? detail::kquant_vnni :
+  // VNNI word dots improve K blocks, while the older four-byte-plane path
+  // for Q8_0/Q4_0 remains opt-in. AVX-512 can use this checked subfeature.
+  const auto k_kernel = selection() == "vnni" || (selection() == "avx512" && cpu_vnni()) ? detail::kquant_vnni :
       selection() == "avx512" ? detail::kquant_avx512 : detail::kquant_avx2;
   // Pack once for the whole matmul, then share read-only across row workers.
-  // Four-plane VNNI packing costs more than direct K decoding. Use the
-  // AVX-512 K kernels for this selection too, without rounding activations.
   const auto activations = selection() == "vnni" && elements == 32 ?
       detail::prepare_activations(x) : std::vector<detail::Activation>{};
   detail::parallel_rows(rows, [&](std::size_t begin, std::size_t end) {
