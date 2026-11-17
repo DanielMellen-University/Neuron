@@ -28,10 +28,10 @@ Completion ModelChat::generate(const TextSink& sink, const Cancelled& cancelled)
   if (prompt_.empty() || max_tokens_ == 0) throw std::logic_error("prepare chat before generation");
   Completion result;
   model_.reset();
-  std::vector<float> logits;
+  std::span<const float> logits;
   for (std::size_t i = 0; i < prompt_.size(); ++i) {
     if (cancelled()) { result.finish_reason = "cancelled"; return result; }
-    logits = model_.step(prompt_[i], i + 1 == prompt_.size());
+    logits = model_.step_view(prompt_[i], i + 1 == prompt_.size());
   }
   std::string pending;
   auto emit = [&](bool final) {
@@ -46,7 +46,7 @@ Completion ModelChat::generate(const TextSink& sink, const Cancelled& cancelled)
     if (tokenizer_.is_eog(next)) { result.finish_reason = "stop"; break; }
     pending += tokenizer_.piece(next);
     if (!emit(false)) { result.finish_reason = "cancelled"; return result; }
-    if (i + 1 < max_tokens_) logits = model_.step(next);
+    if (i + 1 < max_tokens_) logits = model_.step_view(next);
   }
   if (!emit(true)) result.finish_reason = "cancelled";
   return result;

@@ -105,6 +105,23 @@ NEURON_TEST(context_token_and_shape_errors) {
   broken.patch<std::uint32_t>(static_cast<std::size_t>(at - broken.data.begin()) + key.data.size() + 4, 6);
   fixture::File wrong(broken); CHECK_THROWS_AS(neuron::Model{wrong.path}, std::runtime_error);
 }
+NEURON_TEST(model_views_reuse_logits_and_owned_results_survive_steps) {
+  fixture::File f(tiny_model(false, false, true));
+  neuron::Model views(f.path), owned(f.path);
+  const auto first = owned.step(0);
+  const auto view = views.step_view(0);
+  CHECK(std::equal(view.begin(), view.end(), first.begin()));
+  const auto* storage = view.data();
+  for (int token : {1, 2, 0}) {
+    const auto expected = owned.step(token);
+    const auto actual = views.step_view(token);
+    CHECK(actual.data() == storage);
+    CHECK(std::equal(actual.begin(), actual.end(), expected.begin()));
+  }
+  const std::array<std::int32_t, 1> prompt{0};
+  const auto replay = views.forward_view(prompt);
+  CHECK(std::equal(replay.begin(), replay.end(), first.begin()));
+}
 
 NEURON_TEST(qwen2_metadata_and_qkv_bias) {
   fixture::File f(tiny_model(false, true, true)); neuron::Model m(f.path);

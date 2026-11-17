@@ -178,7 +178,7 @@ int execute(int argc, char** argv) {
       throw std::invalid_argument("teacher tokens require exactly -n IDs, --json and cached generation");
   }
   neuron::Model model(path, context);
-  const auto start = Clock::now(); auto logits = model.forward(tokens); const double prompt_seconds = seconds(start);
+  const auto start = Clock::now(); auto logits = model.forward_view(tokens); const double prompt_seconds = seconds(start);
   if (command == "logits") {
     std::ofstream stream(output, std::ios::binary);
     stream.write(reinterpret_cast<const char*>(logits.data()), static_cast<std::streamsize>(logits.size() * sizeof(float)));
@@ -188,6 +188,7 @@ int execute(int argc, char** argv) {
   struct TopTwo { std::int32_t first, second; float gap; };
   std::vector<TopTwo> top2;
   std::vector<std::int32_t> generated, sequence = tokens;
+  top2.reserve(predict); generated.reserve(predict); sequence.reserve(context);
   const auto generation_start = Clock::now();
   for (std::size_t i = 0; i < predict; ++i) {
     const auto next = static_cast<std::int32_t>(std::max_element(logits.begin(), logits.end()) - logits.begin());
@@ -199,8 +200,8 @@ int execute(int argc, char** argv) {
     generated.push_back(next);
     if (!json) { const auto piece = tokenizer.piece(next); std::fwrite(piece.data(), 1, piece.size(), stdout); std::fflush(stdout); }
     if (i + 1 < predict) {
-      if (recompute) { sequence.push_back(next); logits = model.forward(sequence); }
-      else logits = model.step(teacher.empty() ? next : teacher[i]);
+      if (recompute) { sequence.push_back(next); logits = model.forward_view(sequence); }
+      else logits = model.step_view(teacher.empty() ? next : teacher[i]);
     }
   }
   const double generation_seconds = seconds(generation_start);

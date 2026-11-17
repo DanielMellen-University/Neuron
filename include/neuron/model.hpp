@@ -25,8 +25,11 @@ class Model {
   void reset();
   // Appends one token. Returns logits unless output is false (prompt prefix).
   std::vector<float> step(std::int32_t token, bool output = true);
+  // Reuses model storage. The view is valid until the next step/forward call.
+  std::span<const float> step_view(std::int32_t token, bool output = true);
   // Starts a fresh sequence and returns the final position's logits.
   std::vector<float> forward(std::span<const std::int32_t> tokens);
+  std::span<const float> forward_view(std::span<const std::int32_t> tokens);
   std::size_t position() const { return position_; }
  private:
   struct Weight {
@@ -47,6 +50,8 @@ class Model {
   ModelConfig config_{};
   Weight embedding_, output_norm_, output_;
   std::vector<Layer> layers_;
+  std::vector<float> x_, normalized_, q_, k_, v_, attention_, projected_, gate_, up_, scores_, logits_;
+  std::vector<float> rope_cos_, rope_sin_;
   std::size_t position_ = 0;
 };
 }  // namespace neuron

@@ -27,7 +27,7 @@ class Pool {
   }
   ~Pool() { stop(); }
   std::size_t count() const { return count_; }
-  void run(std::size_t rows, const std::function<void(std::size_t, std::size_t)>& work) {
+  void run(std::size_t rows, detail::RowTask work) {
     if (count_ == 1 || rows < 2) { work(0, rows); return; }
     // Independent callers may submit jobs, but one pool executes one at a time.
     const std::lock_guard submit(submit_mutex_);
@@ -84,7 +84,7 @@ class Pool {
   std::mutex mutex_, submit_mutex_;
   std::condition_variable ready_, done_;
   std::vector<std::thread> workers_;
-  std::function<void(std::size_t, std::size_t)> work_;
+  detail::RowTask work_{};
   std::exception_ptr error_;
 };
 void check_count(std::size_t count) {
@@ -114,7 +114,7 @@ void set_threads(std::size_t count) {
 std::size_t threads() { return pool()->count(); }
 }
 namespace detail {
-void parallel_rows(std::size_t rows, const std::function<void(std::size_t, std::size_t)>& work) {
+void parallel_rows_impl(std::size_t rows, RowTask work) {
   pool()->run(rows, work);
 }
 }

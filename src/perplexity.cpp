@@ -33,7 +33,7 @@ Perplexity perplexity(Model& model, std::span<const std::int32_t> tokens, std::s
     model.reset();
     for (std::size_t i = 0; i + 1 < context; ++i) {
       const bool score = i + 1 >= context / 2;
-      const auto logits = model.step(tokens[chunk * context + i], score);
+      const auto logits = model.step_view(tokens[chunk * context + i], score);
       if (score) {
         result.negative_log_likelihood += token_nll(logits, tokens[chunk * context + i + 1]);
         ++result.scored_tokens;
