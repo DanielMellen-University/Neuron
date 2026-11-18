@@ -29,7 +29,14 @@ Recorded from `neuron chat` on an Intel Core i5-1135G7 laptop (4 cores/8 threads
 
 Use x86-64 Linux, CMake, Python and GCC or Clang with C++20 support. The [checked toolchain](bench/M7_CHECKS.md#build-and-runtime-contract) includes GCC 11 and Clang 14. No models are needed to build and run unit tests.
 
-This block builds the engine, downloads the pinned models into a cache directory outside the clone, and starts a terminal chat. The fetch script verifies SHA-256 hashes and reuses valid files. It downloads TinyStories F32, SmolLM2 F16 and Qwen2.5 F16 (the Qwen file is about 3 GiB). It does not download quantized Qwen weights.
+One command builds the engine, downloads the small SmolLM2 135M Instruct model (about 260 MB, hash checked) into `~/.cache/neuron/models` and starts a terminal chat:
+
+```sh
+git clone https://github.com/DanielMellen-University/Neuron.git && cd Neuron
+scripts/quickstart.sh            # add --serve for the web chat and API instead
+```
+
+To do it by hand, this block builds the engine, downloads every pinned model into a cache directory outside the clone, and starts a terminal chat. The fetch script verifies SHA-256 hashes and reuses valid files. It downloads TinyStories F32, SmolLM2 F16 and Qwen2.5 F16 (the Qwen file is about 3 GiB); name models, as in `scripts/fetch_models.sh smollm2`, to fetch only those. It does not download quantized Qwen weights.
 
 ```sh
 git clone https://github.com/DanielMellen-University/Neuron.git
@@ -79,7 +86,7 @@ flowchart LR
 2. The tokenizer turns text into token IDs using the vocabulary stored in that file.
 3. Each step runs one transformer layer after another: normalize, attend over the current token plus the cached prefix, then the feed-forward block. New keys and values are appended to the KV cache so earlier tokens in the same reply are not recomputed.
 4. The CPU kernels do the matrix work. `--threads` and `--isa` override `NEURON_THREADS` and `NEURON_ISA`. [Runtime settings](bench/SPEED.md#kernels-and-threads) also apply to library callers.
-5. Greedy decoding picks the highest logit, decodes that token to text, and feeds it back until the reply ends.
+5. Greedy decoding picks the highest logit (or, with sampling turned on, a seeded draw from the filtered distribution), decodes that token to text, and feeds it back until the reply ends or a stop string appears.
 
 The terminal, the web page and the HTTP API all call this same engine. [The design write-up](docs/blog/design-and-optimization.md) walks through the pieces and the optimization steps.
 
@@ -98,7 +105,7 @@ All rates below are tokens per second (tok/s) with four threads in both engines,
 | Qwen2.5 1.5B Instruct | Q4_K_M | 23.91 | 21.22 | 52.50 | 38.56 | [N](bench/reference/r1-speed-final.json) / [L](bench/reference/r1-speed-llama-final.json) |
 <!-- /speed-table -->
 
-TinyStories pools the original prompt set across three repetitions and 128 generated tokens per sample. The other rows use one raw prompt, `Once upon a time`, with 32 generated tokens and no warmup. These are short samples collected at different times, without fixed frequency or temperature. Q4_K_M was rerun in R1; the other rows retain their M1/M5/M7 records. They do not measure chat latency or sustained throughput. Prompt processing in Neuron evaluates tokens sequentially; llama.cpp can batch them. [The derived table](bench/reference/m7-benchmarks.json) points to every input record. N and L link directly to Neuron and llama.cpp timings.
+These are short single samples (32 generated tokens from `Once upon a time`, no warmup; TinyStories pools three prompts) taken without fixed frequency or temperature, so they are not chat latency or sustained throughput. Neuron evaluates prompt tokens one at a time; llama.cpp batches them. The Q4_K_M row is the R1 rerun. [The derived table](bench/reference/m7-benchmarks.json) points to every input record.
 
 To repeat a short pair after the build and model setup above:
 
@@ -144,8 +151,8 @@ Install `openai` in a separate Python environment to use this example. Omit `str
 
 ## Limitations
 
-- **M4 missed both free-running agreement targets.** R2 reproduced Q8_0's 551/768 tokens (71.74%, target 90%) and Q4_K_M's 180/768 (23.44%, target 70%) against F16. llama.cpp's own runs also miss, at 59.51% and 20.31%. Numerical checks found no inference defect that justifies a correction. Per-format perplexity (how well the model predicts the next token on a fixed text) still tracks llama.cpp within 0.9%. [Quality measurements and accepted misses](bench/QUANT.md#r2-free-running-agreement).
-- **Speed remains below llama.cpp.** R1 Q4_K_M generation is 21.215665 tokens/s versus 38.558125, or 55.02%, with four threads. This short sample meets the 50% target; M5 originally reached 11.02%. Frequency and temperature were not fixed. [Raw results and method](bench/SPEED.md#r1-result) retain both rounds.
+- **M4 missed both free-running agreement targets.** R2 reproduced Q8_0's 551/768 tokens (71.74%, target 90%), Q4_0's 51/768 (6.64%, target 70%) and Q4_K_M's 180/768 (23.44%, target 70%) against F16. llama.cpp's own runs also miss, at 59.51%, 6.38% and 20.31%. Numerical checks found no inference defect that justifies a correction. Per-format perplexity (how well the model predicts the next token on a fixed text) still tracks llama.cpp within 0.9%. [Quality measurements and accepted misses](bench/QUANT.md#r2-free-running-agreement), [R2 numerical checks](bench/R2_AGREEMENT.md).
+- **Speed remains below llama.cpp.** Q4_K_M generation is 55.02% of llama.cpp's with four threads; Q8_0 and Q4_0 reach only about 32% and 14% (table above). [Raw results and method](bench/SPEED.md#r1-result).
 - **Restricted models and formats.** Dense Llama and Qwen2 only; the locally checked models are the table above. No MoE, RoPE scaling, other quantization formats, arbitrary Jinja templates or multimodal inputs.
 - **API subset.** No tools, response formats, logprobs or multiple choices per request. The API implements a subset of OpenAI's interface and serves one request at a time, without authentication or TLS.
 - **Context and memory costs.** F16 expands to FP32 in memory. Chat re-evaluates the full history each turn. The CLI defaults to context 2048 and rejects overflow; it does not truncate or slide history. TinyStories declares a training context of 128; use `--ctx-size 128` with a smaller prompt/output budget to stay inside it. An override makes no quality claim beyond a model's training context.
@@ -170,7 +177,8 @@ Start at the [docs hub](docs/README.md). Source lives in `src/`, public headers 
 - [Design and optimization](docs/blog/design-and-optimization.md): how the engine works, and the measured quality and speed gaps
 - [Command-line reference](docs/cli.md): sampling, stop strings, chat and server options, GGUF inspection and token tools
 - [Terminal demo](docs/demo.md): the real capture, timing policy and GIF reproduction
-- [Roadmap](ROADMAP.md): the seven milestones, acceptance criteria and what was missed
+- [Roadmap](ROADMAP.md): the seven milestones, R1 and R2, acceptance criteria and what was missed
+- [Changelog](CHANGELOG.md): what each release contains
 - [Baseline](bench/BASELINE.md): pinned llama.cpp and model inputs
 - [M7 check sheet](bench/M7_CHECKS.md): table provenance, reproduce commands and toolchain results
 

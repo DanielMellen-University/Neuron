@@ -133,8 +133,8 @@ tokens per second. Each process has no warmup. Power, frequency and
 temperature are uncontrolled.
 
 The initial prompt-processing sample falls by 13.57%, so three alternating
-before/after pairs were also collected, retaining every sample. The median
-paired changes are -0.30% for prompt processing and -2.91% for generation.
+before/after pairs were also collected, retaining every sample. The medians
+change by -0.30% for prompt processing and -2.91% for generation.
 Individual paired generation rates span 9.21 to 20.83. The baseline and
 final executables have identical SHA-256 file-content checksums. Every
 speed run generates the same 32 IDs.
