@@ -168,6 +168,12 @@ class CliTests(unittest.TestCase):
             self.assertEqual(result.returncode, 2, bad)
             self.assertIn(message, result.stderr)
 
+    def test_tokenize_pieces(self):
+        out = self.neuron("tokenize", "-m", self.model, "-p", "a bc", "--pieces").stdout.decode()
+        self.assertEqual(out, '1\t"<s>"\t""\n9\t"\u2581a"\t" a"\n10\t"\u2581b"\t" b"\n6\t"c"\t"c"\n')
+        plain = self.neuron("tokenize", "-m", self.model, "-p", "a", "--pieces", "--no-add-special").stdout
+        self.assertEqual(plain, '9\t"\u2581a"\t" a"\n'.encode())
+
 
 if __name__ == "__main__":
     unittest.main()

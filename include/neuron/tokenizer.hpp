@@ -34,6 +34,8 @@ class Tokenizer {
   std::vector<std::int32_t> encode(std::string_view text, bool add_special = true,
                                  bool parse_special = true) const;
   std::string piece(std::int32_t token) const;
+  // The vocabulary entry as stored in the model, such as "▁a" or "<|im_end|>".
+  const std::string& text(std::int32_t token) const;
   std::string decode(const std::vector<std::int32_t>& tokens, bool remove_prefix = true) const;
   std::int32_t eos() const { return vocabulary_.eos; }
   bool is_eog(std::int32_t token) const;

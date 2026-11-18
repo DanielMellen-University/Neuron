@@ -37,7 +37,7 @@ void print_usage() {
       "       neuron run -m MODEL -p PROMPT [-n 128] --greedy [--json] [--ctx-size N]\n"
       "       neuron run -m MODEL -p PROMPT --temp T [--top-k K] [--top-p P] [--min-p P] [--seed N]\n"
       "       neuron run ... [--stop TEXT]...\n"
-      "       neuron tokenize -m MODEL -p PROMPT [--no-add-special] [--no-parse-special]\n"
+      "       neuron tokenize -m MODEL -p PROMPT [--no-add-special] [--no-parse-special] [--pieces]\n"
       "       neuron detokenize -m MODEL -p IDS\n"
       "       neuron logits -m MODEL -p PROMPT --output FILE [--ctx-size N]\n"
       "\n"
@@ -50,6 +50,7 @@ void print_usage() {
       "       neuron serve -m MODEL [--host 127.0.0.1] [--port 8080] [--ctx-size N] [-n 128] [sampling flags]\n"
       "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0/Q4_K/Q6_K weights.\n"
       "--prompt-file FILE reads prompt bytes instead of -p; use - for standard input.\n"
+      "--pieces prints one token per line: ID, vocabulary entry and decoded bytes.\n"
       "detokenize decodes IDs separated by commas, spaces or brackets (tokenize output works).\n"
       "--chat applies Qwen2.5 ChatML; repeated --message flags supply history.\n"
       "--system replaces the default system text; -p adds a final user message.\n"
@@ -138,7 +139,7 @@ int execute(int argc, char** argv) {
   if (command != "run" && command != "tokenize" && command != "logits" && command != "template" && command != "perplexity" && command != "chat" && command != "serve" && command != "inspect" && command != "detokenize") throw std::invalid_argument("unknown command: " + command);
   std::string path, prompt, output, teacher_file;
   bool has_prompt = false, greedy = false, json = false, add_special = true, parse_special = true;
-  bool chat = false, recompute = false, has_system = false;
+  bool chat = false, recompute = false, has_system = false, pieces = false;
   neuron::InspectOptions inspect;
   std::string inspect_key;
   std::string system;
@@ -188,6 +189,7 @@ int execute(int argc, char** argv) {
     }
     else if (option == "--no-add-special" && command == "tokenize") add_special = false;
     else if (option == "--no-parse-special" && command == "tokenize") parse_special = false;
+    else if (option == "--pieces" && command == "tokenize") pieces = true;
     else if (option == "--no-tensors" && command == "inspect") inspect.tensors = false;
     else if (option == "--key" && command == "inspect") inspect_key = value();
     else throw std::invalid_argument("unknown option: " + std::string(option));
@@ -254,6 +256,11 @@ int execute(int argc, char** argv) {
   }
   if (command == "template") { std::fwrite(prompt.data(), 1, prompt.size(), stdout); return 0; }
   const auto tokens = tokenizer.encode(prompt, add_special, parse_special);
+  if (command == "tokenize" && pieces) {
+    for (const auto token : tokens)
+      std::printf("%d\t%s\t%s\n", token, neuron::json::quote(tokenizer.text(token)).c_str(), neuron::json::quote(tokenizer.piece(token)).c_str());
+    return 0;
+  }
   if (command == "tokenize") { ids(tokens); std::printf("\n"); return 0; }
   if (command == "run" && !greedy && !has_temperature) throw std::invalid_argument("run requires --greedy or --temp T");
   if (command == "logits" && output.empty()) throw std::invalid_argument("logits requires --output FILE");

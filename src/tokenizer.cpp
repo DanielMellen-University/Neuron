@@ -197,6 +197,10 @@ std::vector<std::int32_t> Tokenizer::encode(std::string_view text, bool add_spec
   if (add_special && vocabulary_.add_eos) out.push_back(vocabulary_.eos);
   return out;
 }
+const std::string& Tokenizer::text(std::int32_t id) const {
+  if (id < 0 || static_cast<std::size_t>(id) >= size()) fail("token id out of range");
+  return vocabulary_.tokens[static_cast<std::size_t>(id)].text;
+}
 std::string Tokenizer::piece(std::int32_t id) const {
   if (id < 0 || static_cast<std::size_t>(id) >= size()) fail("token id out of range");
   const auto& token = vocabulary_.tokens[static_cast<std::size_t>(id)];
