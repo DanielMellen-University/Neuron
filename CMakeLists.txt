@@ -52,6 +52,7 @@ add_library(neuron
   src/json.cpp
   src/server.cpp
   src/gguf.cpp
+  src/inspect.cpp
   src/kernels.cpp
   src/dispatch.cpp
   src/kernels_avx2.cpp
