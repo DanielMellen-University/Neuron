@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Repeat only M4-v2 perplexity. Free-running agreement is outside R1."""
+"""Repeat frozen M4-v2 perplexity and compare with its recorded results."""
 import argparse
 import os
 from pathlib import Path
@@ -15,6 +15,7 @@ def main():
     parser.add_argument('--models-dir', type=Path, default=Path(os.environ.get('NEURON_MODELS_DIR', ROOT / 'models')))
     parser.add_argument('--runs-dir', type=Path, default=ROOT / 'bench/runs/r1-ppl')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--record-prefix', default='r1-ppl', help='prefix for per-format records')
     parser.add_argument('--formats', nargs='+', default=['Q4_K_M', 'F16', 'Q8_0', 'Q4_0'])
     parser.add_argument('--isa', default='auto')
     parser.add_argument('--threads', type=int, default=4)
@@ -42,7 +43,7 @@ def main():
         if result['tokens'] != old['tokens'] or result['scored_tokens'] != 4096:
             raise ValueError('M4-v2 tokens or scored positions changed')
         relative = result['perplexity'] / old['perplexity'] - 1
-        saved = args.output.with_name('r1-ppl-' + name + '.json')
+        saved = args.output.with_name(args.record_prefix + '-' + name + '.json')
         write_json(saved, run)
         report['formats'][name] = dict(source=str(saved.resolve().relative_to(ROOT)),
             model_sha256=model_hash, perplexity=result['perplexity'], recorded_perplexity=old['perplexity'],
