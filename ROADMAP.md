@@ -2,7 +2,7 @@
 
 This is the milestone plan for Neuron. Use it to see what was built, what had to pass, and which measured targets were missed.
 
-Neuron was built in seven milestones. Each one ends with a merged pull request, green CI at the merge commit, and a short write-up of how that part works. A milestone is done only when every acceptance item below is true and checkable from the repo.
+Neuron was built in seven milestones, followed by two refinement rounds (R1 and R2). Each one ends with a merged pull request, green CI at the merge commit, and a short write-up of how that part works. A milestone is done only when every acceptance item below is true and checkable from the repo.
 
 Hardware for every number in this file: an Intel Core i5-1135G7 laptop (4 cores/8 threads, 16 GB RAM, AVX2, AVX-512 with VNNI), Ubuntu 22.04, GCC 11.4. Benchmarks record the thread count, model file hash, prompt, and power state.
 
@@ -20,6 +20,8 @@ Model weights are never committed. Scripts download them into the git-ignored `m
 | M5 AVX-512 kernels and multithreading | done (speed target missed, accepted) |
 | M6 Terminal chat, web UI, OpenAI-compatible server | done |
 | M7 Polish: README, benchmarks, demo GIF, blog post | done |
+| R1 Decode speed refinement: K-quant SIMD kernels, reusable buffers | done (55.02% of llama.cpp generation) |
+| R2 Free-running agreement recheck against llama.cpp | done (targets still missed in both engines) |
 
 ## M1: llama.cpp baseline and harness
 
