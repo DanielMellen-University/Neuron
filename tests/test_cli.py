@@ -95,6 +95,12 @@ class CliTests(unittest.TestCase):
         result = self.neuron("chat", "-m", self.model, "--temp", "0.7", "--top-k", "20", "--stop", "x", check=False)
         self.assertIn(b"chat supports Qwen2 and SmolLM2", result.stderr)
 
+    def test_serve_validates_defaults_before_loading(self):
+        for flags in (["--temp", "3x"], ["--min-p", "1"], ["--stop", ""]):
+            result = self.neuron("serve", "-m", self.model, "--port", "1", *flags, check=False)
+            self.assertEqual(result.returncode, 2, flags)
+            self.assertNotIn(b"chat supports", result.stderr, flags)
+
 
 if __name__ == "__main__":
     unittest.main()
