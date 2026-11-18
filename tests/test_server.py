@@ -121,7 +121,17 @@ class ServerTests(unittest.TestCase):
                 (dict(messages=[]), 400, "invalid_request_error"),
                 (dict(messages=[dict(role="tool", content="x")]), 400, "invalid_request_error"),
                 (dict(messages=[dict(role="user", content=None)]), 400, "invalid_request_error"),
-                (dict(temperature=1), 400, "invalid_request_error"),
+                (dict(temperature=2.5), 400, "invalid_request_error"),
+                (dict(top_p=0), 400, "invalid_request_error"),
+                (dict(top_k=1.5), 400, "invalid_request_error"),
+                (dict(min_p=1), 400, "invalid_request_error"),
+                (dict(repeat_penalty=0), 400, "invalid_request_error"),
+                (dict(seed=-1), 400, "invalid_request_error"),
+                (dict(seed="7"), 400, "invalid_request_error"),
+                (dict(stop=""), 400, "invalid_request_error"),
+                (dict(stop=["a", "b", "c", "d", "e"]), 400, "invalid_request_error"),
+                (dict(stop=[1]), 400, "invalid_request_error"),
+                (dict(stop=True), 400, "invalid_request_error"),
                 (dict(n=2), 400, "invalid_request_error"),
             ]:
                 with self.subTest(stream=stream, kwargs=kwargs):
@@ -129,6 +139,40 @@ class ServerTests(unittest.TestCase):
                     self.assertEqual(status, expected)
                     self.assertEqual(headers["Content-Type"], "application/json")
                     self.assertEqual(json.loads(data)["error"]["code"], code)
+
+    def options(self, **kwargs):
+        status, _, body = self.chat(messages=[dict(role="user", content="options")], **kwargs)
+        self.assertEqual(status, 200, body)
+        return json.loads(body)["choices"][0]["message"]["content"]
+
+    def test_sampling_fields_reach_backend(self):
+        text = self.options(temperature=0.7, top_p=0.9, top_k=40, min_p=0.05, repeat_penalty=1.1, seed=1234, stop=["zz"])
+        self.assertEqual(text, "temperature=0.7 top_p=0.9 top_k=40 min_p=0.05 repeat_penalty=1.1 seed=1234 max=16 stops=1")
+        # Missing and null fields keep the greedy defaults.
+        default = self.options(temperature=None, top_p=None, stop=None)
+        self.assertTrue(default.startswith("temperature=0 top_p=1 top_k=0 min_p=0 repeat_penalty=1 seed="), default)
+        self.assertTrue(default.endswith(" stops=0"), default)
+        # Requests without a seed get a fresh one from the server's seed stream.
+        seeds = {self.options(temperature=1).split("seed=")[1].split()[0] for _ in range(3)}
+        self.assertEqual(len(seeds), 3)
+
+    def test_stop_strings_truncate_reply(self):
+        for stream in (False, True):
+            with self.subTest(stream=stream):
+                status, _, body = self.chat(stop=["llo", "zz"], stream=stream)
+                self.assertEqual(status, 200)
+                if stream:
+                    chunks = [json.loads(f[6:]) for f in body.decode().split("\n\n") if f.startswith("data: {")]
+                    text = "".join(c["choices"][0]["delta"].get("content", "") for c in chunks if c["choices"])
+                    self.assertEqual(chunks[-1]["choices"][0]["finish_reason"], "stop")
+                else:
+                    data = json.loads(body)
+                    text = data["choices"][0]["message"]["content"]
+                    self.assertEqual(data["choices"][0]["finish_reason"], "stop")
+                self.assertEqual(text, "history=1: he")
+        # A single string works too, and a prefix that never completes is kept.
+        status, _, body = self.chat(stop="\u2603x")
+        self.assertEqual(json.loads(body)["choices"][0]["message"]["content"], "history=1: hello \u2603\n")
 
     def test_invalid_json_and_schema(self):
         for body in [b'{', b'{}garbage', b'[]', b'{"model":"fake-model","messages":true}', b'{"x":NaN}', b'{"x":01}', b'{"x":"\\ud800"}', b'{"x":"\xff"}', b'{"x":1,"x":2}', b'{"x":' + b'[' * 70 + b'0' + b']' * 70 + b'}']:
