@@ -211,5 +211,8 @@ python3 bench/speed.py chart \
   bench/reference/m5-speed-scalar.json bench/reference/m5-speed-avx2.json \
   bench/reference/m5-speed-avx512.json bench/reference/m5-speed-vnni.json \
   bench/reference/m5-speed-threads.json bench/reference/m5-speed-final.json \
-  bench/reference/m5-speed-llama.json --output docs/assets/m5-speed.svg
+  bench/reference/m5-speed-llama.json bench/reference/r1-speed-kernels.json \
+  bench/reference/r1-speed-packed.json bench/reference/r1-speed-scratch.json \
+  bench/reference/r1-speed-unroll.json bench/reference/r1-speed-final.json \
+  bench/reference/r1-speed-llama-final.json --output docs/assets/m5-speed.svg
 ```
