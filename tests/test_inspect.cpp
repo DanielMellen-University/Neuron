@@ -43,6 +43,27 @@ NEURON_TEST(header_metadata_and_tensors) {
   CHECK(has(text, "\n16 parameters in 56 B (28.00 bits per weight)\n"));
   CHECK(has(text, "\n  F32  1 tensors, 12 parameters, 48 B\n  F16  1 tensors, 4 parameters, 8 B\n"));
 }
+NEURON_TEST(json_output) {
+  fixture::File f(sample());
+  const neuron::Gguf file(f.path);
+  neuron::InspectOptions options;
+  options.array_items = 3;
+  const auto text = neuron::describe_gguf_json(file, options);
+  CHECK(text.starts_with("{\"version\":3,\"alignment\":32,\"data_offset\":"));
+  CHECK(has(text, ",\"parameters\":16,\"tensor_bytes\":56,"));
+  CHECK(has(text, "\"general.name\":{\"type\":\"string\",\"value\":\"say \\\"hi\\\"\\u000a\\u0001\"}"));
+  CHECK(has(text, "\"llama.rope.freq_base\":{\"type\":\"f32\",\"value\":10000.5}"));
+  CHECK(has(text, "\"tokenizer.ggml.token_type\":{\"type\":\"array\",\"value\":{\"element_type\":\"i32\",\"count\":10,\"items\":[0,-1,-2]}}"));
+  CHECK(has(text, "{\"name\":\"output_norm.weight\",\"type\":\"F16\",\"shape\":[4],\"parameters\":4,\"bytes\":8,\"offset\":64}"));
+  options.tensors = false; options.array_items = 0;
+  const auto all = neuron::describe_gguf_json(file, options);
+  CHECK(!has(all, "\"tensors\""));
+  CHECK(has(all, "\"items\":[0,-1,-2,-3,-4,-5,-6,-7,-8,-9]"));
+  // Invalid UTF-8 in a string is replaced so the output stays valid JSON.
+  fixture::Bytes b; b.header(0, 1); b.text("general.name", "a\xff");
+  fixture::File g(b);
+  CHECK(has(neuron::describe_gguf_json(neuron::Gguf(g.path)), "\"value\":\"a\xef\xbf\xbd\""));
+}
 NEURON_TEST(summary_scales_units_and_handles_no_tensors) {
   fixture::Bytes b;
   b.header(1, 0);

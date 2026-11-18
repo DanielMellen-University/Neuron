@@ -1,7 +1,10 @@
 #include "neuron/inspect.hpp"
 #include "neuron/quant.hpp"
+#include "json.hpp"
+#include "utf8.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <map>
 #include <string>
@@ -51,6 +54,27 @@ std::string size_text(std::uint64_t bytes) {
   else if (kib < 1024 * 1024) std::snprintf(text, sizeof(text), "%.1f MiB", kib / 1024);
   else std::snprintf(text, sizeof(text), "%.2f GiB", kib / (1024 * 1024));
   return text;
+}
+std::string json_value(const GgufValue& value, const InspectOptions& options) {
+  switch (value.type) {
+    case GgufType::string: {
+      std::string copy = value.string();
+      return json::quote(detail::take_utf8(copy, true));
+    }
+    case GgufType::f32: case GgufType::f64: {
+      if (!std::isfinite(value.number())) return "null";
+      char text[32]; std::snprintf(text, sizeof(text), "%.9g", value.number()); return text;
+    }
+    case GgufType::array: {
+      const auto& items = value.array();
+      const auto shown = options.array_items == 0 ? items.size() : std::min(items.size(), options.array_items);
+      std::string out = "{\"element_type\":" + json::quote(gguf_type_name(value.element_type)) +
+          ",\"count\":" + std::to_string(items.size()) + ",\"items\":[";
+      for (std::size_t i = 0; i < shown; ++i) out += (i == 0 ? "" : ",") + json_value(items[i], options);
+      return out + "]}";
+    }
+    default: return scalar(value, options);
+  }
 }
 std::string pad(std::string text, std::size_t width) {
   if (text.size() < width) text.resize(width, ' ');
@@ -106,6 +130,31 @@ std::string summarize_tensors(const Gguf& file) {
         std::to_string(total.parameters) + " parameters, " + size_text(total.bytes) + "\n";
   return out;
 }
+std::string describe_gguf_json(const Gguf& file, const InspectOptions& options) {
+  std::uint64_t parameters = 0, bytes = 0;
+  std::string tensors;
+  for (const auto& tensor : file.tensors()) {
+    std::uint64_t elements = 1;
+    std::string dims;
+    for (const auto dim : tensor.dimensions) { elements *= dim; dims += (dims.empty() ? "" : ",") + std::to_string(dim); }
+    parameters += elements; bytes += tensor.bytes;
+    tensors += std::string(tensors.empty() ? "" : ",") + "{\"name\":" + json::quote(tensor.name) + ",\"type\":" +
+        json::quote(tensor_type_name(tensor.type)) + ",\"shape\":[" + dims + "],\"parameters\":" + std::to_string(elements) +
+        ",\"bytes\":" + std::to_string(tensor.bytes) + ",\"offset\":" + std::to_string(tensor.offset) + "}";
+  }
+  std::string out = "{\"version\":" + std::to_string(file.version()) + ",\"alignment\":" + std::to_string(file.alignment()) +
+      ",\"data_offset\":" + std::to_string(file.data_offset()) + ",\"parameters\":" + std::to_string(parameters) +
+      ",\"tensor_bytes\":" + std::to_string(bytes) + ",\"metadata\":{";
+  bool first = true;
+  for (const auto& [key, value] : file.metadata()) {
+    out += std::string(first ? "" : ",") + json::quote(key) + ":{\"type\":" + json::quote(gguf_type_name(value.type)) +
+        ",\"value\":" + json_value(value, options) + "}";
+    first = false;
+  }
+  out += "}";
+  if (options.tensors) out += ",\"tensors\":[" + tensors + "]";
+  return out + "}\n";
+}
 std::string describe_gguf(const Gguf& file, const InspectOptions& options) {
   std::string out = "GGUF v" + std::to_string(file.version()) + ", " + std::to_string(file.metadata().size()) +
       " metadata keys, " + std::to_string(file.tensors().size()) + " tensors, alignment " +
@@ -122,9 +171,10 @@ std::string describe_gguf(const Gguf& file, const InspectOptions& options) {
     }
     const auto& items = value.array();
     out += "[" + std::string(gguf_type_name(value.element_type)) + " x " + std::to_string(items.size()) + "]";
-    for (std::size_t i = 0; i < items.size() && i < options.array_items; ++i)
+    const auto shown = options.array_items == 0 ? items.size() : std::min(items.size(), options.array_items);
+    for (std::size_t i = 0; i < shown; ++i)
       out += (i == 0 ? " " : ", ") + (items[i].type == GgufType::array ? std::string("[...]") : scalar(items[i], options));
-    if (items.size() > options.array_items) out += ", ... " + std::to_string(items.size() - options.array_items) + " more";
+    if (items.size() > shown) out += ", ... " + std::to_string(items.size() - shown) + " more";
     out += "\n";
   }
   if (!options.tensors) return out;

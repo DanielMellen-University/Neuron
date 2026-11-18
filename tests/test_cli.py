@@ -111,6 +111,21 @@ class CliTests(unittest.TestCase):
         self.assertNotIn("tensors:", short)
         self.assertEqual(self.neuron("inspect", check=False).returncode, 2)
 
+    def test_inspect_json(self):
+        record = json.loads(self.neuron("inspect", "-m", self.model, "--json").stdout)
+        self.assertEqual(record["version"], 3)
+        self.assertEqual(record["parameters"], 900)
+        self.assertEqual(record["metadata"]["llama.context_length"], {"type": "u32", "value": 64})
+        tokens = record["metadata"]["tokenizer.ggml.tokens"]["value"]
+        self.assertEqual((tokens["element_type"], tokens["count"], len(tokens["items"])), ("string", 12, 8))
+        self.assertEqual(record["tensors"][0], {"name": "token_embd.weight", "type": "F32", "shape": [12, 12],
+                                                "parameters": 144, "bytes": 576, "offset": 0})
+        full = json.loads(self.neuron("inspect", "-m", self.model, "--json", "--array-items", "0", "--no-tensors").stdout)
+        self.assertEqual(full["metadata"]["tokenizer.ggml.tokens"]["value"]["items"][-1], "\u2581c")
+        self.assertNotIn("tensors", full)
+        text = self.neuron("inspect", "-m", self.model, "--array-items", "2").stdout.decode()
+        self.assertIn('[string x 12] "<unk>", "<s>", ... 10 more', text)
+
 
 if __name__ == "__main__":
     unittest.main()

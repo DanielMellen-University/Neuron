@@ -43,7 +43,7 @@ void print_usage() {
       "\n"
       "       neuron perplexity -m MODEL --prompt-file FILE --ctx-size N [--chunks N]\n"
       "       neuron chat -m MODEL [-n 128] [--system TEXT] [--ctx-size N] [sampling flags] [--stop TEXT]...\n"
-      "       neuron inspect -m MODEL [--no-tensors]\n"
+      "       neuron inspect -m MODEL [--no-tensors] [--array-items N] [--json]\n"
       "       neuron serve -m MODEL [--host 127.0.0.1] [--port 8080] [--ctx-size N] [-n 128] [sampling flags]\n"
       "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0/Q4_K/Q6_K weights.\n"
       "--prompt-file FILE reads prompt bytes instead of -p.\n"
@@ -146,7 +146,12 @@ int execute(int argc, char** argv) {
     else if (option == "--repeat-penalty" && (command == "run" || command == "chat" || command == "serve")) sampling.repeat_penalty = real(value(), "--repeat-penalty");
     else if (option == "--stop" && (command == "run" || command == "chat" || command == "serve")) stops.push_back(value());
     else if (option == "--repeat-last-n" && (command == "run" || command == "chat" || command == "serve")) sampling.repeat_last_n = static_cast<std::size_t>(whole(value()));
-    else if (option == "--json" && command == "run") json = true;
+    else if (option == "--json" && (command == "run" || command == "inspect")) json = true;
+    else if (option == "--array-items" && command == "inspect") {
+      const auto items = whole(value());
+      if (items > 1000000000) throw std::invalid_argument("--array-items is too large");
+      inspect.array_items = static_cast<std::size_t>(items);
+    }
     else if (option == "--no-add-special" && command == "tokenize") add_special = false;
     else if (option == "--no-parse-special" && command == "tokenize") parse_special = false;
     else if (option == "--no-tensors" && command == "inspect") inspect.tensors = false;
@@ -160,7 +165,7 @@ int execute(int argc, char** argv) {
   if (command == "inspect") {
     if (path.empty()) throw std::invalid_argument("-m MODEL is required");
     const neuron::Gguf file(path);
-    const auto text = neuron::describe_gguf(file, inspect);
+    const auto text = json ? neuron::describe_gguf_json(file, inspect) : neuron::describe_gguf(file, inspect);
     std::fwrite(text.data(), 1, text.size(), stdout);
     return 0;
   }

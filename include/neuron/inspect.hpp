@@ -9,7 +9,7 @@
 namespace neuron {
 struct InspectOptions {
   bool tensors = true;            // Include the tensor table.
-  std::size_t array_items = 8;    // Array elements shown before "... N more".
+  std::size_t array_items = 8;    // Array elements shown before "... N more"; 0 shows all.
   std::size_t string_bytes = 96;  // Longer strings are cut, with their full size noted.
 };
 // Human-readable dump of a GGUF file's header, metadata and tensor table.
@@ -17,6 +17,9 @@ struct InspectOptions {
 // weight and a breakdown by tensor type.
 std::string describe_gguf(const Gguf& file, const InspectOptions& options = {});
 std::string summarize_tensors(const Gguf& file);
+// The same information as one JSON object. Strings are complete (invalid
+// UTF-8 becomes U+FFFD) and arrays list up to array_items elements.
+std::string describe_gguf_json(const Gguf& file, const InspectOptions& options = {});
 std::string_view gguf_type_name(GgufType type);
 // GGML tensor type name such as F16 or Q4_K.
 std::string tensor_type_name(std::uint32_t type);
