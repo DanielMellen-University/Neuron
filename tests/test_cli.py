@@ -100,6 +100,15 @@ class CliTests(unittest.TestCase):
             result = self.neuron("serve", "-m", self.model, "--port", "1", *flags, check=False)
             self.assertEqual(result.returncode, 2, flags)
             self.assertNotIn(b"chat supports", result.stderr, flags)
+    def test_inspect_lists_metadata_and_tensors(self):
+        out = self.neuron("inspect", "-m", self.model).stdout.decode()
+        self.assertTrue(out.startswith("GGUF v3, 16 metadata keys, 12 tensors, alignment 32"), out)
+        self.assertRegex(out, r"general\.name +string \"neuron cli fixture\"")
+        self.assertRegex(out, r"tokenizer\.ggml\.tokens +\[string x 12\] \"<unk>\", \"<s>\"")
+        self.assertRegex(out, r"token_embd\.weight +F32 +12 x 12 +576 bytes at 0")
+        short = self.neuron("inspect", "-m", self.model, "--no-tensors").stdout.decode()
+        self.assertNotIn("tensors:", short)
+        self.assertEqual(self.neuron("inspect", check=False).returncode, 2)
 
 
 if __name__ == "__main__":

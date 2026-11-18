@@ -52,6 +52,9 @@ class Gguf {
   std::span<const std::byte> tensor_data(const GgufTensor& tensor) const;
   std::vector<float> tensor_f32(const std::string& name) const;
   std::size_t alignment() const { return alignment_; }
+  std::uint32_t version() const { return version_; }
+  // Byte offset of the tensor data section from the start of the file.
+  std::size_t data_offset() const { return data_offset_; }
 
  private:
   struct Mapping;
@@ -60,6 +63,7 @@ class Gguf {
   std::vector<GgufTensor> tensors_;
   std::size_t alignment_ = 32;
   std::size_t data_offset_ = 0;
+  std::uint32_t version_ = 0;
 };
 
 float f16_to_f32(std::uint16_t bits);

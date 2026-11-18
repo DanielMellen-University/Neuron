@@ -14,6 +14,7 @@
 #include <string_view>
 
 #include "neuron/model.hpp"
+#include "neuron/inspect.hpp"
 #include "neuron/kernels.hpp"
 #include "neuron/perplexity.hpp"
 #include "neuron/chat.hpp"
@@ -42,6 +43,7 @@ void print_usage() {
       "\n"
       "       neuron perplexity -m MODEL --prompt-file FILE --ctx-size N [--chunks N]\n"
       "       neuron chat -m MODEL [-n 128] [--system TEXT] [--ctx-size N] [sampling flags] [--stop TEXT]...\n"
+      "       neuron inspect -m MODEL [--no-tensors]\n"
       "       neuron serve -m MODEL [--host 127.0.0.1] [--port 8080] [--ctx-size N] [-n 128] [sampling flags]\n"
       "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0/Q4_K/Q6_K weights.\n"
       "--prompt-file FILE reads prompt bytes instead of -p.\n"
@@ -95,10 +97,11 @@ int execute(int argc, char** argv) {
     print_usage(); return 0;
   }
   const std::string command = argv[1];
-  if (command != "run" && command != "tokenize" && command != "logits" && command != "template" && command != "perplexity" && command != "chat" && command != "serve") throw std::invalid_argument("unknown command: " + command);
+  if (command != "run" && command != "tokenize" && command != "logits" && command != "template" && command != "perplexity" && command != "chat" && command != "serve" && command != "inspect") throw std::invalid_argument("unknown command: " + command);
   std::string path, prompt, output, teacher_file;
   bool has_prompt = false, greedy = false, json = false, add_special = true, parse_special = true;
   bool chat = false, recompute = false, has_system = false;
+  neuron::InspectOptions inspect;
   std::string system;
   std::vector<neuron::ChatMessage> messages;
   std::size_t predict = 128, context = 2048, chunks = 0;
@@ -146,6 +149,7 @@ int execute(int argc, char** argv) {
     else if (option == "--json" && command == "run") json = true;
     else if (option == "--no-add-special" && command == "tokenize") add_special = false;
     else if (option == "--no-parse-special" && command == "tokenize") parse_special = false;
+    else if (option == "--no-tensors" && command == "inspect") inspect.tensors = false;
     else throw std::invalid_argument("unknown option: " + std::string(option));
   }
   if (greedy && sampling.temperature != 0) throw std::invalid_argument("--greedy conflicts with a nonzero --temp");
@@ -153,6 +157,13 @@ int execute(int argc, char** argv) {
   neuron::StopMatcher stop(stops);
   // serve always needs a random start for its per-request seed stream.
   if ((!sampling.greedy() || command == "serve") && !has_seed) sampling.seed = (static_cast<std::uint64_t>(std::random_device{}()) << 32) | std::random_device{}();
+  if (command == "inspect") {
+    if (path.empty()) throw std::invalid_argument("-m MODEL is required");
+    const neuron::Gguf file(path);
+    const auto text = neuron::describe_gguf(file, inspect);
+    std::fwrite(text.data(), 1, text.size(), stdout);
+    return 0;
+  }
   if (command == "chat" || command == "serve") {
     if (path.empty()) throw std::invalid_argument("-m MODEL is required");
     neuron::ModelChat backend(path, context);

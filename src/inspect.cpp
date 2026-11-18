@@ -1,0 +1,111 @@
+#include "neuron/inspect.hpp"
+#include "neuron/quant.hpp"
+
+#include <algorithm>
+#include <cstdio>
+#include <string>
+
+namespace neuron {
+namespace {
+std::string escape(std::string_view text, std::size_t limit) {
+  std::string out = "\"";
+  // Cut on a UTF-8 boundary so a shortened string stays readable.
+  while (limit > 0 && limit < text.size() && (static_cast<unsigned char>(text[limit]) & 0xc0) == 0x80) --limit;
+  const auto shown = text.substr(0, limit);
+  for (const char c : shown) {
+    const auto u = static_cast<unsigned char>(c);
+    if (c == '"' || c == '\\') { out += '\\'; out += c; }
+    else if (c == '\n') out += "\\n";
+    else if (c == '\t') out += "\\t";
+    else if (c == '\r') out += "\\r";
+    else if (u < 0x20 || u == 0x7f) { char hex[5]; std::snprintf(hex, sizeof(hex), "\\x%02x", u); out += hex; }
+    else out += c;
+  }
+  out += '"';
+  if (text.size() > shown.size()) out += "... (" + std::to_string(text.size()) + " bytes)";
+  return out;
+}
+std::string scalar(const GgufValue& value, const InspectOptions& options) {
+  switch (value.type) {
+    case GgufType::string: return escape(value.string(), options.string_bytes);
+    case GgufType::boolean: return value.boolean() ? "true" : "false";
+    case GgufType::f32: case GgufType::f64: {
+      char text[32]; std::snprintf(text, sizeof(text), "%.9g", value.number()); return text;
+    }
+    case GgufType::i8: case GgufType::i16: case GgufType::i32: case GgufType::i64:
+      return std::to_string(std::get<std::int64_t>(value.data));
+    default: return std::to_string(value.uint());
+  }
+}
+std::string shape(const GgufTensor& tensor) {
+  std::string out;
+  for (const auto dim : tensor.dimensions) out += (out.empty() ? "" : " x ") + std::to_string(dim);
+  return out;
+}
+std::string pad(std::string text, std::size_t width) {
+  if (text.size() < width) text.resize(width, ' ');
+  return text + ' ';
+}
+}  // namespace
+std::string_view gguf_type_name(GgufType type) {
+  switch (type) {
+    case GgufType::u8: return "u8";
+    case GgufType::i8: return "i8";
+    case GgufType::u16: return "u16";
+    case GgufType::i16: return "i16";
+    case GgufType::u32: return "u32";
+    case GgufType::i32: return "i32";
+    case GgufType::f32: return "f32";
+    case GgufType::boolean: return "bool";
+    case GgufType::string: return "string";
+    case GgufType::array: return "array";
+    case GgufType::u64: return "u64";
+    case GgufType::i64: return "i64";
+    case GgufType::f64: return "f64";
+  }
+  return "unknown";
+}
+std::string tensor_type_name(std::uint32_t type) {
+  switch (type) {
+    case 0: return "F32";
+    case 1: return "F16";
+    case q4_0: return "Q4_0";
+    case q8_0: return "Q8_0";
+    case q4_k: return "Q4_K";
+    case q6_k: return "Q6_K";
+    default: return "type " + std::to_string(type);
+  }
+}
+std::string describe_gguf(const Gguf& file, const InspectOptions& options) {
+  std::string out = "GGUF v" + std::to_string(file.version()) + ", " + std::to_string(file.metadata().size()) +
+      " metadata keys, " + std::to_string(file.tensors().size()) + " tensors, alignment " +
+      std::to_string(file.alignment()) + ", data at byte " + std::to_string(file.data_offset()) + "\n";
+  std::size_t key_width = 0;
+  for (const auto& [key, value] : file.metadata()) key_width = std::max(key_width, key.size());
+  out += "\nmetadata:\n";
+  for (const auto& [key, value] : file.metadata()) {
+    out += "  " + pad(key, key_width);
+    if (value.type != GgufType::array) {
+      out += pad(std::string(gguf_type_name(value.type)), 6) + scalar(value, options) + "\n";
+      continue;
+    }
+    const auto& items = value.array();
+    out += "[" + std::string(gguf_type_name(value.element_type)) + " x " + std::to_string(items.size()) + "]";
+    for (std::size_t i = 0; i < items.size() && i < options.array_items; ++i)
+      out += (i == 0 ? " " : ", ") + (items[i].type == GgufType::array ? std::string("[...]") : scalar(items[i], options));
+    if (items.size() > options.array_items) out += ", ... " + std::to_string(items.size() - options.array_items) + " more";
+    out += "\n";
+  }
+  if (!options.tensors) return out;
+  std::size_t name_width = 0, shape_width = 0;
+  for (const auto& tensor : file.tensors()) {
+    name_width = std::max(name_width, tensor.name.size());
+    shape_width = std::max(shape_width, shape(tensor).size());
+  }
+  out += "\ntensors:\n";
+  for (const auto& tensor : file.tensors())
+    out += "  " + pad(tensor.name, name_width) + pad(tensor_type_name(tensor.type), 4) + pad(shape(tensor), shape_width) +
+        std::to_string(tensor.bytes) + " bytes at " + std::to_string(tensor.offset) + "\n";
+  return out;
+}
+}  // namespace neuron

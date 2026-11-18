@@ -149,6 +149,7 @@ Gguf::Gguf(const std::string& path) : mapping_(std::make_unique<Mapping>(path)) 
   if (reader.read<std::uint32_t>() != 0x46554747) fail("bad magic (expected GGUF)");
   const auto version = reader.read<std::uint32_t>();
   if (version != 2 && version != 3) fail("unsupported version " + std::to_string(version));
+  version_ = version;
   const auto nt = reader.read<std::uint64_t>();
   const auto nm = reader.read<std::uint64_t>();
   if (nm > reader.remaining() / 12 || nt > reader.remaining() / 32 || nm > 100000 || nt > 100000)
