@@ -177,7 +177,8 @@ Start at the [docs hub](docs/README.md). Source lives in `src/`, public headers 
 - [Design and optimization](docs/blog/design-and-optimization.md): how the engine works, and the measured quality and speed gaps
 - [Command-line reference](docs/cli.md): sampling, stop strings, chat and server options, GGUF inspection and token tools
 - [Terminal demo](docs/demo.md): the real capture, timing policy and GIF reproduction
-- [Roadmap](ROADMAP.md): the seven milestones, acceptance criteria and what was missed
+- [Roadmap](ROADMAP.md): the seven milestones, R1 and R2, acceptance criteria and what was missed
+- [Changelog](CHANGELOG.md): what each release contains
 - [Baseline](bench/BASELINE.md): pinned llama.cpp and model inputs
 - [M7 check sheet](bench/M7_CHECKS.md): table provenance, reproduce commands and toolchain results
 

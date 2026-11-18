@@ -7,6 +7,7 @@ This is the documentation hub for Neuron. Start with the [README](../README.md) 
 - [Terminal demo](demo.md): the real capture, timing policy and GIF reproduction.
 - [M7 check sheet](../bench/M7_CHECKS.md): where every public number comes from, plus reproduce commands and local validation.
 - [Roadmap](../ROADMAP.md): milestone status, acceptance criteria and the missed targets.
+- [Changelog](../CHANGELOG.md): what each release contains.
 
 The benchmark directory keeps the detailed methods and raw JSON records:
 
