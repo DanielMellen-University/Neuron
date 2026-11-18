@@ -39,6 +39,22 @@ NEURON_TEST(header_metadata_and_tensors) {
   CHECK(has(text, "[i32 x 10] 0, -1, -2, -3, -4, -5, -6, -7, ... 2 more\n"));
   CHECK(has(text, "  token_embd.weight  F32  4 x 3 48 bytes at 0\n"));
   CHECK(has(text, "  output_norm.weight F16  4     8 bytes at 64\n"));
+  // 16 weights in 56 bytes is 28 bits per weight.
+  CHECK(has(text, "\n16 parameters in 56 B (28.00 bits per weight)\n"));
+  CHECK(has(text, "\n  F32  1 tensors, 12 parameters, 48 B\n  F16  1 tensors, 4 parameters, 8 B\n"));
+}
+NEURON_TEST(summary_scales_units_and_handles_no_tensors) {
+  fixture::Bytes b;
+  b.header(1, 0);
+  b.tensor("big", {1024, 1024}, 0, 0);
+  b.align();
+  b.data.resize(b.data.size() + 4u * 1024 * 1024);
+  fixture::File f(b);
+  CHECK_EQ(neuron::summarize_tensors(neuron::Gguf(f.path)),
+           std::string("1048576 parameters in 4.0 MiB (32.00 bits per weight)\n  F32  1 tensors, 1048576 parameters, 4.0 MiB\n"));
+  fixture::Bytes empty; empty.header(0, 0);
+  fixture::File g(empty);
+  CHECK_EQ(neuron::summarize_tensors(neuron::Gguf(g.path)), std::string("no tensors\n"));
 }
 NEURON_TEST(options_limit_output) {
   fixture::File f(sample());

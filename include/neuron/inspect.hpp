@@ -13,7 +13,10 @@ struct InspectOptions {
   std::size_t string_bytes = 96;  // Longer strings are cut, with their full size noted.
 };
 // Human-readable dump of a GGUF file's header, metadata and tensor table.
+// The header line is followed by the parameter count, total size, bits per
+// weight and a breakdown by tensor type.
 std::string describe_gguf(const Gguf& file, const InspectOptions& options = {});
+std::string summarize_tensors(const Gguf& file);
 std::string_view gguf_type_name(GgufType type);
 // GGML tensor type name such as F16 or Q4_K.
 std::string tensor_type_name(std::uint32_t type);

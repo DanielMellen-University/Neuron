@@ -106,6 +106,7 @@ class CliTests(unittest.TestCase):
         self.assertRegex(out, r"general\.name +string \"neuron cli fixture\"")
         self.assertRegex(out, r"tokenizer\.ggml\.tokens +\[string x 12\] \"<unk>\", \"<s>\"")
         self.assertRegex(out, r"token_embd\.weight +F32 +12 x 12 +576 bytes at 0")
+        self.assertIn("\n900 parameters in 3.5 KiB (32.00 bits per weight)\n  F32  12 tensors, 900 parameters", out)
         short = self.neuron("inspect", "-m", self.model, "--no-tensors").stdout.decode()
         self.assertNotIn("tensors:", short)
         self.assertEqual(self.neuron("inspect", check=False).returncode, 2)

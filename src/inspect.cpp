@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <map>
 #include <string>
 
 namespace neuron {
@@ -42,6 +43,15 @@ std::string shape(const GgufTensor& tensor) {
   for (const auto dim : tensor.dimensions) out += (out.empty() ? "" : " x ") + std::to_string(dim);
   return out;
 }
+std::string size_text(std::uint64_t bytes) {
+  char text[32];
+  if (bytes < 1024) return std::to_string(bytes) + " B";
+  const double kib = static_cast<double>(bytes) / 1024;
+  if (kib < 1024) std::snprintf(text, sizeof(text), "%.1f KiB", kib);
+  else if (kib < 1024 * 1024) std::snprintf(text, sizeof(text), "%.1f MiB", kib / 1024);
+  else std::snprintf(text, sizeof(text), "%.2f GiB", kib / (1024 * 1024));
+  return text;
+}
 std::string pad(std::string text, std::size_t width) {
   if (text.size() < width) text.resize(width, ' ');
   return text + ' ';
@@ -76,10 +86,31 @@ std::string tensor_type_name(std::uint32_t type) {
     default: return "type " + std::to_string(type);
   }
 }
+std::string summarize_tensors(const Gguf& file) {
+  struct Total { std::size_t tensors = 0; std::uint64_t parameters = 0, bytes = 0; };
+  std::map<std::uint32_t, Total> by_type;
+  Total all;
+  for (const auto& tensor : file.tensors()) {
+    std::uint64_t elements = 1;
+    for (const auto dim : tensor.dimensions) elements *= dim;
+    for (auto* total : {&all, &by_type[tensor.type]}) {
+      ++total->tensors; total->parameters += elements; total->bytes += tensor.bytes;
+    }
+  }
+  if (all.tensors == 0) return "no tensors\n";
+  char bits[32];
+  std::snprintf(bits, sizeof(bits), "%.2f", static_cast<double>(all.bytes) * 8 / static_cast<double>(all.parameters));
+  std::string out = std::to_string(all.parameters) + " parameters in " + size_text(all.bytes) + " (" + bits + " bits per weight)\n";
+  for (const auto& [type, total] : by_type)
+    out += "  " + pad(tensor_type_name(type), 4) + std::to_string(total.tensors) + " tensors, " +
+        std::to_string(total.parameters) + " parameters, " + size_text(total.bytes) + "\n";
+  return out;
+}
 std::string describe_gguf(const Gguf& file, const InspectOptions& options) {
   std::string out = "GGUF v" + std::to_string(file.version()) + ", " + std::to_string(file.metadata().size()) +
       " metadata keys, " + std::to_string(file.tensors().size()) + " tensors, alignment " +
       std::to_string(file.alignment()) + ", data at byte " + std::to_string(file.data_offset()) + "\n";
+  out += summarize_tensors(file);
   std::size_t key_width = 0;
   for (const auto& [key, value] : file.metadata()) key_width = std::max(key_width, key.size());
   out += "\nmetadata:\n";
