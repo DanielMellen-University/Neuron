@@ -98,7 +98,7 @@ All rates below are tokens per second (tok/s) with four threads in both engines,
 | Qwen2.5 1.5B Instruct | Q4_K_M | 23.91 | 21.22 | 52.50 | 38.56 | [N](bench/reference/r1-speed-final.json) / [L](bench/reference/r1-speed-llama-final.json) |
 <!-- /speed-table -->
 
-TinyStories pools the original prompt set across three repetitions and 128 generated tokens per sample. The other rows use one raw prompt, `Once upon a time`, with 32 generated tokens and no warmup. These are short samples collected at different times, without fixed frequency or temperature. Q4_K_M was rerun in R1; the other rows retain their M1/M5/M7 records. They do not measure chat latency or sustained throughput. Prompt processing in Neuron evaluates tokens sequentially; llama.cpp can batch them. [The derived table](bench/reference/m7-benchmarks.json) points to every input record. N and L link directly to Neuron and llama.cpp timings.
+These are short single samples (32 generated tokens from `Once upon a time`, no warmup; TinyStories pools three prompts) taken without fixed frequency or temperature, so they are not chat latency or sustained throughput. Neuron evaluates prompt tokens one at a time; llama.cpp batches them. The Q4_K_M row is the R1 rerun. [The derived table](bench/reference/m7-benchmarks.json) points to every input record.
 
 To repeat a short pair after the build and model setup above:
 
@@ -145,7 +145,7 @@ Install `openai` in a separate Python environment to use this example. Omit `str
 ## Limitations
 
 - **M4 missed both free-running agreement targets.** R2 reproduced Q8_0's 551/768 tokens (71.74%, target 90%), Q4_0's 51/768 (6.64%, target 70%) and Q4_K_M's 180/768 (23.44%, target 70%) against F16. llama.cpp's own runs also miss, at 59.51%, 6.38% and 20.31%. Numerical checks found no inference defect that justifies a correction. Per-format perplexity (how well the model predicts the next token on a fixed text) still tracks llama.cpp within 0.9%. [Quality measurements and accepted misses](bench/QUANT.md#r2-free-running-agreement), [R2 numerical checks](bench/R2_AGREEMENT.md).
-- **Speed remains below llama.cpp.** R1 Q4_K_M generation is 21.215665 tokens/s versus 38.558125, or 55.02%, with four threads. This short sample meets the 50% target; M5 originally reached 11.02%. Frequency and temperature were not fixed. [Raw results and method](bench/SPEED.md#r1-result) retain both rounds.
+- **Speed remains below llama.cpp.** Q4_K_M generation is 55.02% of llama.cpp's with four threads; Q8_0 and Q4_0 reach only about 32% and 14% (table above). [Raw results and method](bench/SPEED.md#r1-result).
 - **Restricted models and formats.** Dense Llama and Qwen2 only; the locally checked models are the table above. No MoE, RoPE scaling, other quantization formats, arbitrary Jinja templates or multimodal inputs.
 - **API subset.** No tools, response formats, logprobs or multiple choices per request. The API implements a subset of OpenAI's interface and serves one request at a time, without authentication or TLS.
 - **Context and memory costs.** F16 expands to FP32 in memory. Chat re-evaluates the full history each turn. The CLI defaults to context 2048 and rejects overflow; it does not truncate or slide history. TinyStories declares a training context of 128; use `--ctx-size 128` with a smaller prompt/output budget to stay inside it. An override makes no quality claim beyond a model's training context.

@@ -77,22 +77,18 @@ bounds, including scale rounding. The larger M4 quality method scores
 4,096 targets from a fixed WikiText-2 slice and generates 64 tokens on each
 of twelve neutral prompts. [The committed method](../../bench/m4-method-v2.md)
 was fixed before collection. Its [results](../../bench/reference/m4-v2-quantization.json)
-give these perplexities (how well the model predicts the next token on a fixed text; lower is better) on identical files and input IDs:
-
-| GGUF | Neuron | llama.cpp |
-| --- | ---: | ---: |
-| F16 | 11.580966 | 11.580968 |
-| Q8_0 | 11.584336 | 11.614251 |
-| Q4_0 | 13.129919 | 13.143771 |
-| Q4_K_M | 12.145460 | 12.254528 |
-
-Perplexity tracks llama.cpp within 0.9% for every tested format. The
+compare perplexity (how well the model predicts the next token on a fixed
+text; lower is better) on identical files and input IDs. Perplexity tracks
+llama.cpp within 0.9% for every tested format; [the quality
+notes](../../bench/QUANT.md) have the per-format table. The
 free-running agreement gates were still missed. Q8_0 matched 551/768 IDs,
 or 71.74%, against a 90% target. Q4_K_M matched 180/768, or 23.44%, against
 a 70% target. Once a greedy continuation diverges, later positions compare
 two different histories. Teacher-forced agreement diagnoses that effect,
 but does not satisfy the free-running criterion. M4 was accepted with the
-misses recorded in [the quality notes](../../bench/QUANT.md).
+misses recorded. R2 later ran the same check in llama.cpp, which misses
+both targets too; [the R2 checks](../../bench/R2_AGREEMENT.md) explain
+where the two engines differ.
 
 Smaller weights also did not automatically make the original scalar
 implementation faster. Scalar Q4_K_M generated at 0.379621 tokens/s,
@@ -109,19 +105,7 @@ on the same scale.
 
 ![Qwen2.5 Q4_K_M generation on the test laptop through M5 and R1](../assets/m5-speed.svg)
 
-| Step | Threads | Generation tokens/s |
-| --- | ---: | ---: |
-| Scalar | 1 | 0.379682 |
-| AVX2 | 1 | 1.030390 |
-| AVX-512 | 1 | 1.936931 |
-| VNNI | 1 | 1.196552 |
-| AVX-512 with threads | 4 | 5.687839 |
-| Final recheck | 4 | 4.294374 |
-| llama.cpp | 4 | 38.953875 |
-| R1 final | 4 | 21.215665 |
-| R1 llama.cpp | 4 | 38.558125 |
-
-[The M5 source map and raw measurements](../../bench/SPEED.md#optimization-steps)
+[The step table, source map and raw measurements](../../bench/SPEED.md#optimization-steps)
 trace every point. All samples use `Once upon a time`, context 256 and
 32 generated tokens, without a warmup. Generation excludes the first
 sampled token because it comes from prompt evaluation.
@@ -157,8 +141,7 @@ The later sample was slower. Frequency, temperature and scheduling were
 not held fixed, and each point is a single short observation. The final
 comparison uses 4.294374 tokens/s versus llama.cpp's 38.953875 with the
 same file and four threads: 11.02%, below the 50% target. The miss was
-accepted without another tuning cycle. [M7's wider model table](../../README.md#speed-vs-llamacpp)
-added the missing short pairs. The current README uses the R1 Q4_K_M pair.
+accepted at the time, and R1 came back to it after M7.
 
 R1 generation is 3.69 times the fresh unmodified-main sample of 5.747949
 tokens/s. Besides the K kernels, R1 reuses activation, logit and pool job
