@@ -31,7 +31,7 @@ Completed on the test laptop: pinned download and build scripts, three fixed pro
 greedy reference tokens and measured speeds at 1, 4 and 8 threads, and a
 model-free compare test suite in CTest. [bench/BASELINE.md](bench/BASELINE.md)
 records the inputs, power state, results, reproduction commands and local
-validation. M2 adds Neuron inference against that reference.
+validation.
 
 Acceptance criteria:
 
@@ -94,20 +94,14 @@ GGUF layout/truncation checks are implemented. All local CI configurations
 and M2/M3 regressions pass. [Quantization checks](bench/QUANT.md) record
 both rounds and the unchanged acceptance criteria.
 
-M4 is done. The larger precommitted method scores 4,096 WikiText-2
-targets and runs twelve neutral prompts with 64 tokens each. Perplexity
-tracks llama.cpp on the same file for every format: F16 11.580966 vs
-11.580968, Q8_0 11.584336 vs 11.614251, Q4_0 13.129919 vs 13.143771 and
-Q4_K_M 12.145460 vs 12.254528. Q8_0 is 0.029% above F16 and Q4_K_M is
-4.87% above F16, so the perplexity limits pass. Both free-running greedy
-agreement criteria were missed (see the marks below). The milestone was
-accepted by Daniel on Nov 16 2026 because perplexity matches llama.cpp for each format (within 0.9%). Teacher-forced agreement is 99.48% for Q8_0 and
-88.67% for Q4_K_M; it is a diagnostic and does not replace the criteria.
-
-Known limitation: in the current scalar path Q4_K_M is slower than F16
-(0.379621 versus 0.670816 generation tokens/s). Smaller weights do not
-make this implementation faster on their own. SIMD kernels and threading
-were left to M5.
+M4 is done. The precommitted method scores 4,096 WikiText-2 targets and
+runs twelve neutral prompts with 64 tokens each. Perplexity tracks
+llama.cpp on the same file for every format, within 0.9%, so the
+perplexity limits pass. Both free-running greedy agreement criteria were
+missed (see the marks below) and were accepted by Daniel on Nov 16 2026
+for that reason. [R2](#r2-free-running-agreement) later rechecked them in
+both engines. The [quantization notes](bench/QUANT.md) have the full
+perplexity and agreement tables.
 
 Goal: the model fits comfortably and runs faster, with a measured, bounded quality loss.
 
@@ -119,8 +113,8 @@ Acceptance criteria:
   - int8 perplexity within 1% of FP32 (or F16) perplexity.
   - 4-bit perplexity within 10% of FP32 perplexity, and within 2% of llama.cpp's perplexity for the same quant type.
   - Greedy token agreement with the FP32 run of at least 90% over the first 64 tokens across the prompt set for int8, and at least 70% for 4-bit.
-    - MISSED (int8): Q8_0 free-running agreement 551/768 (71.74%), target 90%. Accepted by Daniel on Nov 16 2026 because perplexity matches llama.cpp for each format (within 0.9%).
-    - MISSED (4-bit): best 4-bit format Q4_K_M free-running agreement 180/768 (23.44%), target 70%. Accepted by Daniel on Nov 16 2026 because perplexity matches llama.cpp for each format (within 0.9%).
+    - MISSED (int8): Q8_0 free-running agreement 551/768 (71.74%), target 90%. Accepted.
+    - MISSED (4-bit): best 4-bit format Q4_K_M free-running agreement 180/768 (23.44%), target 70%. Accepted.
 - `bench/QUANT.md` records file size, memory use, perplexity, and token agreement for each format.
 
 ## M5: AVX-512 kernels and multithreading
@@ -130,7 +124,7 @@ Goal: make it fast on the test laptop, one measured step at a time.
 Implemented on the test laptop. All seven build/test configurations and the
 SIMD, threading, TinyStories and quick Qwen correctness guards pass.
 [Speed checks](bench/SPEED.md) record every optimization commit and result.
-MISSED (speed): final Q4_K_M generation is 4.294374 tokens/s versus
+MISSED at M5 (speed, historical): Q4_K_M generation was 4.294374 tokens/s versus
 38.953875 for llama.cpp with four threads, or 11.02%, below the 50% target.
 Accepted by Daniel on Nov 17 2026 as a non-bug miss. The refinement came
 after M7 as [R1](#r1-decode-speed-refinement), which reached 55.02%.
@@ -175,8 +169,7 @@ The docs hub links the design post, generated M5 chart and real Qwen2.5
 Q4_K_M terminal GIF. All seven local build/test configurations pass, and
 the official client passes with SmolLM2 first and Qwen last.
 [M7 checks](bench/M7_CHECKS.md) map claims to committed records and retain
-the reproduction commands. No M7 acceptance item remains open. No tag or
-release was created; those require explicit approval.
+the reproduction commands. No M7 acceptance item remains open.
 
 Goal: someone landing on the repo understands what it is, how fast it is, and how it works in two minutes.
 
@@ -187,7 +180,7 @@ Acceptance criteria:
 - A demo GIF (recorded terminal or web chat with Qwen2.5 1.5B Q4 on the test laptop) committed under `docs/` and under 5 MiB, with no image placeholder in the README before it exists. Done: [docs/chat.gif](docs/chat.gif).
 - A blog post in `docs/blog/` that walks through the design and the optimization steps, with the M5 speed chart.
 - Every number in the README and blog post traces to a file under `bench/`.
-- A tagged release only when explicitly approved.
+- A tagged release only when explicitly approved. Daniel approved v1.0.0, the first release, on Nov 18 2026.
 
 ## R1: decode speed refinement
 
@@ -203,14 +196,10 @@ M4 free-running agreement and all acceptance criteria above are unchanged.
 
 R2 repeats the twelve-prompt M4-v2 agreement check in both engines, with
 each quantized format compared against its own engine's F16 run. Neuron
-reproduces 551/768 (71.74%) for Q8_0, 51/768 (6.64%) for Q4_0 and 180/768
-(23.44%) for Q4_K_M in both runs. llama.cpp measures 457/768 (59.51%),
-49/768 (6.38%) and 156/768 (20.31%), respectively. Both engines miss the
-90% int8 and 70% four-bit agreement targets.
-
-F16 matches across engines at all 768 positions. Layer and operation checks
-found matching weight decoding and F16 conversions. The larger quantized
-differences follow activation precision, with no inference correction
-justified by the checks. All four perplexity regression checks pass at or
-below M4. [Quality table](bench/QUANT.md#r2-free-running-agreement),
+reproduces its M4 numbers exactly, and llama.cpp misses the same 90% int8
+and 70% four-bit targets (Q8_0 71.74% vs 59.51%, Q4_0 6.64% vs 6.38%,
+Q4_K_M 23.44% vs 20.31%). F16 matches across engines at all 768 positions.
+Layer and operation checks found no inference defect that would justify a
+correction, and all four perplexity regression checks pass at or below M4.
+[Quality table](bench/QUANT.md#r2-free-running-agreement),
 [R2 numerical checks](bench/R2_AGREEMENT.md).
