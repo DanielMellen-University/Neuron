@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
     if (argc < 3) throw std::runtime_error("usage: llama-reference MODEL TEXT [--logits FILE] [--generate N] [--perplexity CONTEXT --chunks N] [--chat FILE --render FILE] [--no-add-special] [--no-parse-special] [--cache-f16]");
     bool add_special = true, parse_special = true, cache_f16 = false;
     std::string output, chat, rendered, prompt_file;
-    int generate = 0, ppl_context = 0, chunks = 0;
+    int generate = 0, ppl_context = 0, chunks = 0, generation_context = 2048, batch_size = 512;
     for (int i = 3; i < argc; ++i) {
       const std::string option = argv[i];
       if (option == "--no-add-special") add_special = false;
@@ -34,9 +34,13 @@ int main(int argc, char** argv) {
       else if (option == "--perplexity" && i + 1 < argc) ppl_context = std::stoi(argv[++i]);
       else if (option == "--chunks" && i + 1 < argc) chunks = std::stoi(argv[++i]);
       else if (option == "--generate" && i + 1 < argc) generate = std::stoi(argv[++i]);
+      else if (option == "--ctx-size" && i + 1 < argc) generation_context = std::stoi(argv[++i]);
+      else if (option == "--batch-size" && i + 1 < argc) batch_size = std::stoi(argv[++i]);
       else throw std::runtime_error("unknown option: " + option);
     }
     if (generate < 0 || generate > 2048) throw std::runtime_error("invalid generation count");
+    if (generation_context < 1 || generation_context > 2048 || batch_size < 1 || batch_size > 512)
+      throw std::runtime_error("invalid generation context or batch size");
     llama_backend_init();
     llama_model_kv_override overrides[2]{};
     overrides[0].tag = LLAMA_KV_OVERRIDE_TYPE_INT;
@@ -119,17 +123,18 @@ int main(int argc, char** argv) {
       return 0;
     }
     if (!output.empty() || generate > 0) {
-      if (tokens.empty() || tokens.size() + static_cast<std::size_t>(generate) > 2048)
+      if (tokens.empty() || tokens.size() + static_cast<std::size_t>(generate) > static_cast<std::size_t>(generation_context))
         throw std::runtime_error("prompt plus generation exceeds context");
       auto cp = llama_context_default_params();
-      cp.n_ctx = 2048; cp.n_batch = 512; cp.n_ubatch = 512;
+      cp.n_ctx = static_cast<std::uint32_t>(generation_context);
+      cp.n_batch = cp.n_ubatch = static_cast<std::uint32_t>(batch_size);
       cp.n_threads = 1; cp.n_threads_batch = 1;
       cp.flash_attn_type = LLAMA_FLASH_ATTN_TYPE_DISABLED;
       cp.type_k = cp.type_v = cache_f16 ? GGML_TYPE_F16 : GGML_TYPE_F32;
       std::unique_ptr<llama_context, decltype(&llama_free)> ctx(llama_init_from_model(model.get(), cp), llama_free);
       if (!ctx) throw std::runtime_error("context creation failed");
-      for (std::size_t at = 0; at < tokens.size(); at += 512) {
-        auto batch = llama_batch_get_one(tokens.data() + at, static_cast<std::int32_t>(std::min<std::size_t>(512, tokens.size() - at)));
+      for (std::size_t at = 0; at < tokens.size(); at += static_cast<std::size_t>(batch_size)) {
+        auto batch = llama_batch_get_one(tokens.data() + at, static_cast<std::int32_t>(std::min<std::size_t>(static_cast<std::size_t>(batch_size), tokens.size() - at)));
         if (llama_decode(ctx.get(), batch) != 0) throw std::runtime_error("decode failed");
       }
       const auto size = llama_vocab_n_tokens(vocab);
