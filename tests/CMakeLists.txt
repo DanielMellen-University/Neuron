@@ -13,6 +13,7 @@ neuron_add_test(test_unicode)
 neuron_add_test(test_model)
 neuron_add_test(test_chat)
 neuron_add_test(test_sampling)
+neuron_add_test(test_stop)
 neuron_add_test(test_shape)
 neuron_add_test(test_version)
 
