@@ -1,0 +1,87 @@
+{
+  "agreement_source": "bench/reference/r2-before.json",
+  "trace_binary_sha256": "1b5b7d32f651869c1a0670f46aac5c0c193713dcb9e8b4ccfd2f49c743c14de5",
+  "trace_build": {
+    "command": [
+      "g++",
+      "-std=c++20",
+      "-O3",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "/home/daniel/codex-runs/Neuron-r2/bench/r2_trace.cpp",
+      "-I/tmp/neuron-r2-trace-build-v2",
+      "-I/home/daniel/codex-runs/Neuron-r2/include",
+      "-I/home/daniel/codex-runs/Neuron-r2/build-r2-before/generated",
+      "-I/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp/include",
+      "-I/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp/ggml/include",
+      "-I/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp/vendor/nlohmann",
+      "-I/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp/ggml/src",
+      "/home/daniel/codex-runs/Neuron-r2/build-r2-before/libneuron.a",
+      "/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp/build/src/libllama.a",
+      "/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp/build/ggml/src/libggml.a",
+      "/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp/build/ggml/src/libggml-cpu.a",
+      "/home/daniel/codex-runs/Neuron-m1/third_party/llama.cpp/build/ggml/src/libggml-base.a",
+      "-fopenmp",
+      "-pthread",
+      "-ldl",
+      "-o",
+      "/tmp/neuron-r2-trace-build-v2/r2-trace"
+    ],
+    "model_source_sha256": "90d31b92c7d31d4c0e21d1efbf7998ad1f4c1fdf16b2de89d134c235442d23b0",
+    "instrumented_sha256": "af738d585bbfef07ed490b95be3460fb901ad7a55d0c1bfb275dc30228409762",
+    "probe_sha256": "7497889d6d5dadd4d8a8884bb5ecc1dfd18d35c8763d1e46ff7e56e4a8e315f3",
+    "builder_sha256": "94a4ad3239514c109d1747ec6ff66c41bec0d304d9fe00645da87be3ee4921b3",
+    "neuron_source_sha256": "548200a7b448748f5e9235cb95120d7e7135ee4a039b49cb3cef6bfc8712f445",
+    "neuron_library_sha256": "181919b62027b8a0aabce82db6ede61e4322841c5de07d2456d40838699337e3",
+    "neuron_binary_sha256": "fa21c5ee68df10f4ef0bfff11381c6e229f1e45c97f75bd0b6f62123adaa6a2d",
+    "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+    "binary_sha256": "1b5b7d32f651869c1a0670f46aac5c0c193713dcb9e8b4ccfd2f49c743c14de5"
+  },
+  "formats": {
+    "F16": {
+      "source": "bench/reference/r2-probes-F16.json",
+      "prompt_id": "moon",
+      "generated_index": 4,
+      "reason": "all engine IDs agree; smallest top-two margin control",
+      "logit_difference": {
+        "elements": 151936,
+        "max_abs": 2.8967857360839844e-05,
+        "rms": 8.536792435722234e-06
+      }
+    },
+    "Q8_0": {
+      "source": "bench/reference/r2-probes-Q8_0.json",
+      "prompt_id": "library",
+      "generated_index": 2,
+      "reason": "first same-format engine disagreement in prompt order",
+      "logit_difference": {
+        "elements": 151936,
+        "max_abs": 0.32765185832977295,
+        "rms": 0.07040687463478591
+      }
+    },
+    "Q4_0": {
+      "source": "bench/reference/r2-probes-Q4_0.json",
+      "prompt_id": "museum",
+      "generated_index": 2,
+      "reason": "first same-format engine disagreement in prompt order",
+      "logit_difference": {
+        "elements": 151936,
+        "max_abs": 0.42506253719329834,
+        "rms": 0.08818180954438591
+      }
+    },
+    "Q4_K_M": {
+      "source": "bench/reference/r2-probes-Q4_K_M.json",
+      "prompt_id": "library",
+      "generated_index": 17,
+      "reason": "first same-format engine disagreement in prompt order",
+      "logit_difference": {
+        "elements": 151936,
+        "max_abs": 0.9325013160705566,
+        "rms": 0.21161564722986548
+      }
+    }
+  }
+}
