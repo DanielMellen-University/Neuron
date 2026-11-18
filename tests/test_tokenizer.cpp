@@ -33,6 +33,14 @@ NEURON_TEST(empty_prefix_specials_and_byte_fallback) {
   const std::string binary("\0\xff", 2);
   CHECK_EQ(t.decode(t.encode(binary)), binary);
   CHECK_THROWS_AS(t.piece(-1), std::runtime_error);
+  // text is the stored entry; piece is the decoded bytes.
+  CHECK_EQ(t.text(259), std::string("\xe2\x96\x81"));
+  CHECK_EQ(t.piece(259), std::string(" "));
+  CHECK_EQ(t.text(1), std::string("<s>"));
+  CHECK(t.piece(1).empty());
+  CHECK_EQ(t.text(3 + 0x41), std::string("<0x41>"));
+  CHECK_EQ(t.piece(3 + 0x41), std::string("A"));
+  CHECK_THROWS_AS(t.text(static_cast<std::int32_t>(t.size())), std::runtime_error);
 }
 NEURON_TEST(score_priority_and_leftmost_tie) {
   auto v = vocab(); v.add_space_prefix = false;

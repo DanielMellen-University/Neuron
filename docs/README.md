@@ -3,7 +3,7 @@
 This is the documentation hub for Neuron. Start with the [README](../README.md) if you want the short version: what it is, how to run it, and how fast it is.
 
 - [Design and optimization](blog/design-and-optimization.md): how loading, tokenization, inference, quantization, SIMD and threading work, and the measured gaps.
-- [Command-line reference](cli.md): sampling, stop strings, the fields the HTTP API accepts, and `neuron inspect`.
+- [Command-line reference](cli.md): sampling, stop strings, the fields the HTTP API accepts, `neuron inspect`, and the token tools.
 - [Terminal demo](demo.md): the real capture, timing policy and GIF reproduction.
 - [M7 check sheet](../bench/M7_CHECKS.md): where every public number comes from, plus reproduce commands and local validation.
 - [Roadmap](../ROADMAP.md): milestone status, acceptance criteria and the missed targets.

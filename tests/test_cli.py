@@ -138,6 +138,42 @@ class CliTests(unittest.TestCase):
         both = self.neuron("inspect", "-m", self.model, "--key", "general.name", "--json", check=False)
         self.assertEqual(both.returncode, 2)
 
+    def test_prompt_file_and_standard_input(self):
+        path = os.path.join(self.directory.name, "prompt.txt")
+        with open(path, "wb") as f:
+            f.write(b"a b")
+        from_file = self.neuron("tokenize", "-m", self.model, "--prompt-file", path).stdout
+        from_stdin = self.neuron("tokenize", "-m", self.model, "--prompt-file", "-", stdin=b"a b").stdout
+        self.assertEqual(from_file, b"[1,9,10]\n")
+        self.assertEqual(from_stdin, from_file)
+        out = self.neuron("run", "-m", self.model, "--prompt-file", "-", "--greedy", "-n", "2", stdin=b"a").stdout
+        self.assertEqual(out, b" b c\n")
+        empty = os.path.join(self.directory.name, "empty.txt")
+        open(empty, "wb").close()
+        self.assertEqual(self.neuron("tokenize", "-m", self.model, "--prompt-file", empty).stdout, b"[1]\n")
+        self.assertEqual(self.neuron("tokenize", "-m", self.model, "--prompt-file", "-", stdin=b"").stdout, b"[1]\n")
+        missing = self.neuron("tokenize", "-m", self.model, "--prompt-file", path + ".missing", check=False)
+        self.assertEqual(missing.returncode, 2)
+        self.assertIn(b"cannot read prompt file", missing.stderr)
+
+    def test_detokenize_round_trips_tokenize_output(self):
+        ids = self.neuron("tokenize", "-m", self.model, "-p", "a b cab").stdout
+        self.assertEqual(ids, b"[1,9,10,11,4,5]\n")
+        self.assertEqual(self.neuron("detokenize", "-m", self.model, "-p", ids.decode()).stdout, b"a b cab")
+        self.assertEqual(self.neuron("detokenize", "-m", self.model, "--prompt-file", "-", stdin=ids).stdout, b"a b cab")
+        self.assertEqual(self.neuron("detokenize", "-m", self.model, "-p", "10 11, 4").stdout, b"b ca")
+        self.assertEqual(self.neuron("detokenize", "-m", self.model, "-p", "").stdout, b"")
+        for bad, message in (("12", b"outside the vocabulary of 12"), ("-1", b"not a token ID: -1"), ("4x", b"not a token ID: 4x")):
+            result = self.neuron("detokenize", "-m", self.model, "-p", bad, check=False)
+            self.assertEqual(result.returncode, 2, bad)
+            self.assertIn(message, result.stderr)
+
+    def test_tokenize_pieces(self):
+        out = self.neuron("tokenize", "-m", self.model, "-p", "a bc", "--pieces").stdout.decode()
+        self.assertEqual(out, '1\t"<s>"\t""\n9\t"\u2581a"\t" a"\n10\t"\u2581b"\t" b"\n6\t"c"\t"c"\n')
+        plain = self.neuron("tokenize", "-m", self.model, "-p", "a", "--pieces", "--no-add-special").stdout
+        self.assertEqual(plain, '9\t"\u2581a"\t" a"\n'.encode())
+
 
 if __name__ == "__main__":
     unittest.main()

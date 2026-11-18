@@ -78,3 +78,22 @@ The first lines give the GGUF version, counts, alignment and where the tensor da
 ```
 
 Only the tensor types Neuron can run (F32, F16, Q8_0, Q4_0, Q4_K and Q6_K) are accepted. A file with any other type is rejected with the tensor's name, the same as when loading it.
+
+## Tokens
+
+`neuron tokenize` prints the IDs a prompt turns into. `--pieces` prints one token per line instead: the ID, the vocabulary entry as stored in the model, and the bytes it decodes to, both JSON-quoted so spaces and empty pieces are visible.
+
+```sh
+$ ./build/neuron tokenize -m "$NEURON_MODELS_DIR/stories15M.gguf" -p "Once upon" --pieces
+1	"<s>"	""
+9038	"▁Once"	" Once"
+2501	"▁upon"	" upon"
+```
+
+`neuron detokenize` goes the other way. It takes IDs from `-p` or `--prompt-file`, separated by commas, spaces or brackets, so `tokenize` output can be piped straight back in. It prints the text with no trailing newline.
+
+```sh
+./build/neuron tokenize -m model.gguf -p "Hello there" | ./build/neuron detokenize -m model.gguf --prompt-file -
+```
+
+`--prompt-file -` reads standard input wherever `--prompt-file` is accepted, including `run`, `tokenize`, `logits` and `perplexity`.
