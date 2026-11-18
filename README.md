@@ -17,7 +17,7 @@ Recorded from `neuron chat` on an Intel Core i5-1135G7 laptop (4 cores/8 threads
 
 ## Features
 
-- **Checked GGUF loading** for dense Llama and Qwen2 models, including F32, F16, and the packed Q8_0, Q4_0, Q4_K and Q6_K weight formats. F16 weights are converted to FP32 when loaded. Packed matrices stay mapped and are decoded during use.
+- **Checked GGUF loading** for dense Llama and Qwen2 models, plus `neuron inspect` to list a file's metadata and tensors, including F32, F16, and the packed Q8_0, Q4_0, Q4_K and Q6_K weight formats. F16 weights are converted to FP32 when loaded. Packed matrices stay mapped and are decoded during use.
 - **A complete forward pass**: RMSNorm, rotary position embeddings, grouped-query attention, QKV bias where needed, SwiGLU, and a per-layer FP32 KV cache (the stored keys and values from earlier tokens in the same reply).
 - **Tokenizers in C++**: Llama score-based merges and Qwen2/SmolLM2 byte BPE, including Unicode pre-tokenization and special tokens.
 - **CPU kernels** for scalar, AVX2, AVX-512 and VNNI, with runtime CPU/OS checks and a thread pool that splits work by output row. One default build contains every variant. `--isa auto` selects AVX-512, then AVX2, then scalar.
@@ -168,7 +168,7 @@ Unit tests and model-free HTTP/terminal tests need no weights or reference engin
 Start at the [docs hub](docs/README.md). Source lives in `src/`, public headers in `include/neuron/`, tests in `tests/` and measurement tools in `bench/`.
 
 - [Design and optimization](docs/blog/design-and-optimization.md): how the engine works, and the measured quality and speed gaps
-- [Command-line reference](docs/cli.md): sampling, stop strings, chat and server options
+- [Command-line reference](docs/cli.md): sampling, stop strings, chat and server options, and GGUF inspection
 - [Terminal demo](docs/demo.md): the real capture, timing policy and GIF reproduction
 - [Roadmap](ROADMAP.md): the seven milestones, acceptance criteria and what was missed
 - [Baseline](bench/BASELINE.md): pinned llama.cpp and model inputs

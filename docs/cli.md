@@ -52,3 +52,29 @@ client.chat.completions.create(
     temperature=0.7, top_p=0.9, seed=7, stop=["\n\n"],
 )
 ```
+
+## Inspecting a GGUF file
+
+`neuron inspect` reads a model file's header, metadata and tensor table without loading the weights, so it is instant even for a multi-gigabyte file.
+
+```sh
+./build/neuron inspect -m "$NEURON_MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf" --no-tensors
+```
+
+The first lines give the GGUF version, counts, alignment and where the tensor data starts, then the parameter count, weight size and average bits per weight, broken down by tensor type. A Q4_K_M file, for example, shows its mix of Q4_K and Q6_K tensors there. Metadata follows, one key per line with its type and value, then the tensor table with type, shape, size and offset.
+
+| Flag | Meaning |
+| --- | --- |
+| `--no-tensors` | Skip the tensor table. |
+| `--array-items N` | How many elements of each array to show (default 8; `0` shows all). Applies to text and JSON. |
+| `--json` | Print everything as one JSON object instead. Strings are complete; invalid UTF-8 becomes U+FFFD. |
+| `--key KEY` | Print one metadata value raw, with no quotes or truncation. Arrays print one element per line. |
+
+`--key` is handy for pulling out a single setting, for example the chat template a model ships with:
+
+```sh
+./build/neuron inspect -m model.gguf --key tokenizer.chat_template
+./build/neuron inspect -m model.gguf --key qwen2.context_length
+```
+
+Only the tensor types Neuron can run (F32, F16, Q8_0, Q4_0, Q4_K and Q6_K) are accepted. A file with any other type is rejected with the tensor's name, the same as when loading it.
