@@ -135,3 +135,6 @@ authentication, TLS, batching, chunked request decoding or persistent HTTP
 connection. The terminal and browser keep history; API callers send their
 own history. Every turn recomputes its prompt rather than sharing a cache
 across conversations. These limits do not leave an M6 acceptance item open.
+
+Later change: the API now accepts sampling fields and stop strings. See
+[the command-line reference](../docs/cli.md#chat-and-serve).
