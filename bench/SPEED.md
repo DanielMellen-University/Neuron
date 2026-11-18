@@ -1,6 +1,6 @@
-# M5 speed and correctness
+# Speed and kernel correctness (M5 and R1)
 
-This is the speed and kernel-correctness record for the M5 optimizations. Use it for the step-by-step chart, the comparison with llama.cpp, and the SIMD tests (AVX2, AVX-512 and VNNI are CPU vector instruction sets). tok/s is tokens per second.
+This is the speed and kernel-correctness record for the M5 optimizations and the R1 refinement. Use it for the step-by-step chart, the comparison with llama.cpp, and the SIMD tests (AVX2, AVX-512 and VNNI are CPU vector instruction sets). tok/s is tokens per second.
 
 ## R1 result
 
@@ -32,12 +32,11 @@ AVX2 and the scalar fallback remain covered.
 
 ## Original M5 result
 
-M5 is implemented. The speed target was missed and accepted. The final Qwen2.5 1.5B
-Q4_K_M run generated **4.294374 tokens/s**, versus **38.953875 tokens/s** for
-llama.cpp with the same file and four threads: **11.02%**. The target is
-50%, or 19.476937 tokens/s in this comparison. That speed target was missed.
-R1 above is the later speed refinement; the original measurements below
-remain historical records.
+Historical. The final M5 Qwen2.5 1.5B Q4_K_M run generated
+**4.294374 tokens/s**, versus **38.953875 tokens/s** for llama.cpp with the
+same file and four threads: **11.02%**, below the 50% target (19.476937
+tokens/s here). The miss was accepted, and R1 above is the later
+refinement.
 
 ## Optimization steps
 

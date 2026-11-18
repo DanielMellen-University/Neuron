@@ -128,9 +128,10 @@ missing. Both skip paths were checked. It launches and stops its own server.
 
 ## Limits
 
-The API is text-only and greedy, with one choice per request. Temperature
-zero and top-p one are accepted; other sampling settings, tool calls,
-custom stop strings and response formats return HTTP 400. There is no
+At M6 the API was text-only and greedy, with one choice per request.
+Temperature zero and top-p one were accepted; other sampling settings, tool
+calls, custom stop strings and response formats returned HTTP 400. Sampling
+fields and stop strings were added later (see the note below). There is no
 authentication, TLS, batching, chunked request decoding or persistent HTTP
 connection. The terminal and browser keep history; API callers send their
 own history. Every turn recomputes its prompt rather than sharing a cache

@@ -4,7 +4,8 @@ This sheet maps public README and docs claims to committed benchmark records, an
 
 M7 supplies the rewritten README, a model/quant speed comparison, a real
 terminal GIF, a design post and a docs hub. The roadmap acceptance wording is
-unchanged. No tag or release is created.
+unchanged. No tag or release was created at M7; v1.0.0 later became the
+first release.
 
 R1 later updates the Q4_K_M README row and the shared speed chart. The
 original M7 validation and artifact hashes below describe the M7 snapshot.
@@ -167,10 +168,10 @@ example command budgets in the README and blog.
 | Demo settings, elapsed time and replies | [Timed PTY capture](reference/m7-demo.json) |
 | Build settings and CLI/API numeric defaults | Build and runtime contract above, [M6 checks](M6_CHECKS.md) |
 
-The chart at `docs/assets/m5-speed.svg` is regenerated from the original
-M5 JSON with `bench/speed.py chart`. It retains every original point,
-including the faster threads sample and slower final recheck. Its
-regeneration command is in the blog. No number is inferred from a chart
+The chart at `docs/assets/m5-speed.svg` is regenerated from the committed
+M5 and R1 JSON with `bench/speed.py chart`. It retains every original M5
+point, including the faster threads sample and slower final recheck. Its
+regeneration command is in the blog and in [SPEED.md](SPEED.md#reproduce). No number is inferred from a chart
 pixel or an uncommitted benchmark.
 
 ## Demo and document checks
@@ -255,6 +256,7 @@ All M7 items are met locally: finished-state README, reproducible model/quant
 speed table, a real Qwen Q4_K_M GIF under `docs/`, a design/optimization
 post with the generated M5 chart, and numeric claims tied to `bench/`.
 The docs hub links these pieces. No placeholder image, weight file,
-reference binary or file over 1 MiB is committed. No tag or release is
-created because neither was approved. There are no unmet M7 criteria.
+reference binary or file over 1 MiB is committed. No tag or release was
+created at M7 because neither was approved then. There are no unmet M7
+criteria.
 The accepted M4 and M5 target misses remain visible and unchanged.
