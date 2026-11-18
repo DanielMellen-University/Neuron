@@ -138,6 +138,24 @@ class CliTests(unittest.TestCase):
         both = self.neuron("inspect", "-m", self.model, "--key", "general.name", "--json", check=False)
         self.assertEqual(both.returncode, 2)
 
+    def test_prompt_file_and_standard_input(self):
+        path = os.path.join(self.directory.name, "prompt.txt")
+        with open(path, "wb") as f:
+            f.write(b"a b")
+        from_file = self.neuron("tokenize", "-m", self.model, "--prompt-file", path).stdout
+        from_stdin = self.neuron("tokenize", "-m", self.model, "--prompt-file", "-", stdin=b"a b").stdout
+        self.assertEqual(from_file, b"[1,9,10]\n")
+        self.assertEqual(from_stdin, from_file)
+        out = self.neuron("run", "-m", self.model, "--prompt-file", "-", "--greedy", "-n", "2", stdin=b"a").stdout
+        self.assertEqual(out, b" b c\n")
+        empty = os.path.join(self.directory.name, "empty.txt")
+        open(empty, "wb").close()
+        self.assertEqual(self.neuron("tokenize", "-m", self.model, "--prompt-file", empty).stdout, b"[1]\n")
+        self.assertEqual(self.neuron("tokenize", "-m", self.model, "--prompt-file", "-", stdin=b"").stdout, b"[1]\n")
+        missing = self.neuron("tokenize", "-m", self.model, "--prompt-file", path + ".missing", check=False)
+        self.assertEqual(missing.returncode, 2)
+        self.assertIn(b"cannot read prompt file", missing.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

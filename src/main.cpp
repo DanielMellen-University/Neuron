@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <iostream>
+#include <sstream>
 #include <filesystem>
 #include <random>
 #include <stdexcept>
@@ -46,7 +48,7 @@ void print_usage() {
       "       neuron inspect -m MODEL [--no-tensors] [--array-items N] [--json] [--key KEY]\n"
       "       neuron serve -m MODEL [--host 127.0.0.1] [--port 8080] [--ctx-size N] [-n 128] [sampling flags]\n"
       "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0/Q4_K/Q6_K weights.\n"
-      "--prompt-file FILE reads prompt bytes instead of -p.\n"
+      "--prompt-file FILE reads prompt bytes instead of -p; use - for standard input.\n"
       "--chat applies Qwen2.5 ChatML; repeated --message flags supply history.\n"
       "--system replaces the default system text; -p adds a final user message.\n"
       "--recompute checks generation by evaluating the full sequence at every step.\n"
@@ -80,6 +82,20 @@ float real(const std::string& text, const char* name) {
   if (text.empty() || end != text.c_str() + text.size() || !std::isfinite(value))
     throw std::invalid_argument(std::string(name) + " expects a number");
   return static_cast<float>(value);
+}
+// Reads every byte of a prompt file, or of standard input for "-".
+std::string read_prompt(const std::string& path) {
+  std::ostringstream text;
+  if (path == "-") {
+    if (std::cin.peek() != std::char_traits<char>::eof()) text << std::cin.rdbuf();
+    if (std::cin.bad()) throw std::invalid_argument("cannot read prompt from standard input");
+    return text.str();
+  }
+  std::ifstream stream(path, std::ios::binary);
+  if (!stream) throw std::invalid_argument("cannot read prompt file: " + path);
+  if (stream.peek() != std::char_traits<char>::eof()) text << stream.rdbuf();
+  if (stream.bad()) throw std::invalid_argument("cannot read prompt file: " + path);
+  return text.str();
 }
 void ids(const std::vector<std::int32_t>& values) {
   std::printf("[");
@@ -123,12 +139,7 @@ int execute(int argc, char** argv) {
     else if (option == "--host" && command == "serve") host = value();
     else if (option == "--port" && command == "serve") { port = count(value()); if (port > 65535) throw std::invalid_argument("port must be in 1..65535"); }
     else if (option == "-p") { prompt = value(); has_prompt = true; }
-    else if (option == "--prompt-file") {
-      const auto prompt_path = value();
-      std::ifstream stream(prompt_path, std::ios::binary);
-      if (!stream) throw std::invalid_argument("cannot read prompt file: " + prompt_path);
-      prompt.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()); has_prompt = true;
-    }
+    else if (option == "--prompt-file") { prompt = read_prompt(value()); has_prompt = true; }
     else if (option == "-n" && (command == "run" || command == "chat" || command == "serve")) predict = count(value());
     else if (option == "--chunks" && command == "perplexity") chunks = count(value());
     else if (option == "--chat" && command != "perplexity") chat = true;
