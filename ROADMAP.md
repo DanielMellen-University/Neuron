@@ -132,8 +132,9 @@ SIMD, threading, TinyStories and quick Qwen correctness guards pass.
 [Speed checks](bench/SPEED.md) record every optimization commit and result.
 MISSED (speed): final Q4_K_M generation is 4.294374 tokens/s versus
 38.953875 for llama.cpp with four threads, or 11.02%, below the 50% target.
-Accepted by Daniel on Nov 17 2026 as a non-bug miss; refinement is deferred
-until after M7. AVX-512 tests were run on the test laptop; CI runs AVX2 tests and
+Accepted by Daniel on Nov 17 2026 as a non-bug miss. The refinement came
+after M7 as [R1](#r1-decode-speed-refinement), which reached 55.02%.
+AVX-512 tests were run on the test laptop; CI runs AVX2 tests and
 compile-checks AVX-512.
 
 Acceptance criteria:
@@ -183,7 +184,7 @@ Acceptance criteria:
 
 - README rewritten for the finished state: features that actually exist, quick start that works from a clean clone, and an honest limitations list.
 - Benchmark table in the README: Neuron vs llama.cpp on the test laptop for each model and quant type, tokens/s for prompt processing and generation, with reproduce commands.
-- A demo GIF (recorded terminal or web chat with Qwen2.5 1.5B Q4 on the test laptop) committed under `docs/` and under 5 MiB. Until then the README has no image placeholder.
+- A demo GIF (recorded terminal or web chat with Qwen2.5 1.5B Q4 on the test laptop) committed under `docs/` and under 5 MiB, with no image placeholder in the README before it exists. Done: [docs/chat.gif](docs/chat.gif).
 - A blog post in `docs/blog/` that walks through the design and the optimization steps, with the M5 speed chart.
 - Every number in the README and blog post traces to a file under `bench/`.
 - A tagged release only when explicitly approved.
