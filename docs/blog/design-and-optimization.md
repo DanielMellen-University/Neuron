@@ -181,9 +181,13 @@ The server serializes requests, serves an embedded page without a frontend
 build and returns either JSON or SSE for chat completions. The official
 OpenAI Python client works with its usual methods and a local base URL.
 [The M6 record](../../bench/M6_CHECKS.md) covers both real-model checks and
-model-free error, framing and streaming tests. It also states the API
+model-free error, framing and streaming tests. It also states the M6 API
 subset: text messages, greedy decoding and a single request at a time.
-There is no authentication, TLS, tool execution or sampling support.
+Seeded sampling (temperature, top-k, top-p, min-p and a repeat penalty) and
+stop strings came later, in the terminal, the server and `neuron run`; the
+[command-line reference](../cli.md) lists every flag and API field. There
+is still no authentication, TLS or tool execution, and the server handles
+one request at a time.
 
 The KV cache is reused within a reply. A new chat turn currently rebuilds
 its full prompt, including history. Prompt processing is sequential and

@@ -79,7 +79,7 @@ flowchart LR
 2. The tokenizer turns text into token IDs using the vocabulary stored in that file.
 3. Each step runs one transformer layer after another: normalize, attend over the current token plus the cached prefix, then the feed-forward block. New keys and values are appended to the KV cache so earlier tokens in the same reply are not recomputed.
 4. The CPU kernels do the matrix work. `--threads` and `--isa` override `NEURON_THREADS` and `NEURON_ISA`. [Runtime settings](bench/SPEED.md#kernels-and-threads) also apply to library callers.
-5. Greedy decoding picks the highest logit, decodes that token to text, and feeds it back until the reply ends.
+5. Greedy decoding picks the highest logit (or, with sampling turned on, a seeded draw from the filtered distribution), decodes that token to text, and feeds it back until the reply ends or a stop string appears.
 
 The terminal, the web page and the HTTP API all call this same engine. [The design write-up](docs/blog/design-and-optimization.md) walks through the pieces and the optimization steps.
 
