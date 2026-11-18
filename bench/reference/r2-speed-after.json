@@ -1,0 +1,285 @@
+{
+  "step": "R2-after",
+  "engine": "neuron",
+  "isa": "avx512",
+  "threads": 4,
+  "prompt": "Once upon a time",
+  "n_predict": 32,
+  "context": 256,
+  "warmups": 0,
+  "repetitions": 1,
+  "model": {
+    "file": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281",
+    "size_bytes": 986048512
+  },
+  "binary_sha256": "fa21c5ee68df10f4ef0bfff11381c6e229f1e45c97f75bd0b6f62123adaa6a2d",
+  "source_sha256": "548200a7b448748f5e9235cb95120d7e7135ee4a039b49cb3cef6bfc8712f445",
+  "parent_commit": "5db006d963d37934ee6d2c9aa2b343aa58cde879",
+  "command": [
+    "/home/daniel/codex-runs/Neuron-r2/build-r2-final-default/neuron",
+    "run",
+    "-m",
+    "/home/daniel/codex-runs/Neuron-m1/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf",
+    "-p",
+    "Once upon a time",
+    "-n",
+    "32",
+    "--greedy",
+    "--json",
+    "--ctx-size",
+    "256"
+  ],
+  "environment": {
+    "NEURON_ISA": "avx512",
+    "NEURON_THREADS": "4"
+  },
+  "notes": "Serial R2 repeat on an Intel Core i5-1135G7 laptop. No concurrent builds, tests or model processes. Normal services and development tools present. Power, frequency and temperature uncontrolled.",
+  "before": {
+    "utc": "2026-11-18T05:38:41.896527+00:00",
+    "load_average": [
+      1.1064453125,
+      1.09619140625,
+      1.34765625
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "after": {
+    "utc": "2026-11-18T05:38:45.518554+00:00",
+    "load_average": [
+      1.33837890625,
+      1.14453125,
+      1.3623046875
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "result": {
+    "isa": "avx512",
+    "threads": 4,
+    "prompt_tokens": [
+      12522,
+      5193,
+      264,
+      882
+    ],
+    "generated_tokens": [
+      11,
+      264,
+      3908,
+      3743,
+      6941,
+      47290,
+      572,
+      5619,
+      304,
+      279,
+      6118,
+      13,
+      2932,
+      572,
+      5619,
+      448,
+      1059,
+      6930,
+      21357,
+      11,
+      264,
+      2613,
+      21357,
+      1803,
+      13,
+      2932,
+      572,
+      3432,
+      264,
+      2244,
+      882,
+      11
+    ],
+    "top2": [
+      {
+        "first": 11,
+        "second": 3837,
+        "gap": 1.91843796
+      },
+      {
+        "first": 264,
+        "second": 1052,
+        "gap": 0.0181503296
+      },
+      {
+        "first": 3908,
+        "second": 11477,
+        "gap": 0.445821762
+      },
+      {
+        "first": 3743,
+        "second": 8171,
+        "gap": 0.16759491
+      },
+      {
+        "first": 6941,
+        "second": 572,
+        "gap": 1.90789604
+      },
+      {
+        "first": 47290,
+        "second": 20445,
+        "gap": 1.49230766
+      },
+      {
+        "first": 572,
+        "second": 1030,
+        "gap": 0.0597991943
+      },
+      {
+        "first": 5619,
+        "second": 11435,
+        "gap": 0.209241867
+      },
+      {
+        "first": 304,
+        "second": 448,
+        "gap": 0.11741066
+      },
+      {
+        "first": 279,
+        "second": 1059,
+        "gap": 0.0441951752
+      },
+      {
+        "first": 6118,
+        "second": 13551,
+        "gap": 0.223602295
+      },
+      {
+        "first": 13,
+        "second": 979,
+        "gap": 1.59697342
+      },
+      {
+        "first": 2932,
+        "second": 576,
+        "gap": 3.0152874
+      },
+      {
+        "first": 572,
+        "second": 5485,
+        "gap": 1.2781868
+      },
+      {
+        "first": 5619,
+        "second": 3432,
+        "gap": 0.072019577
+      },
+      {
+        "first": 448,
+        "second": 10265,
+        "gap": 0.972730637
+      },
+      {
+        "first": 1059,
+        "second": 264,
+        "gap": 0.674671173
+      },
+      {
+        "first": 6930,
+        "second": 4780,
+        "gap": 0.175647736
+      },
+      {
+        "first": 21357,
+        "second": 23069,
+        "gap": 3.26214027
+      },
+      {
+        "first": 11,
+        "second": 1803,
+        "gap": 1.12159157
+      },
+      {
+        "first": 264,
+        "second": 892,
+        "gap": 3.17482185
+      },
+      {
+        "first": 2613,
+        "second": 21357,
+        "gap": 0.655532837
+      },
+      {
+        "first": 21357,
+        "second": 22360,
+        "gap": 0.20759964
+      },
+      {
+        "first": 1803,
+        "second": 15328,
+        "gap": 1.36865997
+      },
+      {
+        "first": 13,
+        "second": 11,
+        "gap": 1.96789932
+      },
+      {
+        "first": 2932,
+        "second": 47290,
+        "gap": 0.66189003
+      },
+      {
+        "first": 572,
+        "second": 10245,
+        "gap": 1.13250732
+      },
+      {
+        "first": 3432,
+        "second": 9842,
+        "gap": 0.358798981
+      },
+      {
+        "first": 264,
+        "second": 773,
+        "gap": 0.412401199
+      },
+      {
+        "first": 2244,
+        "second": 2696,
+        "gap": 1.59447479
+      },
+      {
+        "first": 882,
+        "second": 1899,
+        "gap": 5.5646534
+      },
+      {
+        "first": 11,
+        "second": 323,
+        "gap": 0.58382225
+      }
+    ],
+    "timings": {
+      "prompt_n": 4,
+      "prompt_ms": 197.526766,
+      "predicted_n": 32,
+      "predicted_ms": 2462.71318,
+      "prompt_per_second": 20.2504201,
+      "predicted_per_second": 12.5877427
+    }
+  },
+  "tg_tokens_per_second": 12.587742759390274
+}
