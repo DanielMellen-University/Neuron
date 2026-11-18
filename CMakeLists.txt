@@ -62,6 +62,7 @@ add_library(neuron
   src/kquant_avx512.cpp
   src/model.cpp
   src/quant.cpp
+  src/sampling.cpp
   src/perplexity.cpp
   src/tokenizer.cpp
   src/tensor.cpp
