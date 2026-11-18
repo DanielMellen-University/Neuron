@@ -9,7 +9,8 @@
 namespace {
 class FakeBackend final : public neuron::ChatBackend {
  public:
-  std::size_t prepare(std::span<const neuron::ChatMessage> messages, std::size_t max_tokens) override {
+  std::size_t prepare(std::span<const neuron::ChatMessage> messages, const neuron::GenerationOptions& options) override {
+    const auto max_tokens = options.max_tokens;
     std::size_t count = 0;
     for (const auto& message : messages) count += message.content.size();
     if (count > 256 || max_tokens > 256 - count) throw std::length_error("context limit is 256 tokens");
@@ -41,7 +42,9 @@ class FakeBackend final : public neuron::ChatBackend {
 int main(int argc, char** argv) {
   FakeBackend backend;
   if (argc == 2 && std::string_view(argv[1]) == "chat") {
-    neuron::terminal_chat(backend, 16);
+    neuron::GenerationOptions options;
+    options.max_tokens = 16;
+    neuron::terminal_chat(backend, options);
   } else {
     neuron::HttpServer server(backend, "fake-model", "127.0.0.1", 0);
     std::printf("%u\n", static_cast<unsigned int>(server.port()));

@@ -217,7 +217,8 @@ void HttpServer::handle(int client, const std::function<bool()>& stopped) {
       if (role != "system" && role != "user" && role != "assistant") throw HttpError(400, "unsupported message role");
       messages.push_back({role, string_value(item.find("content"), "content")});
     }
-    std::size_t max_tokens = 128;
+    GenerationOptions generation;
+    auto& max_tokens = generation.max_tokens;
     const auto* maximum = root.find("max_completion_tokens");
     if (maximum && root.find("max_tokens")) throw HttpError(400, "use only one maximum token field");
     if (!maximum) maximum = root.find("max_tokens");
@@ -238,7 +239,7 @@ void HttpServer::handle(int client, const std::function<bool()>& stopped) {
       if (const auto* v = options->find("include_usage")) include_usage = bool_value(*v, "include_usage");
     }
     std::size_t prompt_tokens = 0;
-    try { prompt_tokens = backend_.prepare(messages, max_tokens); }
+    try { prompt_tokens = backend_.prepare(messages, generation); }
     catch (const std::length_error& e) { throw HttpError(400, e.what(), "context_length_exceeded", "messages"); }
     const auto id = "chatcmpl-neuron-" + std::to_string(std::time(nullptr)) + "-" + std::to_string(++sequence_);
     const std::string base = "{\"id\":" + quote(id) + ",\"created\":" + std::to_string(std::time(nullptr)) + ",\"model\":" + quote(model_);

@@ -86,6 +86,15 @@ class CliTests(unittest.TestCase):
         bad = self.neuron("run", "-m", self.model, "-p", "a", "--greedy", "--stop", "", check=False)
         self.assertEqual(bad.returncode, 2)
 
+    def test_chat_validates_sampling_before_loading(self):
+        for flags in (["--temp", "-1"], ["--top-p", "2"], ["--stop", ""], ["--greedy"]):
+            result = self.neuron("chat", "-m", self.model, *flags, check=False)
+            self.assertEqual(result.returncode, 2, flags)
+            self.assertNotIn(b"chat supports", result.stderr, flags)
+        # Valid flags reach the model check, which rejects this llama fixture.
+        result = self.neuron("chat", "-m", self.model, "--temp", "0.7", "--top-k", "20", "--stop", "x", check=False)
+        self.assertIn(b"chat supports Qwen2 and SmolLM2", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
