@@ -29,7 +29,14 @@ Recorded from `neuron chat` on an Intel Core i5-1135G7 laptop (4 cores/8 threads
 
 Use x86-64 Linux, CMake, Python and GCC or Clang with C++20 support. The [checked toolchain](bench/M7_CHECKS.md#build-and-runtime-contract) includes GCC 11 and Clang 14. No models are needed to build and run unit tests.
 
-This block builds the engine, downloads the pinned models into a cache directory outside the clone, and starts a terminal chat. The fetch script verifies SHA-256 hashes and reuses valid files. It downloads TinyStories F32, SmolLM2 F16 and Qwen2.5 F16 (the Qwen file is about 3 GiB). It does not download quantized Qwen weights.
+One command builds the engine, downloads the small SmolLM2 135M Instruct model (about 260 MB, hash checked) into `~/.cache/neuron/models` and starts a terminal chat:
+
+```sh
+git clone https://github.com/DanielMellen-University/Neuron.git && cd Neuron
+scripts/quickstart.sh            # add --serve for the web chat and API instead
+```
+
+To do it by hand, this block builds the engine, downloads every pinned model into a cache directory outside the clone, and starts a terminal chat. The fetch script verifies SHA-256 hashes and reuses valid files. It downloads TinyStories F32, SmolLM2 F16 and Qwen2.5 F16 (the Qwen file is about 3 GiB); name models, as in `scripts/fetch_models.sh smollm2`, to fetch only those. It does not download quantized Qwen weights.
 
 ```sh
 git clone https://github.com/DanielMellen-University/Neuron.git
