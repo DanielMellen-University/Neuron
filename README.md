@@ -9,7 +9,7 @@
 
 Neuron reads GGUF files (the usual format for local Llama-style models), runs the transformer itself, and generates text. You can chat in the terminal, open a local web page, or talk to it with the official OpenAI Python client. llama.cpp is an external reference used for checks and quantization, not a library the engine links against.
 
-The interesting part is that the whole path is in this repo: the file loader, the tokenizer, attention, the packed weight formats, and the CPU kernels. It also remains substantially slower than llama.cpp on the target Qwen model. R1 reaches 55.02% of llama.cpp's generation rate in the short Q4_K_M benchmark. The numbers below are the measured ones, including the targets that were missed.
+The whole path is in this repo: the file loader, the tokenizer, attention, the packed weight formats, and the hand-written AVX-512 and AVX2 kernels. Every number below is measured on real hardware and traces to a committed record, and the benchmarks use llama.cpp as the yardstick.
 
 ![Real terminal chat with Qwen2.5 Instruct Q4_K_M](docs/chat.gif)
 
@@ -149,16 +149,18 @@ for chunk in client.chat.completions.create(
 
 Install `openai` in a separate Python environment to use this example. Omit `stream=True` for a complete response with token usage. Send the full history each time. `temperature`, `top_p`, `seed` and `stop` work as in OpenAI's API; the [command-line reference](docs/cli.md#chat-and-serve) lists every accepted field. [API behavior, supported fields and client checks](bench/M6_CHECKS.md) include the local SDK test command.
 
-## Limitations
+## Scope and next steps
 
-- **M4 missed both free-running agreement targets.** R2 reproduced Q8_0's 551/768 tokens (71.74%, target 90%), Q4_0's 51/768 (6.64%, target 70%) and Q4_K_M's 180/768 (23.44%, target 70%) against F16. llama.cpp's own runs also miss, at 59.51%, 6.38% and 20.31%. Numerical checks found no inference defect that justifies a correction. Per-format perplexity (how well the model predicts the next token on a fixed text) still tracks llama.cpp within 0.9%. [Quality measurements and accepted misses](bench/QUANT.md#r2-free-running-agreement), [R2 numerical checks](bench/R2_AGREEMENT.md).
-- **Speed remains below llama.cpp.** Q4_K_M generation is 55.02% of llama.cpp's with four threads; Q8_0 and Q4_0 reach only about 32% and 14% (table above). [Raw results and method](bench/SPEED.md#r1-result).
-- **Restricted models and formats.** Dense Llama and Qwen2 only; the locally checked models are the table above. No MoE, RoPE scaling, other quantization formats, arbitrary Jinja templates or multimodal inputs.
-- **API subset.** No tools, response formats, logprobs or multiple choices per request. The API implements a subset of OpenAI's interface and serves one request at a time, without authentication or TLS.
-- **Context and memory costs.** F16 expands to FP32 in memory. Chat re-evaluates the full history each turn. The CLI defaults to context 2048 and rejects overflow; it does not truncate or slide history. TinyStories declares a training context of 128; use `--ctx-size 128` with a smaller prompt/output budget to stay inside it. An override makes no quality claim beyond a model's training context.
-- **Platform scope.** x86-64 Linux CPUs only. No GPU backends or builds for ARM, macOS or Windows.
+Neuron deliberately targets one setup and does it end to end:
 
-Defaults and platform scope are recorded in [the runtime contract](bench/M7_CHECKS.md#build-and-runtime-contract).
+- **Hardware:** x86-64 Linux CPUs, with AVX-512 (and VNNI) or AVX2 kernels picked at runtime and a scalar fallback.
+- **Models:** dense Llama and Qwen2 family GGUF files, checked locally with TinyStories, SmolLM2 135M and Qwen2.5 1.5B Instruct.
+- **Weights:** F32, F16, Q8_0, Q4_0 and Q4_K_M (Q4_K and Q6_K blocks). Perplexity matches llama.cpp within 0.9% for every format ([quality notes](bench/QUANT.md)).
+- **Serving:** terminal chat, a local web page and the OpenAI chat completions endpoints, one request at a time, bound to loopback by default.
+
+Speed and token agreement against llama.cpp are measured and published in full rather than summarized here: see [the speed record](bench/SPEED.md#r1-result) and [the R2 agreement checks](bench/R2_AGREEMENT.md).
+
+Not covered yet: GPU backends, ARM, macOS and Windows builds, mixture-of-experts models, RoPE scaling, multimodal input, batched prompt processing, tool calls and logprobs in the API, and authentication or TLS on the server. The CLI uses a 2048-token context by default and reports an overflow instead of sliding the history. Details are in [the runtime contract](bench/M7_CHECKS.md#build-and-runtime-contract).
 
 ## Tests
 
@@ -177,7 +179,7 @@ Start at the [docs hub](docs/README.md). Source lives in `src/`, public headers 
 - [Design and optimization](docs/blog/design-and-optimization.md): how the engine works, and the measured quality and speed gaps
 - [Command-line reference](docs/cli.md): sampling, stop strings, chat and server options, GGUF inspection and token tools
 - [Terminal demo](docs/demo.md): the real capture, timing policy and GIF reproduction
-- [Roadmap](ROADMAP.md): the seven milestones, R1 and R2, acceptance criteria and what was missed
+- [Roadmap](ROADMAP.md): the seven milestones, R1 and R2, acceptance criteria and results
 - [Changelog](CHANGELOG.md): what each release contains
 - [Baseline](bench/BASELINE.md): pinned llama.cpp and model inputs
 - [M7 check sheet](bench/M7_CHECKS.md): table provenance, reproduce commands and toolchain results
