@@ -38,6 +38,7 @@ void print_usage() {
       "       neuron run -m MODEL -p PROMPT --temp T [--top-k K] [--top-p P] [--min-p P] [--seed N]\n"
       "       neuron run ... [--stop TEXT]...\n"
       "       neuron tokenize -m MODEL -p PROMPT [--no-add-special] [--no-parse-special]\n"
+      "       neuron detokenize -m MODEL -p IDS\n"
       "       neuron logits -m MODEL -p PROMPT --output FILE [--ctx-size N]\n"
       "\n"
       "       neuron run -m MODEL --chat -p PROMPT [--system TEXT] -n N --greedy\n"
@@ -49,6 +50,7 @@ void print_usage() {
       "       neuron serve -m MODEL [--host 127.0.0.1] [--port 8080] [--ctx-size N] [-n 128] [sampling flags]\n"
       "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0/Q4_K/Q6_K weights.\n"
       "--prompt-file FILE reads prompt bytes instead of -p; use - for standard input.\n"
+      "detokenize decodes IDs separated by commas, spaces or brackets (tokenize output works).\n"
       "--chat applies Qwen2.5 ChatML; repeated --message flags supply history.\n"
       "--system replaces the default system text; -p adds a final user message.\n"
       "--recompute checks generation by evaluating the full sequence at every step.\n"
@@ -97,6 +99,26 @@ std::string read_prompt(const std::string& path) {
   if (stream.bad()) throw std::invalid_argument("cannot read prompt file: " + path);
   return text.str();
 }
+// Token IDs separated by commas, whitespace or brackets, as tokenize prints them.
+std::vector<std::int32_t> parse_ids(std::string_view text, std::size_t vocabulary) {
+  std::vector<std::int32_t> out;
+  std::size_t i = 0;
+  while (i < text.size()) {
+    if (std::string_view(" \t\r\n,[]").find(text[i]) != std::string_view::npos) { ++i; continue; }
+    std::size_t end = i;
+    while (end < text.size() && std::string_view(" \t\r\n,[]").find(text[end]) == std::string_view::npos) ++end;
+    const auto word = text.substr(i, end - i);
+    std::uint64_t id = 0;
+    const auto parsed = std::from_chars(word.data(), word.data() + word.size(), id);
+    if (parsed.ec != std::errc{} || parsed.ptr != word.data() + word.size())
+      throw std::invalid_argument("not a token ID: " + std::string(word));
+    if (id >= vocabulary)
+      throw std::invalid_argument("token ID " + std::string(word) + " is outside the vocabulary of " + std::to_string(vocabulary));
+    out.push_back(static_cast<std::int32_t>(id));
+    i = end;
+  }
+  return out;
+}
 void ids(const std::vector<std::int32_t>& values) {
   std::printf("[");
   for (std::size_t i = 0; i < values.size(); ++i) std::printf("%s%d", i == 0 ? "" : ",", values[i]);
@@ -113,7 +135,7 @@ int execute(int argc, char** argv) {
     print_usage(); return 0;
   }
   const std::string command = argv[1];
-  if (command != "run" && command != "tokenize" && command != "logits" && command != "template" && command != "perplexity" && command != "chat" && command != "serve" && command != "inspect") throw std::invalid_argument("unknown command: " + command);
+  if (command != "run" && command != "tokenize" && command != "logits" && command != "template" && command != "perplexity" && command != "chat" && command != "serve" && command != "inspect" && command != "detokenize") throw std::invalid_argument("unknown command: " + command);
   std::string path, prompt, output, teacher_file;
   bool has_prompt = false, greedy = false, json = false, add_special = true, parse_special = true;
   bool chat = false, recompute = false, has_system = false;
@@ -181,6 +203,14 @@ int execute(int argc, char** argv) {
     if (!inspect_key.empty() && json) throw std::invalid_argument("use either --key or --json");
     const auto text = !inspect_key.empty() ? neuron::metadata_value(file, inspect_key) :
         json ? neuron::describe_gguf_json(file, inspect) : neuron::describe_gguf(file, inspect);
+    std::fwrite(text.data(), 1, text.size(), stdout);
+    return 0;
+  }
+  if (command == "detokenize") {
+    if (path.empty() || !has_prompt) throw std::invalid_argument("-m MODEL and token IDs (-p or --prompt-file) are required");
+    const neuron::Gguf file(path);
+    const neuron::Tokenizer tokenizer(file);
+    const auto text = tokenizer.decode(parse_ids(prompt, tokenizer.size()));
     std::fwrite(text.data(), 1, text.size(), stdout);
     return 0;
   }

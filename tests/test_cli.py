@@ -156,6 +156,18 @@ class CliTests(unittest.TestCase):
         self.assertEqual(missing.returncode, 2)
         self.assertIn(b"cannot read prompt file", missing.stderr)
 
+    def test_detokenize_round_trips_tokenize_output(self):
+        ids = self.neuron("tokenize", "-m", self.model, "-p", "a b cab").stdout
+        self.assertEqual(ids, b"[1,9,10,11,4,5]\n")
+        self.assertEqual(self.neuron("detokenize", "-m", self.model, "-p", ids.decode()).stdout, b"a b cab")
+        self.assertEqual(self.neuron("detokenize", "-m", self.model, "--prompt-file", "-", stdin=ids).stdout, b"a b cab")
+        self.assertEqual(self.neuron("detokenize", "-m", self.model, "-p", "10 11, 4").stdout, b"b ca")
+        self.assertEqual(self.neuron("detokenize", "-m", self.model, "-p", "").stdout, b"")
+        for bad, message in (("12", b"outside the vocabulary of 12"), ("-1", b"not a token ID: -1"), ("4x", b"not a token ID: 4x")):
+            result = self.neuron("detokenize", "-m", self.model, "-p", bad, check=False)
+            self.assertEqual(result.returncode, 2, bad)
+            self.assertIn(message, result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
