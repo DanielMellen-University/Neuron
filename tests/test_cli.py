@@ -126,6 +126,18 @@ class CliTests(unittest.TestCase):
         text = self.neuron("inspect", "-m", self.model, "--array-items", "2").stdout.decode()
         self.assertIn('[string x 12] "<unk>", "<s>", ... 10 more', text)
 
+    def test_inspect_key_prints_raw_value(self):
+        def key(name):
+            return self.neuron("inspect", "-m", self.model, "--key", name).stdout
+        self.assertEqual(key("general.name"), b"neuron cli fixture")
+        self.assertEqual(key("llama.block_count"), b"1")
+        self.assertEqual(key("tokenizer.ggml.tokens").split(b"\n")[:3], [b"<unk>", b"<s>", b"</s>"])
+        missing = self.neuron("inspect", "-m", self.model, "--key", "nope", check=False)
+        self.assertEqual(missing.returncode, 2)
+        self.assertIn(b"no metadata key nope", missing.stderr)
+        both = self.neuron("inspect", "-m", self.model, "--key", "general.name", "--json", check=False)
+        self.assertEqual(both.returncode, 2)
+
 
 if __name__ == "__main__":
     unittest.main()

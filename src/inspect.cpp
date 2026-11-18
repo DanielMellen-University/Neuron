@@ -7,6 +7,7 @@
 #include <cmath>
 #include <cstdio>
 #include <map>
+#include <stdexcept>
 #include <string>
 
 namespace neuron {
@@ -128,6 +129,21 @@ std::string summarize_tensors(const Gguf& file) {
   for (const auto& [type, total] : by_type)
     out += "  " + pad(tensor_type_name(type), 4) + std::to_string(total.tensors) + " tensors, " +
         std::to_string(total.parameters) + " parameters, " + size_text(total.bytes) + "\n";
+  return out;
+}
+std::string metadata_value(const Gguf& file, const std::string& key) {
+  const auto* value = file.find(key);
+  if (!value) throw std::invalid_argument("no metadata key " + key);
+  InspectOptions raw;
+  raw.string_bytes = static_cast<std::size_t>(-1);
+  auto one = [&](const GgufValue& v) -> std::string {
+    if (v.type == GgufType::string) return v.string();
+    if (v.type == GgufType::array) return "[" + std::string(gguf_type_name(v.element_type)) + " x " + std::to_string(v.array().size()) + "]";
+    return scalar(v, raw);
+  };
+  if (value->type != GgufType::array) return one(*value);
+  std::string out;
+  for (const auto& item : value->array()) out += one(item) + "\n";
   return out;
 }
 std::string describe_gguf_json(const Gguf& file, const InspectOptions& options) {

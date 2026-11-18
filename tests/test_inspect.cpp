@@ -64,6 +64,15 @@ NEURON_TEST(json_output) {
   fixture::File g(b);
   CHECK(has(neuron::describe_gguf_json(neuron::Gguf(g.path)), "\"value\":\"a\xef\xbf\xbd\""));
 }
+NEURON_TEST(raw_metadata_value) {
+  fixture::File f(sample());
+  const neuron::Gguf file(f.path);
+  CHECK_EQ(neuron::metadata_value(file, "general.name"), std::string("say \"hi\"\n\x01"));
+  CHECK_EQ(neuron::metadata_value(file, "llama.context_length"), std::string("64"));
+  CHECK_EQ(neuron::metadata_value(file, "tokenizer.ggml.add_bos_token"), std::string("true"));
+  CHECK_EQ(neuron::metadata_value(file, "tokenizer.ggml.token_type"), std::string("0\n-1\n-2\n-3\n-4\n-5\n-6\n-7\n-8\n-9\n"));
+  CHECK_THROWS_AS(neuron::metadata_value(file, "missing.key"), std::invalid_argument);
+}
 NEURON_TEST(summary_scales_units_and_handles_no_tensors) {
   fixture::Bytes b;
   b.header(1, 0);

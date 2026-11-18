@@ -43,7 +43,7 @@ void print_usage() {
       "\n"
       "       neuron perplexity -m MODEL --prompt-file FILE --ctx-size N [--chunks N]\n"
       "       neuron chat -m MODEL [-n 128] [--system TEXT] [--ctx-size N] [sampling flags] [--stop TEXT]...\n"
-      "       neuron inspect -m MODEL [--no-tensors] [--array-items N] [--json]\n"
+      "       neuron inspect -m MODEL [--no-tensors] [--array-items N] [--json] [--key KEY]\n"
       "       neuron serve -m MODEL [--host 127.0.0.1] [--port 8080] [--ctx-size N] [-n 128] [sampling flags]\n"
       "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0/Q4_K/Q6_K weights.\n"
       "--prompt-file FILE reads prompt bytes instead of -p.\n"
@@ -102,6 +102,7 @@ int execute(int argc, char** argv) {
   bool has_prompt = false, greedy = false, json = false, add_special = true, parse_special = true;
   bool chat = false, recompute = false, has_system = false;
   neuron::InspectOptions inspect;
+  std::string inspect_key;
   std::string system;
   std::vector<neuron::ChatMessage> messages;
   std::size_t predict = 128, context = 2048, chunks = 0;
@@ -155,6 +156,7 @@ int execute(int argc, char** argv) {
     else if (option == "--no-add-special" && command == "tokenize") add_special = false;
     else if (option == "--no-parse-special" && command == "tokenize") parse_special = false;
     else if (option == "--no-tensors" && command == "inspect") inspect.tensors = false;
+    else if (option == "--key" && command == "inspect") inspect_key = value();
     else throw std::invalid_argument("unknown option: " + std::string(option));
   }
   if (greedy && sampling.temperature != 0) throw std::invalid_argument("--greedy conflicts with a nonzero --temp");
@@ -165,7 +167,9 @@ int execute(int argc, char** argv) {
   if (command == "inspect") {
     if (path.empty()) throw std::invalid_argument("-m MODEL is required");
     const neuron::Gguf file(path);
-    const auto text = json ? neuron::describe_gguf_json(file, inspect) : neuron::describe_gguf(file, inspect);
+    if (!inspect_key.empty() && json) throw std::invalid_argument("use either --key or --json");
+    const auto text = !inspect_key.empty() ? neuron::metadata_value(file, inspect_key) :
+        json ? neuron::describe_gguf_json(file, inspect) : neuron::describe_gguf(file, inspect);
     std::fwrite(text.data(), 1, text.size(), stdout);
     return 0;
   }
