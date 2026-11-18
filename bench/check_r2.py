@@ -12,7 +12,7 @@ from speed import source_hash
 FORMATS = ['F16', 'Q8_0', 'Q4_0', 'Q4_K_M']
 
 
-def agreement(expected, actual, prompts):
+def agreement(expected, actual, prompts, *, require_full_reference=True):
     if len(prompts) != 12 or len(expected) != len(prompts) or len(actual) != len(prompts):
         raise ValueError('requires all twelve prompts')
     details = []
@@ -20,11 +20,14 @@ def agreement(expected, actual, prompts):
         a, b = a['result'], b['result']
         if a['prompt_tokens'] != b['prompt_tokens']:
             raise ValueError('prompt tokenization differs')
-        if len(a['generated_tokens']) != 64:
+        if require_full_reference and len(a['generated_tokens']) != 64:
             raise ValueError('F16 must reach all 64 planned positions')
-        if len(b['generated_tokens']) > 64:
-            raise ValueError('candidate exceeds the planned positions')
-        details.append(dict(prompt_id=prompt['id'], **comparison(a['generated_tokens'], b['generated_tokens'])))
+        if max(len(a['generated_tokens']), len(b['generated_tokens'])) > 64:
+            raise ValueError('generation exceeds the planned positions')
+        row = dict(prompt_id=prompt['id'], **comparison(a['generated_tokens'], b['generated_tokens']))
+        if row['first_divergent_token_index'] is None and row['matching_tokens'] < 64:
+            row['first_divergent_token_index'] = row['matching_tokens']
+        details.append(row)
     matches = sum(d['matching_tokens'] for d in details)
     return dict(matching_tokens=matches, total_tokens=768, rate=matches / 768, prompts=details)
 
@@ -80,7 +83,8 @@ def main():
             write_json(saved, dict(engine=engine, format=name, runs=runs))
             item[engine + '_record'] = str(saved.relative_to(ROOT))
             item[engine + '_agreement'] = agreement(rows[engine]['F16'], runs, prompts)
-        item['between_engines'] = agreement(rows['llama'][name], rows['neuron'][name], prompts)
+        item['between_engines'] = agreement(rows['llama'][name], rows['neuron'][name], prompts,
+                                            require_full_reference=False)
         report['formats'][name] = item
         write_json(args.output, report)
         print(name, {k: v['matching_tokens'] for k, v in item.items() if isinstance(v, dict) and 'matching_tokens' in v}, flush=True)
