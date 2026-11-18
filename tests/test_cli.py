@@ -70,6 +70,37 @@ class CliTests(unittest.TestCase):
             self.assertEqual(result.returncode, 2, flags)
             self.assertTrue(result.stderr.startswith(b"neuron: "), result.stderr)
 
+    def test_stop_strings_cut_text(self):
+        def text(*flags):
+            return self.neuron("run", "-m", self.model, "-p", "a", "--greedy", "-n", "12", *flags).stdout
+        # " b cabcde": "ab" spans the " ca" and "b" pieces.
+        self.assertEqual(text("--stop", "ab"), b" b c\n")
+        self.assertEqual(text("--stop", "zz", "--stop", " c"), b" b\n")
+        # A held prefix that never completes is printed at the end.
+        self.assertEqual(text("--stop", "ex"), b" b cabcde\n")
+        record = self.run_json("--greedy", "-n", "12", "--stop", "cd")
+        self.assertEqual(record["stop"], "cd")
+        self.assertEqual(record["generated_tokens"], [10, 11, 4, 5, 6, 7])
+        self.assertIsNone(self.run_json("--greedy", "-n", "2", "--stop", "q")["stop"])
+        self.assertNotIn("stop", self.run_json("--greedy", "-n", "2"))
+        bad = self.neuron("run", "-m", self.model, "-p", "a", "--greedy", "--stop", "", check=False)
+        self.assertEqual(bad.returncode, 2)
+
+    def test_chat_validates_sampling_before_loading(self):
+        for flags in (["--temp", "-1"], ["--top-p", "2"], ["--stop", ""], ["--greedy"]):
+            result = self.neuron("chat", "-m", self.model, *flags, check=False)
+            self.assertEqual(result.returncode, 2, flags)
+            self.assertNotIn(b"chat supports", result.stderr, flags)
+        # Valid flags reach the model check, which rejects this llama fixture.
+        result = self.neuron("chat", "-m", self.model, "--temp", "0.7", "--top-k", "20", "--stop", "x", check=False)
+        self.assertIn(b"chat supports Qwen2 and SmolLM2", result.stderr)
+
+    def test_serve_validates_defaults_before_loading(self):
+        for flags in (["--temp", "3x"], ["--min-p", "1"], ["--stop", ""]):
+            result = self.neuron("serve", "-m", self.model, "--port", "1", *flags, check=False)
+            self.assertEqual(result.returncode, 2, flags)
+            self.assertNotIn(b"chat supports", result.stderr, flags)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -21,7 +21,7 @@ Recorded from `neuron chat` on an Intel Core i5-1135G7 laptop (4 cores/8 threads
 - **A complete forward pass**: RMSNorm, rotary position embeddings, grouped-query attention, QKV bias where needed, SwiGLU, and a per-layer FP32 KV cache (the stored keys and values from earlier tokens in the same reply).
 - **Tokenizers in C++**: Llama score-based merges and Qwen2/SmolLM2 byte BPE, including Unicode pre-tokenization and special tokens.
 - **CPU kernels** for scalar, AVX2, AVX-512 and VNNI, with runtime CPU/OS checks and a thread pool that splits work by output row. One default build contains every variant. `--isa auto` selects AVX-512, then AVX2, then scalar.
-- **Terminal chat** with streaming replies, history, `/reset`, `/exit`, and Ctrl-C to stop the current reply without killing the session.
+- **Terminal chat** with streaming replies, optional sampling and stop strings, history, `/reset`, `/exit`, and Ctrl-C to stop the current reply without killing the session.
 - **A local web page and OpenAI-compatible API** from `neuron serve`, with no frontend build and no CDN. The official Python client works against it.
 - **Greedy decoding or seeded sampling** (temperature, top-k, top-p, min-p and a repeat penalty), JSON token/timing output, logit export, reference checks and chunked perplexity evaluation. See the [command-line reference](docs/cli.md).
 
@@ -140,14 +140,14 @@ for chunk in client.chat.completions.create(
     print(chunk.choices[0].delta.content or "", end="", flush=True)
 ```
 
-Install `openai` in a separate Python environment to use this example. Omit `stream=True` for a complete response with token usage. Send the full history each time. [API behavior, supported fields and client checks](bench/M6_CHECKS.md) include the local SDK test command.
+Install `openai` in a separate Python environment to use this example. Omit `stream=True` for a complete response with token usage. Send the full history each time. `temperature`, `top_p`, `seed` and `stop` work as in OpenAI's API; the [command-line reference](docs/cli.md#chat-and-serve) lists every accepted field. [API behavior, supported fields and client checks](bench/M6_CHECKS.md) include the local SDK test command.
 
 ## Limitations
 
 - **M4 missed both free-running agreement targets.** R2 reproduced Q8_0's 551/768 tokens (71.74%, target 90%) and Q4_K_M's 180/768 (23.44%, target 70%) against F16. llama.cpp's own runs also miss, at 59.51% and 20.31%. Numerical checks found no inference defect that justifies a correction. Per-format perplexity (how well the model predicts the next token on a fixed text) still tracks llama.cpp within 0.9%. [Quality measurements and accepted misses](bench/QUANT.md#r2-free-running-agreement).
 - **Speed remains below llama.cpp.** R1 Q4_K_M generation is 21.215665 tokens/s versus 38.558125, or 55.02%, with four threads. This short sample meets the 50% target; M5 originally reached 11.02%. Frequency and temperature were not fixed. [Raw results and method](bench/SPEED.md#r1-result) retain both rounds.
 - **Restricted models and formats.** Dense Llama and Qwen2 only; the locally checked models are the table above. No MoE, RoPE scaling, other quantization formats, arbitrary Jinja templates or multimodal inputs.
-- **Sampling is CLI only.** `neuron run` can sample, but chat and the API still decode greedily. No tools or custom stop strings. The API implements a subset of OpenAI's interface and serves one request at a time, without authentication or TLS.
+- **API subset.** No tools, response formats, logprobs or multiple choices per request. The API implements a subset of OpenAI's interface and serves one request at a time, without authentication or TLS.
 - **Context and memory costs.** F16 expands to FP32 in memory. Chat re-evaluates the full history each turn. The CLI defaults to context 2048 and rejects overflow; it does not truncate or slide history. TinyStories declares a training context of 128; use `--ctx-size 128` with a smaller prompt/output budget to stay inside it. An override makes no quality claim beyond a model's training context.
 - **Platform scope.** x86-64 Linux CPUs only. No GPU backends or builds for ARM, macOS or Windows.
 
@@ -168,7 +168,7 @@ Unit tests and model-free HTTP/terminal tests need no weights or reference engin
 Start at the [docs hub](docs/README.md). Source lives in `src/`, public headers in `include/neuron/`, tests in `tests/` and measurement tools in `bench/`.
 
 - [Design and optimization](docs/blog/design-and-optimization.md): how the engine works, and the measured quality and speed gaps
-- [Command-line reference](docs/cli.md): sampling flags and other options
+- [Command-line reference](docs/cli.md): sampling, stop strings, chat and server options
 - [Terminal demo](docs/demo.md): the real capture, timing policy and GIF reproduction
 - [Roadmap](ROADMAP.md): the seven milestones, acceptance criteria and what was missed
 - [Baseline](bench/BASELINE.md): pinned llama.cpp and model inputs

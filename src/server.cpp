@@ -13,6 +13,7 @@
 #include <charconv>
 #include <chrono>
 #include <cmath>
+#include <cstdio>
 #include <ctime>
 #include <map>
 #include <stdexcept>
@@ -137,6 +138,27 @@ bool bool_value(const json::Value& value, const std::string& name) {
   if (!std::holds_alternative<bool>(value.data)) throw HttpError(400, name + " must be a boolean");
   return std::get<bool>(value.data);
 }
+std::string shown(double value) {
+  char text[32];
+  std::snprintf(text, sizeof(text), "%.17g", value);
+  return text;
+}
+double bounded(const json::Value& value, const std::string& name, double low, double high) {
+  const double n = number_value(value, name);
+  if (!(n >= low && n <= high)) throw HttpError(400, name + " must be in " + shown(low) + ".." + shown(high), "invalid_request_error", name);
+  return n;
+}
+std::vector<std::string> stop_value(const json::Value& value) {
+  if (std::holds_alternative<std::nullptr_t>(value.data)) return {};
+  std::vector<std::string> stops;
+  if (std::holds_alternative<std::string>(value.data)) stops.push_back(std::get<std::string>(value.data));
+  else if (std::holds_alternative<json::Value::Array>(value.data)) {
+    for (const auto& item : std::get<json::Value::Array>(value.data)) stops.push_back(string_value(&item, "stop"));
+    if (stops.size() > 4) throw HttpError(400, "stop accepts at most 4 strings", "invalid_request_error", "stop");
+  } else throw HttpError(400, "stop must be a string or an array of strings", "invalid_request_error", "stop");
+  for (const auto& stop : stops) if (stop.empty()) throw HttpError(400, "stop strings must not be empty", "invalid_request_error", "stop");
+  return stops;
+}
 bool disconnected(int fd) {
   char c;
   const auto n = recv(fd, &c, 1, MSG_PEEK | MSG_DONTWAIT);
@@ -163,6 +185,11 @@ HttpServer::HttpServer(ChatBackend& backend, std::string model, const std::strin
   if (socket_ < 0) throw std::runtime_error("cannot retain HTTP socket");
 }
 HttpServer::~HttpServer() { if (socket_ >= 0) close(socket_); }
+void HttpServer::set_defaults(const GenerationOptions& defaults) {
+  defaults.sampling.validate();
+  defaults_ = defaults;
+  seeds_ = Random(defaults.sampling.seed);
+}
 void HttpServer::run(const std::function<bool()>& stopped) {
   while (!stopped()) {
     pollfd p{socket_, POLLIN, 0};
@@ -217,7 +244,8 @@ void HttpServer::handle(int client, const std::function<bool()>& stopped) {
       if (role != "system" && role != "user" && role != "assistant") throw HttpError(400, "unsupported message role");
       messages.push_back({role, string_value(item.find("content"), "content")});
     }
-    std::size_t max_tokens = 128;
+    GenerationOptions generation = defaults_;
+    auto& max_tokens = generation.max_tokens;
     const auto* maximum = root.find("max_completion_tokens");
     if (maximum && root.find("max_tokens")) throw HttpError(400, "use only one maximum token field");
     if (!maximum) maximum = root.find("max_tokens");
@@ -226,9 +254,42 @@ void HttpServer::handle(int client, const std::function<bool()>& stopped) {
       if (n < 1 || n > 1048576 || std::floor(n) != n) throw HttpError(400, "max_tokens must be an integer in 1..1048576");
       max_tokens = static_cast<std::size_t>(n);
     }
-    for (const auto& [name, expected] : std::map<std::string, double>{{"temperature", 0}, {"top_p", 1}, {"n", 1}, {"presence_penalty", 0}, {"frequency_penalty", 0}})
-      if (const auto* v = root.find(name); v && number_value(*v, name) != expected) throw HttpError(400, "only " + name + "=" + std::to_string(expected) + " is supported");
-    for (const auto* name : {"tools", "tool_choice", "functions", "function_call", "stop", "response_format", "logit_bias"})
+    for (const auto& [name, expected] : std::map<std::string, double>{{"n", 1}, {"presence_penalty", 0}, {"frequency_penalty", 0}})
+      if (const auto* v = root.find(name); v && number_value(*v, name) != expected) throw HttpError(400, "only " + name + "=" + shown(expected) + " is supported");
+    // OpenAI fields, plus the llama.cpp server extensions top_k, min_p and repeat_penalty.
+    auto& sampling = generation.sampling;
+    auto present = [&](const char* name) {
+      const auto* v = root.find(name);
+      return v && !std::holds_alternative<std::nullptr_t>(v->data) ? v : nullptr;
+    };
+    if (const auto* v = present("temperature")) sampling.temperature = static_cast<float>(bounded(*v, "temperature", 0, 2));
+    if (const auto* v = present("top_p")) {
+      sampling.top_p = static_cast<float>(bounded(*v, "top_p", 0, 1));
+      if (sampling.top_p == 0) throw HttpError(400, "top_p must be above 0", "invalid_request_error", "top_p");
+    }
+    if (const auto* v = present("min_p")) {
+      sampling.min_p = static_cast<float>(bounded(*v, "min_p", 0, 1));
+      if (sampling.min_p == 1) throw HttpError(400, "min_p must be below 1", "invalid_request_error", "min_p");
+    }
+    if (const auto* v = present("top_k")) {
+      const double k = bounded(*v, "top_k", 0, 1048576);
+      if (std::floor(k) != k) throw HttpError(400, "top_k must be an integer", "invalid_request_error", "top_k");
+      sampling.top_k = static_cast<std::size_t>(k);
+    }
+    if (const auto* v = present("repeat_penalty")) {
+      sampling.repeat_penalty = static_cast<float>(bounded(*v, "repeat_penalty", 0, 100));
+      if (sampling.repeat_penalty == 0) throw HttpError(400, "repeat_penalty must be above 0", "invalid_request_error", "repeat_penalty");
+    }
+    // Draw from the seed stream for every request, so the sequence of seeds
+    // depends only on the server's starting seed and request order.
+    const auto drawn = seeds_.next();
+    if (const auto* v = present("seed")) {
+      const double seed = bounded(*v, "seed", 0, 9007199254740992.0);
+      if (std::floor(seed) != seed) throw HttpError(400, "seed must be an integer", "invalid_request_error", "seed");
+      sampling.seed = static_cast<std::uint64_t>(seed);
+    } else sampling.seed = drawn;
+    if (const auto* v = root.find("stop")) generation.stop = stop_value(*v);
+    for (const auto* name : {"tools", "tool_choice", "functions", "function_call", "response_format", "logit_bias"})
       if (const auto* v = root.find(name); v && !std::holds_alternative<std::nullptr_t>(v->data)) throw HttpError(400, std::string(name) + " is not supported");
     if (const auto* v = root.find("logprobs"); v && bool_value(*v, "logprobs")) throw HttpError(400, "logprobs is not supported");
     bool stream = false, include_usage = false;
@@ -238,7 +299,7 @@ void HttpServer::handle(int client, const std::function<bool()>& stopped) {
       if (const auto* v = options->find("include_usage")) include_usage = bool_value(*v, "include_usage");
     }
     std::size_t prompt_tokens = 0;
-    try { prompt_tokens = backend_.prepare(messages, max_tokens); }
+    try { prompt_tokens = backend_.prepare(messages, generation); }
     catch (const std::length_error& e) { throw HttpError(400, e.what(), "context_length_exceeded", "messages"); }
     const auto id = "chatcmpl-neuron-" + std::to_string(std::time(nullptr)) + "-" + std::to_string(++sequence_);
     const std::string base = "{\"id\":" + quote(id) + ",\"created\":" + std::to_string(std::time(nullptr)) + ",\"model\":" + quote(model_);

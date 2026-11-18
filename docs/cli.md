@@ -24,3 +24,31 @@
 The filters run on the temperature-scaled distribution. `--top-k` and `--min-p` go first (they commute), then `--top-p` works on what is left. The random source is SplitMix64, written out in `src/sampling.cpp`, so a seed means the same thing with any compiler or standard library.
 
 With `--json`, a sampled run adds a `sampling` object with every setting, including the seed that was drawn when `--seed` was not given. `top2` always describes the raw model logits, not the sampled token, so it stays useful for numerical checks. `--teacher-tokens` replays a fixed sequence and only works with plain greedy decoding.
+
+## Stop strings
+
+`--stop TEXT` ends generation just before `TEXT` appears. Repeat it for several strings; the earliest match wins. Text arrives one token piece at a time, so a stop string can be split across tokens. Neuron holds back any tail that could still turn into a stop string and prints it once it cannot, so nothing after the stop is ever shown. With `--json`, `neuron run` adds a `stop` field holding the string that matched, or `null` if none did.
+
+## Chat and serve
+
+`neuron chat` takes the same sampling flags and `--stop`. Every reply uses them; the default is still greedy.
+
+`neuron serve` takes them as defaults for requests that leave a field out, along with `-n` for the default `max_tokens`. `POST /v1/chat/completions` accepts:
+
+| Field | Range | Notes |
+| --- | --- | --- |
+| `temperature` | 0 to 2 | Default 0 (greedy) unless `serve --temp` sets another. |
+| `top_p` | above 0, up to 1 | |
+| `seed` | integer, 0 to 2^53 | Repeats a sampled reply exactly for the same request. |
+| `stop` | string or up to 4 strings | Ends the reply with `finish_reason` `stop`. |
+| `top_k`, `min_p`, `repeat_penalty` | as on the CLI | Extensions that llama.cpp's server also accepts. |
+
+Fields sent as `null` keep the default. A sampled request without a `seed` gets the next value from a per-server seed stream. That stream starts from `serve --seed` when given (random otherwise), so a server started with a fixed seed hands out the same seeds in the same request order.
+
+```python
+client.chat.completions.create(
+    model=model,
+    messages=[{"role": "user", "content": "List three prime numbers."}],
+    temperature=0.7, top_p=0.9, seed=7, stop=["\n\n"],
+)
+```

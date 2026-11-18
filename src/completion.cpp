@@ -1,4 +1,5 @@
 #include "neuron/completion.hpp"
+#include "neuron/stop.hpp"
 #include "utf8.hpp"
 
 #include <algorithm>
@@ -12,7 +13,10 @@ ModelChat::ModelChat(const std::string& path, std::size_t context)
   if (!smollm_ && model_.file().at("general.architecture").string() != "qwen2")
     throw std::invalid_argument("chat supports Qwen2 and SmolLM2 Instruct ChatML models");
 }
-std::size_t ModelChat::prepare(std::span<const ChatMessage> messages, std::size_t max_tokens) {
+std::size_t ModelChat::prepare(std::span<const ChatMessage> messages, const GenerationOptions& options) {
+  options.sampling.validate();
+  const StopMatcher check(options.stop);
+  const auto max_tokens = options.max_tokens;
   std::vector<ChatMessage> history(messages.begin(), messages.end());
   if (smollm_ && (history.empty() || history.front().role != "system"))
     history.insert(history.begin(), {"system", "You are a helpful AI assistant named SmolLM, trained by Hugging Face"});
@@ -21,12 +25,16 @@ std::size_t ModelChat::prepare(std::span<const ChatMessage> messages, std::size_
       max_tokens > model_.config().context - tokens.size())
     throw std::length_error("prompt plus requested generation exceeds context limit; reset or shorten the conversation");
   prompt_ = std::move(tokens);
-  max_tokens_ = max_tokens;
+  options_ = options;
+  prepared_ = true;
   return prompt_.size();
 }
 Completion ModelChat::generate(const TextSink& sink, const Cancelled& cancelled) {
-  if (prompt_.empty() || max_tokens_ == 0) throw std::logic_error("prepare chat before generation");
+  if (!prepared_) throw std::logic_error("prepare chat before generation");
   Completion result;
+  Sampler sampler(options_.sampling);
+  StopMatcher stop(options_.stop);
+  for (const auto token : prompt_) sampler.accept(token);
   model_.reset();
   std::span<const float> logits;
   for (std::size_t i = 0; i < prompt_.size(); ++i) {
@@ -39,15 +47,18 @@ Completion ModelChat::generate(const TextSink& sink, const Cancelled& cancelled)
     result.text += piece;
     return piece.empty() || sink(piece);
   };
-  for (std::size_t i = 0; i < max_tokens_; ++i) {
+  for (std::size_t i = 0; i < options_.max_tokens; ++i) {
     if (cancelled()) { result.finish_reason = "cancelled"; break; }
-    const auto next = static_cast<std::int32_t>(std::max_element(logits.begin(), logits.end()) - logits.begin());
+    const auto next = sampler.sample(logits);
+    sampler.accept(next);
     ++result.tokens;
     if (tokenizer_.is_eog(next)) { result.finish_reason = "stop"; break; }
-    pending += tokenizer_.piece(next);
+    pending += stop.push(tokenizer_.piece(next));
     if (!emit(false)) { result.finish_reason = "cancelled"; return result; }
-    if (i + 1 < max_tokens_) logits = model_.step_view(next);
+    if (stop.stopped()) { result.finish_reason = "stop"; break; }
+    if (i + 1 < options_.max_tokens) logits = model_.step_view(next);
   }
+  pending += stop.finish();
   if (!emit(true)) result.finish_reason = "cancelled";
   return result;
 }

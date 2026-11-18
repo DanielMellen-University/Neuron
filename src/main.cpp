@@ -20,8 +20,10 @@
 #include "neuron/completion.hpp"
 #include "neuron/sampling.hpp"
 #include "neuron/server.hpp"
+#include "neuron/stop.hpp"
 #include "neuron/tokenizer.hpp"
 #include "neuron/version.hpp"
+#include "json.hpp"
 
 namespace {
 volatile std::sig_atomic_t server_stopped = 0;
@@ -31,6 +33,7 @@ void print_usage() {
       "usage: neuron [--version] [--help]\n"
       "       neuron run -m MODEL -p PROMPT [-n 128] --greedy [--json] [--ctx-size N]\n"
       "       neuron run -m MODEL -p PROMPT --temp T [--top-k K] [--top-p P] [--min-p P] [--seed N]\n"
+      "       neuron run ... [--stop TEXT]...\n"
       "       neuron tokenize -m MODEL -p PROMPT [--no-add-special] [--no-parse-special]\n"
       "       neuron logits -m MODEL -p PROMPT --output FILE [--ctx-size N]\n"
       "\n"
@@ -38,8 +41,8 @@ void print_usage() {
       "       neuron tokenize|template -m MODEL --chat [--message ROLE TEXT]... [-p TEXT]\n"
       "\n"
       "       neuron perplexity -m MODEL --prompt-file FILE --ctx-size N [--chunks N]\n"
-      "       neuron chat -m MODEL [-n 128] [--system TEXT] [--ctx-size N]\n"
-      "       neuron serve -m MODEL [--host 127.0.0.1] [--port 8080] [--ctx-size N]\n"
+      "       neuron chat -m MODEL [-n 128] [--system TEXT] [--ctx-size N] [sampling flags] [--stop TEXT]...\n"
+      "       neuron serve -m MODEL [--host 127.0.0.1] [--port 8080] [--ctx-size N] [-n 128] [sampling flags]\n"
       "\nDense llama and Qwen2 GGUF models with F32/F16/Q8_0/Q4_0/Q4_K/Q6_K weights.\n"
       "--prompt-file FILE reads prompt bytes instead of -p.\n"
       "--chat applies Qwen2.5 ChatML; repeated --message flags supply history.\n"
@@ -50,6 +53,7 @@ void print_usage() {
       "--temp 0 is the same as --greedy. Above 0, --top-k (0 = off), --top-p and --min-p\n"
       "filter the scaled distribution. --seed makes sampling repeatable (default: random).\n"
       "--repeat-penalty X (default 1, off) and --repeat-last-n N (default 64) discourage repeats.\n"
+      "--stop TEXT ends generation before TEXT; repeat it for more stop strings.\n"
       "--threads N sets total matmul threads (default NEURON_THREADS or 1).\n"
       "--isa auto|scalar|avx2|avx512|vnni overrides NEURON_ISA.\n"
       "--ctx-size defaults to 2048, matching the M1 reference context.\n");
@@ -102,6 +106,7 @@ int execute(int argc, char** argv) {
   std::size_t port = 8080;
   neuron::SamplingOptions sampling;
   bool has_temperature = false, has_seed = false;
+  std::vector<std::string> stops;
   for (int i = 2; i < argc; ++i) {
     const std::string_view option = argv[i];
     auto value = [&]() -> std::string {
@@ -120,7 +125,7 @@ int execute(int argc, char** argv) {
       if (!stream) throw std::invalid_argument("cannot read prompt file: " + prompt_path);
       prompt.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()); has_prompt = true;
     }
-    else if (option == "-n" && (command == "run" || command == "chat")) predict = count(value());
+    else if (option == "-n" && (command == "run" || command == "chat" || command == "serve")) predict = count(value());
     else if (option == "--chunks" && command == "perplexity") chunks = count(value());
     else if (option == "--chat" && command != "perplexity") chat = true;
     else if (option == "--system" && command != "perplexity") { system = value(); has_system = true; chat = true; }
@@ -130,24 +135,34 @@ int execute(int argc, char** argv) {
     else if (option == "--ctx-size" && command != "tokenize" && command != "template") context = count(value());
     else if (option == "--output" && command == "logits") output = value();
     else if (option == "--greedy" && command == "run") greedy = true;
-    else if (option == "--temp" && command == "run") { sampling.temperature = real(value(), "--temp"); has_temperature = true; }
-    else if (option == "--top-k" && command == "run") sampling.top_k = static_cast<std::size_t>(whole(value()));
-    else if (option == "--top-p" && command == "run") sampling.top_p = real(value(), "--top-p");
-    else if (option == "--min-p" && command == "run") sampling.min_p = real(value(), "--min-p");
-    else if (option == "--seed" && command == "run") { sampling.seed = whole(value()); has_seed = true; }
-    else if (option == "--repeat-penalty" && command == "run") sampling.repeat_penalty = real(value(), "--repeat-penalty");
-    else if (option == "--repeat-last-n" && command == "run") sampling.repeat_last_n = static_cast<std::size_t>(whole(value()));
+    else if (option == "--temp" && (command == "run" || command == "chat" || command == "serve")) { sampling.temperature = real(value(), "--temp"); has_temperature = true; }
+    else if (option == "--top-k" && (command == "run" || command == "chat" || command == "serve")) sampling.top_k = static_cast<std::size_t>(whole(value()));
+    else if (option == "--top-p" && (command == "run" || command == "chat" || command == "serve")) sampling.top_p = real(value(), "--top-p");
+    else if (option == "--min-p" && (command == "run" || command == "chat" || command == "serve")) sampling.min_p = real(value(), "--min-p");
+    else if (option == "--seed" && (command == "run" || command == "chat" || command == "serve")) { sampling.seed = whole(value()); has_seed = true; }
+    else if (option == "--repeat-penalty" && (command == "run" || command == "chat" || command == "serve")) sampling.repeat_penalty = real(value(), "--repeat-penalty");
+    else if (option == "--stop" && (command == "run" || command == "chat" || command == "serve")) stops.push_back(value());
+    else if (option == "--repeat-last-n" && (command == "run" || command == "chat" || command == "serve")) sampling.repeat_last_n = static_cast<std::size_t>(whole(value()));
     else if (option == "--json" && command == "run") json = true;
     else if (option == "--no-add-special" && command == "tokenize") add_special = false;
     else if (option == "--no-parse-special" && command == "tokenize") parse_special = false;
     else throw std::invalid_argument("unknown option: " + std::string(option));
   }
+  if (greedy && sampling.temperature != 0) throw std::invalid_argument("--greedy conflicts with a nonzero --temp");
+  sampling.validate();
+  neuron::StopMatcher stop(stops);
+  // serve always needs a random start for its per-request seed stream.
+  if ((!sampling.greedy() || command == "serve") && !has_seed) sampling.seed = (static_cast<std::uint64_t>(std::random_device{}()) << 32) | std::random_device{}();
   if (command == "chat" || command == "serve") {
     if (path.empty()) throw std::invalid_argument("-m MODEL is required");
     neuron::ModelChat backend(path, context);
-    if (command == "chat") neuron::terminal_chat(backend, predict, has_system ? &system : nullptr);
+    if (command == "chat") {
+      const neuron::GenerationOptions options{predict, sampling, stops};
+      neuron::terminal_chat(backend, options, has_system ? &system : nullptr);
+    }
     else {
       neuron::HttpServer server(backend, std::filesystem::path(path).filename().string(), host, static_cast<std::uint16_t>(port));
+      server.set_defaults({predict, sampling, stops});
       struct sigaction action{};
       action.sa_handler = stop_server;
       sigemptyset(&action.sa_mask);
@@ -180,9 +195,6 @@ int execute(int argc, char** argv) {
   const auto tokens = tokenizer.encode(prompt, add_special, parse_special);
   if (command == "tokenize") { ids(tokens); std::printf("\n"); return 0; }
   if (command == "run" && !greedy && !has_temperature) throw std::invalid_argument("run requires --greedy or --temp T");
-  if (greedy && sampling.temperature != 0) throw std::invalid_argument("--greedy conflicts with a nonzero --temp");
-  sampling.validate();
-  if (!sampling.greedy() && !has_seed) sampling.seed = (static_cast<std::uint64_t>(std::random_device{}()) << 32) | std::random_device{}();
   if (command == "logits" && output.empty()) throw std::invalid_argument("logits requires --output FILE");
   if (command == "perplexity") {
     neuron::Model model(path, context);
@@ -210,7 +222,8 @@ int execute(int argc, char** argv) {
     }
     if (!stream.eof() || teacher.size() != predict || !json || recompute)
       throw std::invalid_argument("teacher tokens require exactly -n IDs, --json and cached generation");
-    if (!sampling.greedy() || sampling.repeat_penalty != 1) throw std::invalid_argument("teacher tokens require plain greedy decoding");
+    if (!sampling.greedy() || sampling.repeat_penalty != 1 || !stops.empty())
+      throw std::invalid_argument("teacher tokens require plain greedy decoding without --stop");
   }
   neuron::Model model(path, context);
   const auto start = Clock::now(); auto logits = model.forward_view(tokens); const double prompt_seconds = seconds(start);
@@ -238,7 +251,9 @@ int execute(int argc, char** argv) {
     top2.push_back({best, second, logits[static_cast<std::size_t>(best)] - logits[static_cast<std::size_t>(second)]});
     if (teacher.empty() && tokenizer.is_eog(next)) break;
     generated.push_back(next);
-    if (!json) { const auto piece = tokenizer.piece(next); std::fwrite(piece.data(), 1, piece.size(), stdout); std::fflush(stdout); }
+    const auto text = stop.push(tokenizer.piece(next));
+    if (!json) { std::fwrite(text.data(), 1, text.size(), stdout); std::fflush(stdout); }
+    if (stop.stopped()) break;
     if (i + 1 < predict) {
       if (recompute) { sequence.push_back(next); logits = model.forward_view(sequence); }
       else logits = model.step_view(teacher.empty() ? next : teacher[i]);
@@ -256,11 +271,16 @@ int execute(int argc, char** argv) {
       std::printf(",\"sampling\":{\"temperature\":%.7g,\"top_k\":%zu,\"top_p\":%.7g,\"min_p\":%.7g,\"repeat_penalty\":%.7g,\"repeat_last_n\":%zu,\"seed\":%llu}",
           static_cast<double>(sampling.temperature), sampling.top_k, static_cast<double>(sampling.top_p), static_cast<double>(sampling.min_p),
           static_cast<double>(sampling.repeat_penalty), sampling.repeat_last_n, static_cast<unsigned long long>(sampling.seed));
+    if (!stop.empty()) std::printf(",\"stop\":%s", stop.stopped() ? neuron::json::quote(stop.matched()).c_str() : "null");
     const double steps = static_cast<double>(generated.empty() ? 0 : generated.size() - 1);
     std::printf(",\"timings\":{\"prompt_n\":%zu,\"prompt_ms\":%.9g,\"predicted_n\":%zu,\"predicted_ms\":%.9g,\"prompt_per_second\":%.9g,\"predicted_per_second\":%.9g}}\n",
                 tokens.size(), prompt_seconds * 1000, generated.size(), generation_seconds * 1000,
                 static_cast<double>(tokens.size()) / prompt_seconds, steps / generation_seconds);
-  } else std::printf("\n");
+  } else {
+    const auto rest = stop.finish();
+    std::fwrite(rest.data(), 1, rest.size(), stdout);
+    std::printf("\n");
+  }
   return 0;
 }
 }  // namespace
