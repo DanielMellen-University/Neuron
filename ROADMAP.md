@@ -195,3 +195,19 @@ The short M5 protocol now measures 21.215665 generation tokens/s versus
 miss remains historical. [Speed records](bench/SPEED.md) and
 [profile and checks](bench/R1_PROFILE.md) describe this refinement.
 M4 free-running agreement and all acceptance criteria above are unchanged.
+
+## R2 free-running agreement
+
+R2 repeats the twelve-prompt M4-v2 agreement check in both engines, with
+each quantized format compared against its own engine's F16 run. Neuron
+reproduces 551/768 (71.74%) for Q8_0, 51/768 (6.64%) for Q4_0 and 180/768
+(23.44%) for Q4_K_M in both runs. llama.cpp measures 457/768 (59.51%),
+49/768 (6.38%) and 156/768 (20.31%), respectively. Both engines miss the
+90% int8 and 70% four-bit agreement targets.
+
+F16 matches across engines at all 768 positions. Layer and operation checks
+found matching weight decoding and F16 conversions. The larger quantized
+differences follow activation precision, with no inference correction
+justified by the checks. All four perplexity regression checks pass at or
+below M4. [Quality table](bench/QUANT.md#r2-free-running-agreement),
+[R2 numerical checks](bench/R2_AGREEMENT.md).
