@@ -22,7 +22,7 @@ class InterruptHandler {
   struct sigaction previous_{};
 };
 }
-void terminal_chat(ChatBackend& backend, std::size_t max_tokens, const std::string* system) {
+void terminal_chat(ChatBackend& backend, const GenerationOptions& options, const std::string* system) {
   const InterruptHandler handler;
   std::vector<ChatMessage> history;
   auto reset = [&] {
@@ -44,7 +44,7 @@ void terminal_chat(ChatBackend& backend, std::size_t max_tokens, const std::stri
     if (line.empty()) continue;
     history.push_back({"user", line});
     try {
-      backend.prepare(history, max_tokens);
+      backend.prepare(history, options);
       std::cout << "assistant> " << std::flush;
       const auto reply = backend.generate([](std::string_view piece) {
         std::cout << piece << std::flush; return true;
