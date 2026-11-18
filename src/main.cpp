@@ -20,8 +20,10 @@
 #include "neuron/completion.hpp"
 #include "neuron/sampling.hpp"
 #include "neuron/server.hpp"
+#include "neuron/stop.hpp"
 #include "neuron/tokenizer.hpp"
 #include "neuron/version.hpp"
+#include "json.hpp"
 
 namespace {
 volatile std::sig_atomic_t server_stopped = 0;
@@ -31,6 +33,7 @@ void print_usage() {
       "usage: neuron [--version] [--help]\n"
       "       neuron run -m MODEL -p PROMPT [-n 128] --greedy [--json] [--ctx-size N]\n"
       "       neuron run -m MODEL -p PROMPT --temp T [--top-k K] [--top-p P] [--min-p P] [--seed N]\n"
+      "       neuron run ... [--stop TEXT]...\n"
       "       neuron tokenize -m MODEL -p PROMPT [--no-add-special] [--no-parse-special]\n"
       "       neuron logits -m MODEL -p PROMPT --output FILE [--ctx-size N]\n"
       "\n"
@@ -50,6 +53,7 @@ void print_usage() {
       "--temp 0 is the same as --greedy. Above 0, --top-k (0 = off), --top-p and --min-p\n"
       "filter the scaled distribution. --seed makes sampling repeatable (default: random).\n"
       "--repeat-penalty X (default 1, off) and --repeat-last-n N (default 64) discourage repeats.\n"
+      "--stop TEXT ends generation before TEXT; repeat it for more stop strings.\n"
       "--threads N sets total matmul threads (default NEURON_THREADS or 1).\n"
       "--isa auto|scalar|avx2|avx512|vnni overrides NEURON_ISA.\n"
       "--ctx-size defaults to 2048, matching the M1 reference context.\n");
@@ -102,6 +106,7 @@ int execute(int argc, char** argv) {
   std::size_t port = 8080;
   neuron::SamplingOptions sampling;
   bool has_temperature = false, has_seed = false;
+  std::vector<std::string> stops;
   for (int i = 2; i < argc; ++i) {
     const std::string_view option = argv[i];
     auto value = [&]() -> std::string {
@@ -136,6 +141,7 @@ int execute(int argc, char** argv) {
     else if (option == "--min-p" && command == "run") sampling.min_p = real(value(), "--min-p");
     else if (option == "--seed" && command == "run") { sampling.seed = whole(value()); has_seed = true; }
     else if (option == "--repeat-penalty" && command == "run") sampling.repeat_penalty = real(value(), "--repeat-penalty");
+    else if (option == "--stop" && command == "run") stops.push_back(value());
     else if (option == "--repeat-last-n" && command == "run") sampling.repeat_last_n = static_cast<std::size_t>(whole(value()));
     else if (option == "--json" && command == "run") json = true;
     else if (option == "--no-add-special" && command == "tokenize") add_special = false;
@@ -182,6 +188,7 @@ int execute(int argc, char** argv) {
   if (command == "run" && !greedy && !has_temperature) throw std::invalid_argument("run requires --greedy or --temp T");
   if (greedy && sampling.temperature != 0) throw std::invalid_argument("--greedy conflicts with a nonzero --temp");
   sampling.validate();
+  neuron::StopMatcher stop(stops);
   if (!sampling.greedy() && !has_seed) sampling.seed = (static_cast<std::uint64_t>(std::random_device{}()) << 32) | std::random_device{}();
   if (command == "logits" && output.empty()) throw std::invalid_argument("logits requires --output FILE");
   if (command == "perplexity") {
@@ -210,7 +217,8 @@ int execute(int argc, char** argv) {
     }
     if (!stream.eof() || teacher.size() != predict || !json || recompute)
       throw std::invalid_argument("teacher tokens require exactly -n IDs, --json and cached generation");
-    if (!sampling.greedy() || sampling.repeat_penalty != 1) throw std::invalid_argument("teacher tokens require plain greedy decoding");
+    if (!sampling.greedy() || sampling.repeat_penalty != 1 || !stops.empty())
+      throw std::invalid_argument("teacher tokens require plain greedy decoding without --stop");
   }
   neuron::Model model(path, context);
   const auto start = Clock::now(); auto logits = model.forward_view(tokens); const double prompt_seconds = seconds(start);
@@ -238,7 +246,9 @@ int execute(int argc, char** argv) {
     top2.push_back({best, second, logits[static_cast<std::size_t>(best)] - logits[static_cast<std::size_t>(second)]});
     if (teacher.empty() && tokenizer.is_eog(next)) break;
     generated.push_back(next);
-    if (!json) { const auto piece = tokenizer.piece(next); std::fwrite(piece.data(), 1, piece.size(), stdout); std::fflush(stdout); }
+    const auto text = stop.push(tokenizer.piece(next));
+    if (!json) { std::fwrite(text.data(), 1, text.size(), stdout); std::fflush(stdout); }
+    if (stop.stopped()) break;
     if (i + 1 < predict) {
       if (recompute) { sequence.push_back(next); logits = model.forward_view(sequence); }
       else logits = model.step_view(teacher.empty() ? next : teacher[i]);
@@ -256,11 +266,16 @@ int execute(int argc, char** argv) {
       std::printf(",\"sampling\":{\"temperature\":%.7g,\"top_k\":%zu,\"top_p\":%.7g,\"min_p\":%.7g,\"repeat_penalty\":%.7g,\"repeat_last_n\":%zu,\"seed\":%llu}",
           static_cast<double>(sampling.temperature), sampling.top_k, static_cast<double>(sampling.top_p), static_cast<double>(sampling.min_p),
           static_cast<double>(sampling.repeat_penalty), sampling.repeat_last_n, static_cast<unsigned long long>(sampling.seed));
+    if (!stop.empty()) std::printf(",\"stop\":%s", stop.stopped() ? neuron::json::quote(stop.matched()).c_str() : "null");
     const double steps = static_cast<double>(generated.empty() ? 0 : generated.size() - 1);
     std::printf(",\"timings\":{\"prompt_n\":%zu,\"prompt_ms\":%.9g,\"predicted_n\":%zu,\"predicted_ms\":%.9g,\"prompt_per_second\":%.9g,\"predicted_per_second\":%.9g}}\n",
                 tokens.size(), prompt_seconds * 1000, generated.size(), generation_seconds * 1000,
                 static_cast<double>(tokens.size()) / prompt_seconds, steps / generation_seconds);
-  } else std::printf("\n");
+  } else {
+    const auto rest = stop.finish();
+    std::fwrite(rest.data(), 1, rest.size(), stdout);
+    std::printf("\n");
+  }
   return 0;
 }
 }  // namespace

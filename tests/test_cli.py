@@ -70,6 +70,22 @@ class CliTests(unittest.TestCase):
             self.assertEqual(result.returncode, 2, flags)
             self.assertTrue(result.stderr.startswith(b"neuron: "), result.stderr)
 
+    def test_stop_strings_cut_text(self):
+        def text(*flags):
+            return self.neuron("run", "-m", self.model, "-p", "a", "--greedy", "-n", "12", *flags).stdout
+        # " b cabcde": "ab" spans the " ca" and "b" pieces.
+        self.assertEqual(text("--stop", "ab"), b" b c\n")
+        self.assertEqual(text("--stop", "zz", "--stop", " c"), b" b\n")
+        # A held prefix that never completes is printed at the end.
+        self.assertEqual(text("--stop", "ex"), b" b cabcde\n")
+        record = self.run_json("--greedy", "-n", "12", "--stop", "cd")
+        self.assertEqual(record["stop"], "cd")
+        self.assertEqual(record["generated_tokens"], [10, 11, 4, 5, 6, 7])
+        self.assertIsNone(self.run_json("--greedy", "-n", "2", "--stop", "q")["stop"])
+        self.assertNotIn("stop", self.run_json("--greedy", "-n", "2"))
+        bad = self.neuron("run", "-m", self.model, "-p", "a", "--greedy", "--stop", "", check=False)
+        self.assertEqual(bad.returncode, 2)
+
 
 if __name__ == "__main__":
     unittest.main()
