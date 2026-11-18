@@ -12,6 +12,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'bench'))
 from check_m4_v2 import comparison
+from check_r2 import agreement
 BINARY = Path(sys.argv.pop(1)).resolve()
 
 
@@ -70,6 +71,25 @@ class MethodTests(unittest.TestCase):
         self.assertEqual(comparison([1] * 64, [1] * 2)['agreement_rate'], 2 / 64)
         self.assertEqual(comparison([1] * 64, [])['first_divergent_token_index'], 0)
 
+    def test_two_engine_agreement_requires_all_prompts_and_counts_early_stops(self):
+        prompts = [{'id': str(i)} for i in range(12)]
+        expected = [{'result': {'prompt_tokens': [1, 2], 'generated_tokens': [3] * 64}} for _ in prompts]
+        actual = json.loads(json.dumps(expected))
+        actual[0]['result']['generated_tokens'] = [3, 4]
+        result = agreement(expected, actual, prompts)
+        self.assertEqual(result['matching_tokens'], 705)
+        self.assertEqual(result['total_tokens'], 768)
+        self.assertEqual(result['prompts'][0]['first_divergent_token_index'], 1)
+        with self.assertRaises(ValueError):
+            agreement(expected[:-1], actual, prompts)
+        actual[0]['result']['prompt_tokens'] = [1]
+        with self.assertRaises(ValueError):
+            agreement(expected, actual, prompts)
+        actual[0] = json.loads(json.dumps(expected[0]))
+        actual[0]['result']['generated_tokens'].append(3)
+        with self.assertRaises(ValueError):
+            agreement(expected, actual, prompts)
+
     def test_teacher_replays_previous_id_and_records_current_argmax(self):
         with tempfile.TemporaryDirectory() as directory:
             path, teacher = Path(directory) / 'tiny.gguf', Path(directory) / 'ids.txt'
@@ -85,6 +105,22 @@ class MethodTests(unittest.TestCase):
                 teacher.write_text(bad)
                 result = subprocess.run(command + ['--teacher-tokens', str(teacher)], capture_output=True)
                 self.assertEqual(result.returncode, 2)
+
+    def test_cross_engine_early_stops_keep_all_planned_positions(self):
+        prompts = [{'id': str(i)} for i in range(12)]
+        expected = [{'result': {'prompt_tokens': [1], 'generated_tokens': [2] * 64}} for _ in prompts]
+        actual = json.loads(json.dumps(expected))
+        expected[0]['result']['generated_tokens'] = [2, 2]
+        actual[0]['result']['generated_tokens'] = [2, 2]
+        result = agreement(expected, actual, prompts, require_full_reference=False)
+        self.assertEqual(result['matching_tokens'], 706)
+        self.assertEqual(result['total_tokens'], 768)
+        self.assertEqual(result['prompts'][0]['first_divergent_token_index'], 2)
+        with self.assertRaises(ValueError):
+            agreement(expected, actual, prompts)
+        expected[0]['result']['generated_tokens'] = [2] * 65
+        with self.assertRaises(ValueError):
+            agreement(expected, actual, prompts, require_full_reference=False)
 
 
 if __name__ == '__main__':

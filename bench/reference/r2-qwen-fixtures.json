@@ -1,0 +1,43 @@
+{
+  "model_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+  "llama_cpp_commit": "9e9619d030bbe6b584d826a0a6cf06e38251f52b",
+  "neuron_binary_sha256": "fa21c5ee68df10f4ef0bfff11381c6e229f1e45c97f75bd0b6f62123adaa6a2d",
+  "reference_tool_sha256": "b9065a7488b1a5e15152b4b8e3979dd026bfe11c0afd027d54496b63fb5d3339",
+  "context": 2048,
+  "threads": 1,
+  "machine_before": {
+    "utc": "2026-11-18T05:07:17.854904+00:00",
+    "load_average": [
+      1.5791015625,
+      2.49169921875,
+      3.2548828125
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  },
+  "notes": "R2 tokenizer and ChatML fixture checks on an Intel Core i5-1135G7 laptop.",
+  "tokenizer_cases": 63,
+  "chat_cases": 4,
+  "machine_after": {
+    "utc": "2026-11-18T05:07:37.248158+00:00",
+    "load_average": [
+      1.4140625,
+      2.39404296875,
+      3.2060546875
+    ],
+    "power": {
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/intel_pstate/no_turbo": "0",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    }
+  }
+}

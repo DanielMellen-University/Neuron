@@ -1,0 +1,1918 @@
+{
+  "sources": {
+    "before": "bench/reference/r2-before.json",
+    "after": "bench/reference/r2-after.json",
+    "perplexity": "bench/reference/r2-perplexity.json",
+    "probes": "bench/reference/r2-probes.json",
+    "validation": "bench/reference/r2-validation.json"
+  },
+  "engine_changes": [],
+  "formats": {
+    "F16": {
+      "neuron_before": {
+        "matching_tokens": 768,
+        "total_tokens": 768,
+        "rate": 1.0,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          }
+        ]
+      },
+      "neuron_after": {
+        "matching_tokens": 768,
+        "total_tokens": 768,
+        "rate": 1.0,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          }
+        ]
+      },
+      "llama": {
+        "matching_tokens": 768,
+        "total_tokens": 768,
+        "rate": 1.0,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          }
+        ]
+      },
+      "between_engines": {
+        "matching_tokens": 768,
+        "total_tokens": 768,
+        "rate": 1.0,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          }
+        ]
+      },
+      "perplexity": {
+        "source": "bench/reference/r2-ppl-F16.json",
+        "model_sha256": "b6eaec3509f1d0373d1f4802654c4a7bfcde0768645d2d45e8885f6922b428ee",
+        "perplexity": 11.580966356650235,
+        "recorded_perplexity": 11.580966363839208,
+        "llama_perplexity": 11.580967791401383,
+        "relative_change": -6.207575564687318e-10,
+        "no_increase": true,
+        "passed": true,
+        "r1_perplexity": 11.580966356650235,
+        "relative_to_r1": 0.0
+      },
+      "probe": {
+        "source": "bench/reference/r2-probes-F16.json",
+        "prompt_id": "moon",
+        "generated_index": 4,
+        "logit_error": {
+          "elements": 151936,
+          "max_abs": 2.8967857360839844e-05,
+          "rms": 8.536792435722234e-06
+        },
+        "max_block_output_error": 0.000152587890625,
+        "neuron_shared_input": {
+          "activation_max_error": 0.0,
+          "weight_max_error": 0.0,
+          "neuron_dot_max_error": 3.9705267695921975e-07,
+          "llama_dot_max_error": 8.869469896310989e-07,
+          "llama_dot_vs_quantized_input_max_error": 8.869469896310989e-07,
+          "f16_checked": 63490,
+          "f16_mismatches": 0,
+          "matrices": 197,
+          "sampled_rows": 985,
+          "shared_operations": 281,
+          "shared_max_by_op": {
+            "attn_norm": 0.0,
+            "ffn_norm": 0.0,
+            "Qrope": 0.0,
+            "Krope": 0.0,
+            "softmax": 0.0,
+            "attention_scores": 0.0,
+            "attention_values": 0.0,
+            "swiglu": 0.0,
+            "residual_": 0.0,
+            "result_norm": 0.0
+          }
+        },
+        "llama_shared_input": {
+          "activation_max_error": 0.0,
+          "weight_max_error": 0.0,
+          "neuron_dot_max_error": 2.6227181848526016e-07,
+          "llama_dot_max_error": 9.866984385098476e-07,
+          "llama_dot_vs_quantized_input_max_error": 9.866984385098476e-07,
+          "f16_checked": 63490,
+          "f16_mismatches": 0,
+          "matrices": 197,
+          "sampled_rows": 985,
+          "shared_operations": 281,
+          "shared_max_by_op": {
+            "attn_norm": 0.0,
+            "ffn_norm": 3.814697265625e-06,
+            "Qrope": 1.9073486328125e-06,
+            "Krope": 3.814697265625e-06,
+            "softmax": 1.1920928955078125e-07,
+            "attention_scores": 0.0009765625,
+            "attention_values": 9.5367431640625e-07,
+            "swiglu": 9.5367431640625e-07,
+            "residual_": 0.0,
+            "result_norm": 0.0
+          }
+        }
+      }
+    },
+    "Q8_0": {
+      "neuron_before": {
+        "matching_tokens": 551,
+        "total_tokens": 768,
+        "rate": 0.7174479166666666,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 24,
+            "matching_tokens": 25,
+            "total_tokens": 64,
+            "agreement_rate": 0.390625
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 6,
+            "matching_tokens": 6,
+            "total_tokens": 64,
+            "agreement_rate": 0.09375
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 3,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 4,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          }
+        ]
+      },
+      "neuron_after": {
+        "matching_tokens": 551,
+        "total_tokens": 768,
+        "rate": 0.7174479166666666,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 24,
+            "matching_tokens": 25,
+            "total_tokens": 64,
+            "agreement_rate": 0.390625
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 6,
+            "matching_tokens": 6,
+            "total_tokens": 64,
+            "agreement_rate": 0.09375
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 3,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 4,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          }
+        ]
+      },
+      "llama": {
+        "matching_tokens": 457,
+        "total_tokens": 768,
+        "rate": 0.5950520833333334,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 13,
+            "matching_tokens": 14,
+            "total_tokens": 64,
+            "agreement_rate": 0.21875
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 6,
+            "matching_tokens": 6,
+            "total_tokens": 64,
+            "agreement_rate": 0.09375
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": 26,
+            "matching_tokens": 26,
+            "total_tokens": 64,
+            "agreement_rate": 0.40625
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 3,
+            "matching_tokens": 5,
+            "total_tokens": 64,
+            "agreement_rate": 0.078125
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": 17,
+            "matching_tokens": 18,
+            "total_tokens": 64,
+            "agreement_rate": 0.28125
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          }
+        ]
+      },
+      "between_engines": {
+        "matching_tokens": 452,
+        "total_tokens": 768,
+        "rate": 0.5885416666666666,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 13,
+            "matching_tokens": 13,
+            "total_tokens": 64,
+            "agreement_rate": 0.203125
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": 26,
+            "matching_tokens": 26,
+            "total_tokens": 64,
+            "agreement_rate": 0.40625
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 3,
+            "matching_tokens": 3,
+            "total_tokens": 64,
+            "agreement_rate": 0.046875
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": 17,
+            "matching_tokens": 18,
+            "total_tokens": 64,
+            "agreement_rate": 0.28125
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 4,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          }
+        ]
+      },
+      "perplexity": {
+        "source": "bench/reference/r2-ppl-Q8_0.json",
+        "model_sha256": "c4ad03ca16d5486d696da7450fdcdd6e89d44cb1285d2bdb80dccbdcdcb582fe",
+        "perplexity": 11.584335660934997,
+        "recorded_perplexity": 11.58433569741417,
+        "llama_perplexity": 11.614250911640267,
+        "relative_change": -3.1490086094265735e-09,
+        "no_increase": true,
+        "passed": true,
+        "r1_perplexity": 11.584335660934997,
+        "relative_to_r1": 0.0
+      },
+      "probe": {
+        "source": "bench/reference/r2-probes-Q8_0.json",
+        "prompt_id": "library",
+        "generated_index": 2,
+        "logit_error": {
+          "elements": 151936,
+          "max_abs": 0.32765185832977295,
+          "rms": 0.07040687463478591
+        },
+        "max_block_output_error": 0.9989776611328125,
+        "neuron_shared_input": {
+          "activation_max_error": 0.3320772647857666,
+          "weight_max_error": 0.0,
+          "neuron_dot_max_error": 2.2490204187874951e-07,
+          "llama_dot_max_error": 0.08287329710554792,
+          "llama_dot_vs_quantized_input_max_error": 9.668810889706947e-07,
+          "f16_checked": 63490,
+          "f16_mismatches": 0,
+          "matrices": 197,
+          "sampled_rows": 985,
+          "shared_operations": 281,
+          "shared_max_by_op": {
+            "attn_norm": 0.0,
+            "ffn_norm": 0.0,
+            "Qrope": 0.0,
+            "Krope": 0.0,
+            "softmax": 0.0,
+            "attention_scores": 0.0,
+            "attention_values": 0.0,
+            "swiglu": 0.0,
+            "residual_": 0.0,
+            "result_norm": 0.0
+          }
+        },
+        "llama_shared_input": {
+          "activation_max_error": 0.33749401569366455,
+          "weight_max_error": 0.0,
+          "neuron_dot_max_error": 2.283469386910042e-07,
+          "llama_dot_max_error": 0.06556462375970096,
+          "llama_dot_vs_quantized_input_max_error": 1.4348588592838496e-06,
+          "f16_checked": 63490,
+          "f16_mismatches": 0,
+          "matrices": 197,
+          "sampled_rows": 985,
+          "shared_operations": 281,
+          "shared_max_by_op": {
+            "attn_norm": 1.9073486328125e-06,
+            "ffn_norm": 4.76837158203125e-07,
+            "Qrope": 1.9073486328125e-06,
+            "Krope": 7.62939453125e-06,
+            "softmax": 1.1920928955078125e-07,
+            "attention_scores": 0.0009765625,
+            "attention_values": 1.9073486328125e-06,
+            "swiglu": 9.5367431640625e-07,
+            "residual_": 0.0,
+            "result_norm": 0.0
+          }
+        }
+      }
+    },
+    "Q4_0": {
+      "neuron_before": {
+        "matching_tokens": 51,
+        "total_tokens": 768,
+        "rate": 0.06640625,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 5,
+            "total_tokens": 64,
+            "agreement_rate": 0.078125
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 8,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 2,
+            "total_tokens": 64,
+            "agreement_rate": 0.03125
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 3,
+            "total_tokens": 64,
+            "agreement_rate": 0.046875
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 0,
+            "total_tokens": 64,
+            "agreement_rate": 0.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": 1,
+            "matching_tokens": 3,
+            "total_tokens": 64,
+            "agreement_rate": 0.046875
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 3,
+            "matching_tokens": 6,
+            "total_tokens": 64,
+            "agreement_rate": 0.09375
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": 6,
+            "matching_tokens": 12,
+            "total_tokens": 64,
+            "agreement_rate": 0.1875
+          }
+        ]
+      },
+      "neuron_after": {
+        "matching_tokens": 51,
+        "total_tokens": 768,
+        "rate": 0.06640625,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 5,
+            "total_tokens": 64,
+            "agreement_rate": 0.078125
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 8,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 2,
+            "total_tokens": 64,
+            "agreement_rate": 0.03125
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 3,
+            "total_tokens": 64,
+            "agreement_rate": 0.046875
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 0,
+            "total_tokens": 64,
+            "agreement_rate": 0.0
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": 1,
+            "matching_tokens": 3,
+            "total_tokens": 64,
+            "agreement_rate": 0.046875
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 3,
+            "matching_tokens": 6,
+            "total_tokens": 64,
+            "agreement_rate": 0.09375
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": 6,
+            "matching_tokens": 12,
+            "total_tokens": 64,
+            "agreement_rate": 0.1875
+          }
+        ]
+      },
+      "llama": {
+        "matching_tokens": 49,
+        "total_tokens": 768,
+        "rate": 0.06380208333333333,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 5,
+            "total_tokens": 64,
+            "agreement_rate": 0.078125
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 8,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 2,
+            "total_tokens": 64,
+            "agreement_rate": 0.03125
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 3,
+            "total_tokens": 64,
+            "agreement_rate": 0.046875
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 2,
+            "total_tokens": 64,
+            "agreement_rate": 0.03125
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": 1,
+            "matching_tokens": 3,
+            "total_tokens": 64,
+            "agreement_rate": 0.046875
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 3,
+            "matching_tokens": 3,
+            "total_tokens": 64,
+            "agreement_rate": 0.046875
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": 1,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": 6,
+            "matching_tokens": 11,
+            "total_tokens": 64,
+            "agreement_rate": 0.171875
+          }
+        ]
+      },
+      "between_engines": {
+        "matching_tokens": 562,
+        "total_tokens": 768,
+        "rate": 0.7317708333333334,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 2,
+            "total_tokens": 64,
+            "agreement_rate": 0.03125
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 21,
+            "matching_tokens": 21,
+            "total_tokens": 64,
+            "agreement_rate": 0.328125
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 3,
+            "total_tokens": 64,
+            "agreement_rate": 0.046875
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": 21,
+            "matching_tokens": 24,
+            "total_tokens": 64,
+            "agreement_rate": 0.375
+          }
+        ]
+      },
+      "perplexity": {
+        "source": "bench/reference/r2-ppl-Q4_0.json",
+        "model_sha256": "9716085e2f398e15d73d536e2dbafb22e80ae2290588f94d34dab5fd55d0ceab",
+        "perplexity": 13.129918942499566,
+        "recorded_perplexity": 13.129918942499566,
+        "llama_perplexity": 13.143771032244894,
+        "relative_change": 0.0,
+        "no_increase": true,
+        "passed": true,
+        "r1_perplexity": 13.129918942499566,
+        "relative_to_r1": 0.0
+      },
+      "probe": {
+        "source": "bench/reference/r2-probes-Q4_0.json",
+        "prompt_id": "museum",
+        "generated_index": 2,
+        "logit_error": {
+          "elements": 151936,
+          "max_abs": 0.42506253719329834,
+          "rms": 0.08818180954438591
+        },
+        "max_block_output_error": 0.528900146484375,
+        "neuron_shared_input": {
+          "activation_max_error": 0.3966193199157715,
+          "weight_max_error": 0.0,
+          "neuron_dot_max_error": 2.328383787997268e-07,
+          "llama_dot_max_error": 0.11258711726055104,
+          "llama_dot_vs_quantized_input_max_error": 2.4458859115839005e-06,
+          "f16_checked": 63490,
+          "f16_mismatches": 0,
+          "matrices": 197,
+          "sampled_rows": 985,
+          "shared_operations": 281,
+          "shared_max_by_op": {
+            "attn_norm": 0.0,
+            "ffn_norm": 0.0,
+            "Qrope": 0.0,
+            "Krope": 0.0,
+            "softmax": 0.0,
+            "attention_scores": 0.0,
+            "attention_values": 0.0,
+            "swiglu": 0.0,
+            "residual_": 0.0,
+            "result_norm": 0.0
+          }
+        },
+        "llama_shared_input": {
+          "activation_max_error": 0.4288616180419922,
+          "weight_max_error": 0.0,
+          "neuron_dot_max_error": 3.955458964810532e-07,
+          "llama_dot_max_error": 0.0807713456282837,
+          "llama_dot_vs_quantized_input_max_error": 2.196524292230606e-06,
+          "f16_checked": 63490,
+          "f16_mismatches": 0,
+          "matrices": 197,
+          "sampled_rows": 985,
+          "shared_operations": 281,
+          "shared_max_by_op": {
+            "attn_norm": 0.0,
+            "ffn_norm": 0.0,
+            "Qrope": 1.9073486328125e-06,
+            "Krope": 7.62939453125e-06,
+            "softmax": 1.7881393432617188e-07,
+            "attention_scores": 0.001953125,
+            "attention_values": 9.5367431640625e-07,
+            "swiglu": 1.9073486328125e-06,
+            "residual_": 0.0,
+            "result_norm": 0.0
+          }
+        }
+      }
+    },
+    "Q4_K_M": {
+      "neuron_before": {
+        "matching_tokens": 180,
+        "total_tokens": 768,
+        "rate": 0.234375,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 5,
+            "total_tokens": 64,
+            "agreement_rate": 0.078125
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 9,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 0,
+            "total_tokens": 64,
+            "agreement_rate": 0.0
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": 7,
+            "matching_tokens": 31,
+            "total_tokens": 64,
+            "agreement_rate": 0.484375
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": 9,
+            "matching_tokens": 12,
+            "total_tokens": 64,
+            "agreement_rate": 0.1875
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 1,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": 5,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": 44,
+            "matching_tokens": 44,
+            "total_tokens": 64,
+            "agreement_rate": 0.6875
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": 10,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 33,
+            "matching_tokens": 33,
+            "total_tokens": 64,
+            "agreement_rate": 0.515625
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": 20,
+            "matching_tokens": 20,
+            "total_tokens": 64,
+            "agreement_rate": 0.3125
+          }
+        ]
+      },
+      "neuron_after": {
+        "matching_tokens": 180,
+        "total_tokens": 768,
+        "rate": 0.234375,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 5,
+            "total_tokens": 64,
+            "agreement_rate": 0.078125
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 9,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 0,
+            "total_tokens": 64,
+            "agreement_rate": 0.0
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": 7,
+            "matching_tokens": 31,
+            "total_tokens": 64,
+            "agreement_rate": 0.484375
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": 9,
+            "matching_tokens": 12,
+            "total_tokens": 64,
+            "agreement_rate": 0.1875
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 1,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": 5,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": 44,
+            "matching_tokens": 44,
+            "total_tokens": 64,
+            "agreement_rate": 0.6875
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": 10,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 33,
+            "matching_tokens": 33,
+            "total_tokens": 64,
+            "agreement_rate": 0.515625
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": 20,
+            "matching_tokens": 20,
+            "total_tokens": 64,
+            "agreement_rate": 0.3125
+          }
+        ]
+      },
+      "llama": {
+        "matching_tokens": 156,
+        "total_tokens": 768,
+        "rate": 0.203125,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 6,
+            "total_tokens": 64,
+            "agreement_rate": 0.09375
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 9,
+            "matching_tokens": 9,
+            "total_tokens": 64,
+            "agreement_rate": 0.140625
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 8,
+            "total_tokens": 64,
+            "agreement_rate": 0.125
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": 7,
+            "matching_tokens": 34,
+            "total_tokens": 64,
+            "agreement_rate": 0.53125
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": 9,
+            "matching_tokens": 9,
+            "total_tokens": 64,
+            "agreement_rate": 0.140625
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": 1,
+            "matching_tokens": 1,
+            "total_tokens": 64,
+            "agreement_rate": 0.015625
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": 5,
+            "matching_tokens": 9,
+            "total_tokens": 64,
+            "agreement_rate": 0.140625
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": 44,
+            "matching_tokens": 44,
+            "total_tokens": 64,
+            "agreement_rate": 0.6875
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": 10,
+            "matching_tokens": 10,
+            "total_tokens": 64,
+            "agreement_rate": 0.15625
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 4,
+            "total_tokens": 64,
+            "agreement_rate": 0.0625
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": 20,
+            "matching_tokens": 21,
+            "total_tokens": 64,
+            "agreement_rate": 0.328125
+          }
+        ]
+      },
+      "between_engines": {
+        "matching_tokens": 393,
+        "total_tokens": 768,
+        "rate": 0.51171875,
+        "prompts": [
+          {
+            "prompt_id": "library",
+            "first_divergent_token_index": 17,
+            "matching_tokens": 45,
+            "total_tokens": 64,
+            "agreement_rate": 0.703125
+          },
+          {
+            "prompt_id": "weather",
+            "first_divergent_token_index": 13,
+            "matching_tokens": 19,
+            "total_tokens": 64,
+            "agreement_rate": 0.296875
+          },
+          {
+            "prompt_id": "train",
+            "first_divergent_token_index": 0,
+            "matching_tokens": 0,
+            "total_tokens": 64,
+            "agreement_rate": 0.0
+          },
+          {
+            "prompt_id": "bread",
+            "first_divergent_token_index": 5,
+            "matching_tokens": 5,
+            "total_tokens": 64,
+            "agreement_rate": 0.078125
+          },
+          {
+            "prompt_id": "museum",
+            "first_divergent_token_index": 48,
+            "matching_tokens": 50,
+            "total_tokens": 64,
+            "agreement_rate": 0.78125
+          },
+          {
+            "prompt_id": "garden_tools",
+            "first_divergent_token_index": 17,
+            "matching_tokens": 17,
+            "total_tokens": 64,
+            "agreement_rate": 0.265625
+          },
+          {
+            "prompt_id": "bicycle",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "river",
+            "first_divergent_token_index": 17,
+            "matching_tokens": 17,
+            "total_tokens": 64,
+            "agreement_rate": 0.265625
+          },
+          {
+            "prompt_id": "notebook",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "kitchen",
+            "first_divergent_token_index": null,
+            "matching_tokens": 64,
+            "total_tokens": 64,
+            "agreement_rate": 1.0
+          },
+          {
+            "prompt_id": "moon",
+            "first_divergent_token_index": 2,
+            "matching_tokens": 2,
+            "total_tokens": 64,
+            "agreement_rate": 0.03125
+          },
+          {
+            "prompt_id": "post_office",
+            "first_divergent_token_index": 46,
+            "matching_tokens": 46,
+            "total_tokens": 64,
+            "agreement_rate": 0.71875
+          }
+        ]
+      },
+      "perplexity": {
+        "source": "bench/reference/r2-ppl-Q4_K_M.json",
+        "model_sha256": "52e47664d0a0001bd58ffdd16beb6e6a0b3609bbfee7a439a462dc6285a23281",
+        "perplexity": 12.14545993579603,
+        "recorded_perplexity": 12.145460061051034,
+        "llama_perplexity": 12.254528204040504,
+        "relative_change": -1.0312907416931694e-08,
+        "no_increase": true,
+        "passed": true,
+        "r1_perplexity": 12.145459915405054,
+        "relative_to_r1": 1.6788970214065557e-09
+      },
+      "probe": {
+        "source": "bench/reference/r2-probes-Q4_K_M.json",
+        "prompt_id": "library",
+        "generated_index": 17,
+        "logit_error": {
+          "elements": 151936,
+          "max_abs": 0.9325013160705566,
+          "rms": 0.21161564722986548
+        },
+        "max_block_output_error": 1.6134858131408691,
+        "neuron_shared_input": {
+          "activation_max_error": 0.30504393577575684,
+          "weight_max_error": 0.0,
+          "neuron_dot_max_error": 5.957327111616451e-07,
+          "llama_dot_max_error": 0.22661404146303354,
+          "llama_dot_vs_quantized_input_max_error": 1.8188304167221503e-06,
+          "f16_checked": 63490,
+          "f16_mismatches": 0,
+          "matrices": 197,
+          "sampled_rows": 985,
+          "shared_operations": 281,
+          "shared_max_by_op": {
+            "attn_norm": 0.0,
+            "ffn_norm": 0.0,
+            "Qrope": 0.0,
+            "Krope": 0.0,
+            "softmax": 0.0,
+            "attention_scores": 0.0,
+            "attention_values": 0.0,
+            "swiglu": 0.0,
+            "residual_": 0.0,
+            "result_norm": 0.0
+          }
+        },
+        "llama_shared_input": {
+          "activation_max_error": 0.30251461267471313,
+          "weight_max_error": 0.0,
+          "neuron_dot_max_error": 5.957327111616451e-07,
+          "llama_dot_max_error": 0.2576582987607843,
+          "llama_dot_vs_quantized_input_max_error": 1.9080644815261394e-06,
+          "f16_checked": 63490,
+          "f16_mismatches": 0,
+          "matrices": 197,
+          "sampled_rows": 985,
+          "shared_operations": 281,
+          "shared_max_by_op": {
+            "attn_norm": 9.5367431640625e-07,
+            "ffn_norm": 0.0,
+            "Qrope": 1.9073486328125e-06,
+            "Krope": 7.62939453125e-06,
+            "softmax": 1.7881393432617188e-07,
+            "attention_scores": 0.015625,
+            "attention_values": 9.5367431640625e-07,
+            "swiglu": 1.9073486328125e-06,
+            "residual_": 0.0,
+            "result_norm": 0.0
+          }
+        }
+      }
+    }
+  },
+  "speed": {
+    "before": {
+      "source": "bench/reference/r2-speed-before.json",
+      "pp": 23.4290485,
+      "tg": 12.162904560618781,
+      "binary_sha256": "fa21c5ee68df10f4ef0bfff11381c6e229f1e45c97f75bd0b6f62123adaa6a2d",
+      "source_sha256": "548200a7b448748f5e9235cb95120d7e7135ee4a039b49cb3cef6bfc8712f445"
+    },
+    "after": {
+      "source": "bench/reference/r2-speed-after.json",
+      "pp": 20.2504201,
+      "tg": 12.587742759390274,
+      "binary_sha256": "fa21c5ee68df10f4ef0bfff11381c6e229f1e45c97f75bd0b6f62123adaa6a2d",
+      "source_sha256": "548200a7b448748f5e9235cb95120d7e7135ee4a039b49cb3cef6bfc8712f445"
+    }
+  },
+  "same_engine_source": true,
+  "validation": {
+    "default": {
+      "returncode": 0,
+      "binary_sha256": "fa21c5ee68df10f4ef0bfff11381c6e229f1e45c97f75bd0b6f62123adaa6a2d",
+      "total": 22,
+      "passed": 21,
+      "skipped": 1
+    },
+    "werror": {
+      "returncode": 0,
+      "binary_sha256": "fa21c5ee68df10f4ef0bfff11381c6e229f1e45c97f75bd0b6f62123adaa6a2d",
+      "total": 22,
+      "passed": 21,
+      "skipped": 1
+    },
+    "avx2": {
+      "returncode": 0,
+      "binary_sha256": "fa21c5ee68df10f4ef0bfff11381c6e229f1e45c97f75bd0b6f62123adaa6a2d",
+      "total": 22,
+      "passed": 21,
+      "skipped": 1
+    },
+    "avx512": {
+      "returncode": 0,
+      "binary_sha256": "fa21c5ee68df10f4ef0bfff11381c6e229f1e45c97f75bd0b6f62123adaa6a2d",
+      "total": 22,
+      "passed": 21,
+      "skipped": 1
+    },
+    "sanitize": {
+      "returncode": 0,
+      "binary_sha256": "5dce94ab4264f0506633d41b1304d7626cdb938dc5da65396dfc56a95ca45a5c",
+      "total": 22,
+      "passed": 21,
+      "skipped": 1
+    },
+    "clang": {
+      "returncode": 0,
+      "binary_sha256": "678f3fe7893452ab73fe0cbebd9682e1a9f24064c9b00b2130a040c3cf6e2cc9",
+      "total": 22,
+      "passed": 21,
+      "skipped": 1
+    },
+    "clang-avx2": {
+      "returncode": 0,
+      "binary_sha256": "678f3fe7893452ab73fe0cbebd9682e1a9f24064c9b00b2130a040c3cf6e2cc9",
+      "total": 22,
+      "passed": 21,
+      "skipped": 1
+    }
+  },
+  "same_neuron_binary": true,
+  "repeated_ids_exact": {
+    "F16": {
+      "neuron": true,
+      "llama": true
+    },
+    "Q8_0": {
+      "neuron": true,
+      "llama": true
+    },
+    "Q4_0": {
+      "neuron": true,
+      "llama": true
+    },
+    "Q4_K_M": {
+      "neuron": true,
+      "llama": true
+    }
+  },
+  "m4_ids_exact": {
+    "F16": true,
+    "Q8_0": true,
+    "Q4_0": true,
+    "Q4_K_M": true
+  },
+  "agreement_targets": {
+    "Q8_0": 0.9,
+    "Q4_0": 0.7,
+    "Q4_K_M": 0.7
+  },
+  "agreement_passed": {
+    "Q8_0": false,
+    "Q4_0": false,
+    "Q4_K_M": false
+  },
+  "perplexity_all_at_or_below_m4": true,
+  "perplexity_acceptance": {
+    "q8_within_one_percent_f16": true,
+    "q4km_within_ten_percent_f16": true,
+    "q4km_within_two_percent_llama": true,
+    "q4_0_within_ten_percent_f16": false
+  },
+  "speed_relative_change": {
+    "pp": -0.13567040078473525,
+    "tg": 0.034929008663525885
+  },
+  "same_speed_ids": true,
+  "engine_baseline_commit": "4091ebbe6098f0c8ced31c8560ecf9b97f23c175",
+  "engine_matches_main_baseline": true,
+  "speed_pairs": {
+    "source": "bench/reference/r2-speed-pairs.json",
+    "medians": {
+      "before": {
+        "prompt_tokens_per_second": 23.695349,
+        "generation_tokens_per_second": 20.63534729951833
+      },
+      "after": {
+        "prompt_tokens_per_second": 23.6241048,
+        "generation_tokens_per_second": 20.034088842304392
+      }
+    },
+    "relative_change": {
+      "prompt_tokens_per_second": -0.0030066744321849415,
+      "generation_tokens_per_second": -0.02913730738265652
+    },
+    "samples": 6
+  },
+  "optional_client_check": {
+    "command": [
+      "python3",
+      "scripts/test_openai_client.py",
+      "--binary",
+      "build-r2-final-default/neuron"
+    ],
+    "environment": {
+      "NEURON_MODELS_DIR": "/home/daniel/codex-runs/Neuron-m1/models"
+    },
+    "returncode": 77,
+    "log": "SKIP: the openai Python package is unavailable\n"
+  },
+  "guards": {
+    "no_weight_files": true,
+    "all_tracked_files_at_most_one_mib": true,
+    "maximum_tracked_file_bytes": 574547,
+    "engine_source_matches_main_baseline": true,
+    "roadmap_acceptance_text_preserved": true,
+    "edited_markdown_links_resolve": true,
+    "edited_markdown_has_no_em_dashes": true,
+    "required_text_and_filename_checks_passed": true
+  }
+}

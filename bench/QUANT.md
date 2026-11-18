@@ -2,9 +2,9 @@
 
 This is the quantization quality record for Qwen2.5 1.5B. Use it for file sizes, perplexity, token agreement, and the accepted misses. Quantization packs model weights into fewer bits. Q8_0 is 8-bit, Q4_0 is a simple 4-bit format, and Q4_K_M is a mixed 4-bit and 6-bit format. Perplexity measures how well the model predicts the next token on a fixed text (lower is better). tok/s is tokens per second.
 
-Hardware for both rounds: an Intel Core i5-1135G7 laptop (4 cores/8 threads,
+Hardware for the measurements is an Intel Core i5-1135G7 laptop (4 cores/8 threads,
 AVX-512 VNNI), 16 GB RAM, Ubuntu 22.04 base, GCC 11.4 and CMake 3.22.1.
-Neuron uses the default Release build and one thread.
+M4 uses the default Release build and one thread.
 
 R1 leaves this quality study and its agreement scores unchanged. It speeds
 up the K-quant implementation (weights packed in groups of 256 values) and
@@ -13,6 +13,40 @@ repeats the original perplexity slice for all four formats.
 record the follow-up. No perplexity increased relative to M4 across the four
 formats; Q4_K_M changed from 12.145460061051 to 12.145459915405 on the same
 slice. The scalar speed numbers below are historical M4 data.
+
+## R2 free-running agreement
+
+R2 repeats the frozen twelve-prompt, 64-token method on the main baseline
+after R1 and again after the numerical checks. Free-running agreement counts
+equal generated IDs at the same positions while each model feeds back its
+own output. Each engine's quantized formats are compared with its own F16
+run. Every continuation reaches all 64 positions.
+
+| Format | Neuron before | Neuron after | llama.cpp vs its F16 |
+| --- | ---: | ---: | ---: |
+| F16 | 768/768 (100.00%) | 768/768 (100.00%) | 768/768 (100.00%) |
+| Q8_0 | 551/768 (71.74%) | 551/768 (71.74%) | 457/768 (59.51%) |
+| Q4_0 | 51/768 (6.64%) | 51/768 (6.64%) | 49/768 (6.38%) |
+| Q4_K_M | 180/768 (23.44%) | 180/768 (23.44%) | 156/768 (20.31%) |
+
+The llama.cpp results also miss the 90% int8 and 70% four-bit targets.
+Neuron's complete continuations match M4 exactly. F16 agrees across engines
+at all 768 positions. All sampled decoded weights and F16 conversions
+match. Replaying operations on identical inputs localizes the larger
+quantized-engine differences to activation precision. llama.cpp converts
+inputs to Q8_0 or Q8_K, while Neuron retains more activation precision.
+The checks found no inference defect that justifies a correction. The
+agreement targets remain missed.
+[Before](reference/r2-before.json), [after](reference/r2-after.json),
+[numerical checks](R2_AGREEMENT.md).
+
+All four full-slice perplexity regression checks pass with results at or
+below M4. Q4_K_M measures 12.145459935796 against M4's 12.145460061051.
+F16, Q8_0 and Q4_0 match R1 exactly. Q4_K_M is 2.04e-8 above the saved R1
+value. R2 agreement checks record generation and prompt-processing speed,
+build checks and per-operation traces. Per-format records link every
+perplexity process. [R2 agreement checks](R2_AGREEMENT.md),
+[perplexity records](reference/r2-perplexity.json).
 
 ## Second round: 4,096 targets and twelve prompts
 
