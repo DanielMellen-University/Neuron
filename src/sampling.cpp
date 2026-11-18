@@ -9,6 +9,7 @@ void SamplingOptions::validate() const {
   if (!std::isfinite(temperature) || temperature < 0) throw std::invalid_argument("temperature must be a finite number >= 0");
   if (!(top_p > 0 && top_p <= 1)) throw std::invalid_argument("top_p must be in (0, 1]");
   if (!(min_p >= 0 && min_p < 1)) throw std::invalid_argument("min_p must be in [0, 1)");
+  if (!std::isfinite(repeat_penalty) || repeat_penalty <= 0) throw std::invalid_argument("repeat_penalty must be a finite number > 0");
 }
 std::int32_t argmax(std::span<const float> logits) {
   if (logits.empty()) throw std::invalid_argument("sampling needs at least one logit");
@@ -22,7 +23,30 @@ std::uint64_t Random::next() {
 }
 double Random::uniform() { return static_cast<double>(next() >> 11) * 0x1.0p-53; }
 Sampler::Sampler(const SamplingOptions& options) : options_(options), random_(options.seed) { options_.validate(); }
+void Sampler::accept(std::int32_t token) {
+  if (options_.repeat_penalty == 1 || options_.repeat_last_n == 0) return;
+  if (recent_.size() < options_.repeat_last_n) { recent_.push_back(token); return; }
+  recent_[next_recent_] = token;
+  next_recent_ = (next_recent_ + 1) % recent_.size();
+}
+void Sampler::reset() {
+  recent_.clear();
+  next_recent_ = 0;
+}
 std::int32_t Sampler::sample(std::span<const float> logits) {
+  if (!recent_.empty()) {
+    penalized_.assign(logits.begin(), logits.end());
+    // Each distinct token is penalized once, however often it repeats.
+    std::vector<std::int32_t> seen(recent_);
+    std::sort(seen.begin(), seen.end());
+    seen.erase(std::unique(seen.begin(), seen.end()), seen.end());
+    for (const auto token : seen) {
+      if (token < 0 || static_cast<std::size_t>(token) >= penalized_.size()) continue;
+      auto& logit = penalized_[static_cast<std::size_t>(token)];
+      logit = logit > 0 ? logit / options_.repeat_penalty : logit * options_.repeat_penalty;
+    }
+    logits = penalized_;
+  }
   const auto best = argmax(logits);
   if (options_.greedy()) return best;
   const auto top = logits[static_cast<std::size_t>(best)];

@@ -101,3 +101,37 @@ NEURON_TEST(masked_logits_are_never_sampled) {
   CHECK(!counts.contains(0)); CHECK(!counts.contains(2));
   CHECK_EQ(counts.size(), std::size_t{2});
 }
+NEURON_TEST(repeat_penalty_scales_recent_tokens) {
+  const std::array<float, 3> logits{2, 1.5f, -1};
+  neuron::SamplingOptions o; o.repeat_penalty = 2;
+  neuron::Sampler sampler(o);
+  CHECK_EQ(sampler.sample(logits), 0);
+  // 2 / 2 = 1 now loses to 1.5, even with greedy selection.
+  sampler.accept(0);
+  CHECK_EQ(sampler.sample(logits), 1);
+  // Repeats count once: 1.5 / 2 = 0.75 still loses to 1.
+  sampler.accept(1); sampler.accept(1); sampler.accept(1);
+  CHECK_EQ(sampler.sample(logits), 0);
+  sampler.reset();
+  CHECK_EQ(sampler.sample(logits), 0);
+  // Negative logits move further down instead of up.
+  const std::array<float, 2> negative{-1, -1.5f};
+  neuron::Sampler down(o);
+  down.accept(0);
+  CHECK_EQ(down.sample(negative), 1);
+}
+NEURON_TEST(repeat_window_forgets_old_tokens) {
+  const std::array<float, 3> logits{2, 1.5f, 0};
+  neuron::SamplingOptions o; o.repeat_penalty = 4; o.repeat_last_n = 2;
+  neuron::Sampler sampler(o);
+  sampler.accept(0); sampler.accept(2);
+  CHECK_EQ(sampler.sample(logits), 1);
+  sampler.accept(2);  // Token 0 falls out of the two-token window.
+  CHECK_EQ(sampler.sample(logits), 0);
+  o.repeat_last_n = 0;
+  neuron::Sampler off(o);
+  off.accept(0);
+  CHECK_EQ(off.sample(logits), 0);
+  o.repeat_penalty = 0;
+  CHECK_THROWS_AS(neuron::Sampler{o}, std::invalid_argument);
+}

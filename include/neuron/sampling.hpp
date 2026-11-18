@@ -14,6 +14,11 @@ struct SamplingOptions {
   std::size_t top_k = 0;  // 0 keeps every token.
   float top_p = 1;        // Smallest set whose probability reaches top_p.
   float min_p = 0;        // Drops tokens below min_p times the top probability.
+  // llama.cpp style: logits of tokens seen in the last repeat_last_n accepted
+  // tokens are divided by the penalty when positive and multiplied when
+  // negative. 1 turns it off; it also applies when temperature is 0.
+  float repeat_penalty = 1;
+  std::size_t repeat_last_n = 64;
   std::uint64_t seed = 0;
   bool greedy() const { return temperature == 0; }
   // Throws std::invalid_argument naming the bad field.
@@ -39,10 +44,16 @@ class Sampler {
   explicit Sampler(const SamplingOptions& options);
   const SamplingOptions& options() const { return options_; }
   std::int32_t sample(std::span<const float> logits);
+  // Records a prompt or generated token for the repeat penalty window.
+  void accept(std::int32_t token);
+  void reset();
  private:
   struct Candidate { float logit; std::int32_t token; };
   SamplingOptions options_;
   Random random_;
   std::vector<Candidate> candidates_;
+  std::vector<std::int32_t> recent_;  // Ring buffer of the last repeat_last_n tokens.
+  std::size_t next_recent_ = 0;
+  std::vector<float> penalized_;
 };
 }  // namespace neuron
