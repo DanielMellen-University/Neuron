@@ -53,3 +53,10 @@ set_tests_properties(test_http test_terminal PROPERTIES TIMEOUT 45)
 add_test(NAME test_openai_client
   COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/test_openai_client.py --binary $<TARGET_FILE:neuron_cli>)
 set_tests_properties(test_openai_client PROPERTIES SKIP_RETURN_CODE 77 TIMEOUT 600)
+
+add_executable(cli_model cli_model.cpp)
+target_include_directories(cli_model PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(cli_model PRIVATE neuron_options)
+add_test(NAME test_cli
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_cli.py $<TARGET_FILE:neuron_cli> $<TARGET_FILE:cli_model>)
+set_tests_properties(test_cli PROPERTIES TIMEOUT 120)

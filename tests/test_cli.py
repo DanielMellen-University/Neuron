@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""End-to-end CLI checks on a tiny generated GGUF model (no real weights)."""
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import unittest
+
+NEURON, WRITER = sys.argv.pop(1), sys.argv.pop(1)
+
+
+class CliTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.directory = tempfile.TemporaryDirectory()
+        cls.model = os.path.join(cls.directory.name, "tiny.gguf")
+        subprocess.run([WRITER, cls.model], check=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.directory.cleanup()
+
+    def neuron(self, *args, check=True, stdin=None):
+        result = subprocess.run([NEURON, *args], capture_output=True, input=stdin, timeout=60)
+        if check and result.returncode != 0:
+            self.fail(f"{args} exited {result.returncode}: {result.stderr.decode()}")
+        return result
+
+    def run_json(self, *args):
+        return json.loads(self.neuron("run", "-m", self.model, "-p", "a", "--json", *args).stdout)
+
+    def test_greedy_follows_successor_chain(self):
+        out = self.neuron("run", "-m", self.model, "-p", "a", "--greedy", "-n", "12").stdout
+        self.assertEqual(out, b" b cabcde\n")
+        record = self.run_json("--greedy", "-n", "3")
+        self.assertEqual(record["generated_tokens"], [10, 11, 4])
+        self.assertNotIn("sampling", record)
+
+    def test_temperature_zero_matches_greedy(self):
+        self.assertEqual(self.run_json("--temp", "0", "-n", "5")["generated_tokens"],
+                         self.run_json("--greedy", "-n", "5")["generated_tokens"])
+
+    def test_seed_repeats_and_varies(self):
+        runs = {}
+        for seed in range(1, 9):
+            first = self.run_json("--temp", "1.5", "--seed", str(seed), "-n", "8")
+            again = self.run_json("--temp", "1.5", "--seed", str(seed), "-n", "8")
+            self.assertEqual(first["generated_tokens"], again["generated_tokens"])
+            self.assertEqual(first["sampling"]["seed"], seed)
+            runs[seed] = tuple(first["generated_tokens"])
+        self.assertGreater(len(set(runs.values())), 1)
+
+    def test_top_k_one_is_greedy(self):
+        greedy = self.run_json("--greedy", "-n", "6")["generated_tokens"]
+        for seed in ("1", "2", "3"):
+            sampled = self.run_json("--temp", "2", "--top-k", "1", "--seed", seed, "-n", "6")
+            self.assertEqual(sampled["generated_tokens"], greedy)
+
+    def test_repeat_penalty_is_reported(self):
+        record = self.run_json("--greedy", "--repeat-penalty", "1.3", "--repeat-last-n", "8", "-n", "3")
+        self.assertEqual(record["sampling"]["repeat_penalty"], 1.3)
+        self.assertEqual(record["sampling"]["repeat_last_n"], 8)
+
+    def test_rejects_bad_sampling_flags(self):
+        for flags in (["--temp", "-1"], ["--temp", "x"], ["--temp", "1", "--top-p", "0"],
+                      ["--temp", "1", "--min-p", "1"], ["--greedy", "--temp", "0.5"],
+                      ["--greedy", "--repeat-penalty", "0"], ["--temp", "1", "--top-k", "-2"], []):
+            result = self.neuron("run", "-m", self.model, "-p", "a", "-n", "2", *flags, check=False)
+            self.assertEqual(result.returncode, 2, flags)
+            self.assertTrue(result.stderr.startswith(b"neuron: "), result.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main()
