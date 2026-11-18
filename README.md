@@ -168,7 +168,7 @@ Unit tests and model-free HTTP/terminal tests need no weights or reference engin
 Start at the [docs hub](docs/README.md). Source lives in `src/`, public headers in `include/neuron/`, tests in `tests/` and measurement tools in `bench/`.
 
 - [Design and optimization](docs/blog/design-and-optimization.md): how the engine works, and the measured quality and speed gaps
-- [Command-line reference](docs/cli.md): sampling, stop strings, chat and server options, and GGUF inspection
+- [Command-line reference](docs/cli.md): sampling, stop strings, chat and server options, GGUF inspection and token tools
 - [Terminal demo](docs/demo.md): the real capture, timing policy and GIF reproduction
 - [Roadmap](ROADMAP.md): the seven milestones, acceptance criteria and what was missed
 - [Baseline](bench/BASELINE.md): pinned llama.cpp and model inputs
